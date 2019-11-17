@@ -1,0 +1,55 @@
+[tool]
+[tool.poetry]
+name = "spangle"
+version = "0.0.1"
+description = "ASGI apprication framework inspired by `responder`, `vibora`, and `express-js`."
+license = "MIT"
+authors = ["T.Kameyama <tkamenoko@vivaldi.net>"]
+homepage = "https://github.com/tkamenoko/spangle"
+repository = "https://github.com/tkamenoko/spangle"
+documentation = "https://tkamenoko.github.io/spangle/"
+readme = "README.md"
+classifiers = [
+    # Trove classifiers
+    # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 2 - Pre-Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Environment :: Web Environment",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: JavaScript",
+    "Topic :: Internet :: WWW/HTTP",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+addict = "^2.2"
+aiofiles = "^0.4.0"
+asgiref = "^3.2"
+chardet = "^3.0"
+httpx = "^0.7.5"
+jinja2 = "^2.10"
+multidict = "^4.5"
+multipart = "^0.2.0"
+parse = "^1.12"
+starlette = "^0.12.12"
+
+
+[tool.poetry.dev-dependencies]
+black = {version = "*", allows-prereleases = true}
+flake8 = "*"
+green = "*"
+mypy = "*"
+rope = "*"
+mkdocs-material = "*"
+mkdocs = "*"
+inari = "*"
+hypercorn = "*"
+uvloop = "*"
+
+[tool.poetry.scripts]
+spangle = "spangle.cli.run:main"
