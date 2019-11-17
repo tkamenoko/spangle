@@ -1,0 +1,74 @@
+site_name: spangle - ASGI framework for modern web application
+
+docs_dir: "markdown"
+site_dir: "docs"
+repo_url: "https://github.com/tkamenoko/spangle/"
+edit_uri: ""
+
+nav:
+    - Home: index.md
+    - Introduction: introduction.md
+    - Routing: routing.md
+    - HTTP Methods: methods.md
+    - Request: request.md
+    - Response: response.md
+    - Component: component.md
+    - Lifespan Events: lifespan.md
+    - Before Request: before-request.md
+    - Error Handling: error-handling.md
+    - Static Files: statics.md
+    - Test Client: test-client.md
+    - Advanced Features:
+      - Advanced Features: advanced/index.md
+      - Application Blueprint: advanced/blueprint.md
+      - WebSocket: advanced/websocket.md
+      - Use Decorator: advanced/decorator.md
+      - ASGI Middleware: advanced/middleware.md
+      - Mount Other ASGI App: advanced/mount.md
+      - Default Routing: advanced/default-route.md
+      - CLI Tools: advanced/cli-tools.md
+    - API:
+      - spangle: api/index.md
+      - Module api: api/api-py.md
+      - Module blueprint: api/blueprint-py.md
+      - Module error_handler: api/error_handler-py.md
+      - Module exceptions: api/exceptions-py.md
+      - Module parser: api/parser-py.md
+      - Module testing: api/testing-py.md
+      - Models:
+        - Module models: api/models/index.md
+        - Module http: api/models/http-py.md
+        - Module websocket: api/models/websocket-py.md
+      - CLI:
+        - Module cli: api/cli/index.md
+        - Module run: api/cli/run-py.md
+
+theme:
+  name: 'material'
+  feature:
+    tabs: true
+  palette:
+    primary: 'teal'
+    accent: 'pink'
+
+markdown_extensions:
+    - toc:
+        toc_depth: 4
+        permalink: True
+    - extra
+    - smarty
+    - codehilite:
+        linenums: true
+    - admonition
+    - attr_list
+    - pymdownx.details
+    - pymdownx.superfences
+    - pymdownx.emoji
+    - pymdownx.inlinehilite
+    - pymdownx.magiclink
+
+plugins:
+    - search
+    - inari:
+        module: spangle
+        out-name: api

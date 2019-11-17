@@ -1,0 +1,33 @@
+{
+  "name": "spangle",
+  "version": "0.1.0",
+  "description": "Just as a task runner",
+  "repository": "https://github.com/tkamenoko/spangle",
+  "author": "T.Kameyama <tkamenoko@vivaldi.net>",
+  "license": "MIT",
+  "scripts": {
+    "doc:serve": "poetry run mkdocs serve",
+    "doc:build": "poetry run mkdocs build",
+    "test:unit": "poetry run green -vvv -r -U -s 1 -O -u 'spangle/**' -o '**/_*,tests/*,.venv/*' $@",
+    "test:unit_all": "run test:unit tests ; run report:coverage",
+    "report:coverage": "poetry run coverage html",
+    "test:e2e": "run urls:gen && pnpify testyts ; run urls:rm",
+    "test": "run test:unit_all && run test:e2e",
+    "urls:gen": "poetry run spangle urls-ts tests_js.src.app:api > tests_js/src/urls.ts",
+    "urls:rm": "rm tests_js/src/urls.ts",
+    "build": "poetry build"
+  },
+  "private": true,
+  "devDependencies": {
+    "@types/got": "^9.6.9",
+    "@types/node": "^12.11.7",
+    "@types/typescript": "^2.0.0",
+    "@types/ws": "^6.0.3",
+    "@yarnpkg/pnpify": "^2.0.0-rc.9",
+    "got": "^9.6.0",
+    "isomorphic-ws": "^4.0.1",
+    "testyts": "^0.8.2",
+    "typescript": "^3.7.2",
+    "ws": "^7.2.0"
+  }
+}
