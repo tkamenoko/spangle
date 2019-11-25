@@ -42,7 +42,7 @@ class UrlExample:
 class Search:
     # parse `/search?q=somevalue`
     async def on_get(self, req, resp):
-        qeries = req.params
+        queries = req.params
         value = queries.get("q")
 
 ```

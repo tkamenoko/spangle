@@ -32,7 +32,7 @@ class Api:
     * debug (`bool`): Server running mode.
     * routing (`str`): Routing strategy about trailing slash.
     * components (`Dict[Type, Any]`): Classes shared by any views or hooks.
-    * templates_dir (`str`): Path to `Jinja2` templetes.
+    * templates_dir (`str`): Path to `Jinja2` templates.
 
     """
 
@@ -113,7 +113,7 @@ class Api:
         self.components[self.__class__] = self
         # init lifespan handlers
         self.lifespan_handlers = {"startup": [], "shutdown": []}
-        # Jinja enviroment
+        # Jinja environment
         self.templates_dir = templates_dir
         self._jinja_env = jinja2.Environment(
             loader=jinja2.FileSystemLoader([self.templates_dir], followlinks=True),
@@ -187,8 +187,8 @@ class Api:
                 elif scope["type"] == "websocket":
                     model = {"conn": models.websocket.Connection(scope, receive, send)}
 
-                scope["extentions"] = scope.get("extentions", {})
-                scope["extentions"].update(
+                scope["extensions"] = scope.get("extensions", {})
+                scope["extensions"].update(
                     {"spangle": dict(components=self.components, **model)}
                 )
                 await app(scope, receive, send)
@@ -326,7 +326,7 @@ class Api:
                 for _pattern in _patterns:
                     self.route(_pattern, converters=converters)(default_view)
 
-        # add ErrorHandler binded by Blueprint!
+        # add ErrorHandler bound by Blueprint!
         self.add_error_handler(blueprint._handler)
         # add lifecycle events from Blueprint!
         for e in blueprint.events["startup"]:

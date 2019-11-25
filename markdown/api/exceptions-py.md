@@ -39,7 +39,7 @@ class MethodNotAllowedError(
 class NotFoundError(self, message="Content not found.", status=HTTPStatus.NOT_FOUND)
 ```
 
-404: Missing resouces, views, etc.
+404: Missing resources, views, etc.
 
 **Args**
 
@@ -76,8 +76,8 @@ class ParseError(self, message="Unsupported format.", status=HTTPStatus.BAD_REQU
 
 #### Base classes {: #ParseError-bases }
 
-* `builtins.ValueError`
 * [`SpangleError `](./#SpangleError)
+* `builtins.ValueError`
 
 
 ------

@@ -2,7 +2,7 @@
 
 To create single page application, `default_route` and `allowed_patterns` help you.
 
-## Defalt route
+## Default route
 
 ```python
 api = Api(default_route="/default")

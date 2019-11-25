@@ -1,4 +1,4 @@
-# Use Decolator
+# Use Decorator
 
 To append common routines to views, you can make your own decorator.
 

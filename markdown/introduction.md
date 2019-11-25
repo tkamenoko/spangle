@@ -22,7 +22,7 @@ from spangle import Api
 api = Api()  # application instance.
 
 
-# a view is defined as a class, and `api.route` decolates it.
+# a view is defined as a class, and `api.route` decorates it.
 @api.route("/")
 class Hello:
     # view methods must be asynchronous.

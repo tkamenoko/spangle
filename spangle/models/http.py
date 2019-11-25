@@ -300,7 +300,7 @@ class Request:
 
 class Response:
     """
-    Outgoing HTTP response class. `Response` instance is ASGI3 apprication.
+    Outgoing HTTP response class. `Response` instance is ASGI3 application.
 
     **Attributes**
 

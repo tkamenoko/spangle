@@ -1,6 +1,6 @@
 # Component
 
-`Component` is an object shared in `spangle` app. It is useful to store databes connections or global configrations.
+`Component` is an object shared in `spangle` app. It is useful to store database connections or global configurations.
 
 ## Define your components
 

@@ -1,6 +1,6 @@
 # Module spangle.error_handler
 
-Apprication blueprint for `Exception`.
+Application blueprint for `Exception`.
 
 
 ## Classes

@@ -36,7 +36,7 @@ The main application class.
 * **debug** (`bool`): Server running mode.
 * **routing** (`str`): Routing strategy about trailing slash.
 * **components** (`Dict[Type, Any]`): Classes shared by any views or hooks.
-* **templates_dir** (`str`): Path to `Jinja2` templetes.
+* **templates_dir** (`str`): Path to `Jinja2` templates.
 
 **Args**
 
