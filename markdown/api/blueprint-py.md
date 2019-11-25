@@ -1,6 +1,6 @@
 # Module spangle.blueprint
 
-Apprication blueprint and router.
+Application blueprint and router.
 
 
 ## Classes

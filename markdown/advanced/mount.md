@@ -32,7 +32,7 @@ The `scope` looks like this:
 ```python
 scope = {
     ... 
-    "extentions": {
+    "extensions": {
         "spangle": {
             # for HTTP connection.
             "req": models.Request,

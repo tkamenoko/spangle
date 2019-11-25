@@ -28,7 +28,7 @@ class DynamicRoute(object):
         # `spangle` tries to get a view from static routes first.
         assert name != "page"
 
-@api.route("/use/{multiple}/{alllowed}")
+@api.route("/use/{multiple}/{allowed}")
 class Multiple:
     async def on_request(self, req, resp, **kw):
         assert "multiple" in kw
@@ -83,4 +83,4 @@ See [`parse`](https://github.com/r1chardj0n3s/parse) for more details.
 * `"strict"` : distinct `/route` from `/route/` .
 * `"clone"` : return same view between `/route` and `/route/` .
 
-To change the strategie, create `Api` instance with an argument like `Api(routing="clone")` .
+To change the strategy, create `Api` instance with an argument like `Api(routing="clone")` .

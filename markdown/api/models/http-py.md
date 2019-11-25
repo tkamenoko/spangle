@@ -125,7 +125,7 @@ HTTP2 push-promise.
 class Response(self, jinja_env: jinja2.Environment = None, url_for=None)
 ```
 
-Outgoing HTTP response class. `Response` instance is ASGI3 apprication.
+Outgoing HTTP response class. `Response` instance is ASGI3 application.
 
 **Attributes**
 

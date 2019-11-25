@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "spangle"
-version = "0.1.0"
+version = "0.2.0"
 description = "ASGI apprication framework inspired by `responder`, `vibora`, and `express-js`."
 license = "MIT"
 authors = ["T.Kameyama <tkamenoko@vivaldi.net>"]
@@ -36,7 +36,7 @@ jinja2 = "^2.10"
 multidict = "^4.5"
 multipart = "^0.2.0"
 parse = "^1.12"
-starlette = "^0.12.12"
+starlette = "^0.13.0"
 
 
 [tool.poetry.dev-dependencies]
