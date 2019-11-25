@@ -1,6 +1,6 @@
 # spangle
 
-`spangle` is an ASGI apprication framework inspired by [responder](https://github.com/taoufik07/responder), [vibora](https://github.com/vibora-io/vibora), and [express-js](https://github.com/expressjs/express/). 
+`spangle` is an ASGI application framework inspired by [responder](https://github.com/taoufik07/responder), [vibora](https://github.com/vibora-io/vibora), and [express-js](https://github.com/expressjs/express/). 
 
 ## Getting Started
 
@@ -44,7 +44,7 @@ hypercorn hello:api
 * Flexible URL params
 * `Jinja2` built-in support
 * Uniformed API
-* Single page apprication friendly
+* Single page application friendly
 
 ...and more features. Take [tutorials](/introduction) and see [features](/advanced/index) !
 

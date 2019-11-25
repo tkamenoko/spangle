@@ -69,7 +69,7 @@ class _Client(Client):
 class HttpTestResponse:
     """
     Response for testing.
-    
+
     **Attributes**
 
     * status_code(`int`): `HTTPStatus` if available, or just `int` .
@@ -303,7 +303,7 @@ class HttpTestClient:
         """
         **Args**
 
-        * app (`ASGIApp`): Apprication instance.
+        * app (`ASGIApp`): Application instance.
         * timeout (`Optional[int]`): Timeout seconds.
         * host (`str`): Temporary host name.
 

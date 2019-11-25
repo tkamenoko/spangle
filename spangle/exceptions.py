@@ -38,7 +38,7 @@ class ParseError(SpangleError, ValueError):
 
 
 class NotFoundError(SpangleError):
-    """404: Missing resouces, views, etc."""
+    """404: Missing resources, views, etc."""
 
     def __init__(self, message="Content not found.", status=HTTPStatus.NOT_FOUND):
         super().__init__(message, status)

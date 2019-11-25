@@ -1,5 +1,5 @@
 """
-Apprication blueprint for `Exception`.
+Application blueprint for `Exception`.
 """
 
 from typing import Callable, Dict, Type

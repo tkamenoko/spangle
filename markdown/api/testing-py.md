@@ -26,7 +26,7 @@ Mock HTTP client without running server. Lifespan-event is supported by `with`
 
 **Args**
 
-* **app** (`ASGIApp`): Apprication instance.
+* **app** (`ASGIApp`): Application instance.
 * **timeout** (`Optional[int]`): Timeout seconds.
 * **host** (`str`): Temporary host name.
 

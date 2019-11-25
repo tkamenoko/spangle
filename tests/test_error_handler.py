@@ -54,4 +54,3 @@ class ErrorHandlerTests(TestCase):
                     self.assertEqual(response.text, k)
             with self.assertRaises(KeyError):
                 response = client.get("/notdefined")
-
