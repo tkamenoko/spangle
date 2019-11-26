@@ -18,7 +18,6 @@ class Api(
     templates_dir="templates",
     routing="redirect",
     default_route: Optional[str] = None,
-    allowed_patterns: Optional[List[str]] = None,
     middlewares: Optional[List[Tuple[Callable, dict]]] = None,
     components: List[type] = None,)
 ```
@@ -46,12 +45,12 @@ The main application class.
 * **static_dir** (`Optional[str]`): The root directory that contains static files.
     If you want to disable `static_file`, set `None`.
 * **favicon** (`Optional[str]`): When a client requests `"/favicon.ico"`,
-    [`Api `](./#Api) responses `"static_dir/{given_file}"`. Optional; defaults to
-    `None`.
-* **templates_dir** (`Optional[str]`): The root directory that contains `Jinja2`
-    templates. If you want to disable rendering templates, set `None`.
+    [`Api `](./#Api) responses `"static_dir/{given_file}"`. Optional; defaults
+     to `None`.
 * **auto_escape** (`bool`): If set `True` (default), `Jinja2` renders templates with
     escaping.
+* **templates_dir** (`Optional[str]`): The root directory that contains `Jinja2`
+    templates. If you want to disable rendering templates, set `None`.
 * **routing** (`str`): Set routing mode:
 
     * `"redirect"` (default): always redirect from `/route` to `/route/` with
@@ -59,6 +58,8 @@ The main application class.
     * `"strict"` : distinct `/route` from `/route/` .
     * `"clone"` : return same view between `/route` and `/route/` .
 
+* **default_route** (`Optional[str]`): Use the view bound with given path instead
+    of returning 404.
 * **middlewares** (`Optional[List[Tuple[Callable, dict]]]`): Your custom list of
     asgi middlewares. Add later, called faster.
 * **components** (`Optional[List[Type]]`): List of class used in your views.
@@ -79,8 +80,8 @@ Mount a blueprint under the given path, and register error/event handlers.
 **Args**
 
 * **path** (`str`): Prefix for the blueprint.
-* **blueprint** ([`Blueprint `](../blueprint-py#Blueprint)): A [`Blueprint `](../blueprint-py#Blueprint) instance
-    to mount.
+* **blueprint** ([`Blueprint `](../blueprint-py#Blueprint)): A [`Blueprint `](../blueprint-py#Blueprint)
+    instance to mount.
 
 ------
 
@@ -108,8 +109,8 @@ Register [`ErrorHandler `](../error_handler-py#ErrorHandler) to the api.
 
 **Args**
 
-* **eh** ([`ErrorHandler `](../error_handler-py#ErrorHandler)): An [`ErrorHandler `](../error_handler-py#ErrorHandler)
-    instance.
+* **eh** ([`ErrorHandler `](../error_handler-py#ErrorHandler)): An
+    [`ErrorHandler `](../error_handler-py#ErrorHandler) instance.
 
 ------
 

@@ -563,8 +563,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#allowed-patterns" class="md-nav__link">
-    Allowed patterns
+  <a href="#multiple-routing-for-allowed-patterns" class="md-nav__link">
+    Multiple routing for allowed patterns
   </a>
   
 </li>
@@ -841,8 +841,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#allowed-patterns" class="md-nav__link">
-    Allowed patterns
+  <a href="#multiple-routing-for-allowed-patterns" class="md-nav__link">
+    Multiple routing for allowed patterns
   </a>
   
 </li>
@@ -865,7 +865,7 @@
                 
                 
                 <h1 id="default-routing-for-single-page-application">Default Routing for Single Page Application<a class="headerlink" href="#default-routing-for-single-page-application" title="Permanent link">&para;</a></h1>
-<p>To create single page application, <code class="codehilite"><span class="n">default_route</span></code> and <code class="codehilite"><span class="n">allowed_patterns</span></code> help you.</p>
+<p>To create single page application, <code class="codehilite"><span class="n">default_route</span></code> and multiple routing help you.</p>
 <h2 id="default-route">Default route<a class="headerlink" href="#default-route" title="Permanent link">&para;</a></h2>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
@@ -888,17 +888,23 @@
 </td></tr></table>
 
 <p>In this example, a request to <code class="codehilite"><span class="o">/</span><span class="n">spam</span></code> gets a response from <code class="codehilite"><span class="n">Spam</span></code> , and the other requests include <code class="codehilite"><span class="o">/</span><span class="k">default</span></code> get responses from <code class="codehilite"><span class="k">Default</span></code> , so any users get not <code class="codehilite"><span class="mi">404</span></code> responses.</p>
-<h2 id="allowed-patterns">Allowed patterns<a class="headerlink" href="#allowed-patterns" title="Permanent link">&para;</a></h2>
-<p><a href="https://support.google.com/webmasters/answer/181708?hl=en">A soft 404</a> is a bad practice. Using <code class="codehilite"><span class="n">allowed_patterns</span></code> removes worry of the problem.</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4
-5
-6
-7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">default_route</span><span class="o">=</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">allowed_patterns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;/api/{foo}&quot;</span><span class="p">,</span> <span class="s2">&quot;/api/more/longer/path&quot;</span><span class="p">,</span> <span class="s2">&quot;/need/{converter:func}&quot;</span><span class="p">])</span>
+<h2 id="multiple-routing-for-allowed-patterns">Multiple routing for allowed patterns<a class="headerlink" href="#multiple-routing-for-allowed-patterns" title="Permanent link">&para;</a></h2>
+<p><a href="https://support.google.com/webmasters/answer/181708?hl=en">A soft 404</a> is a bad practice. Routing allowed patterns to a view removes worry of the problem.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">()</span>
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span><span class="p">})</span>
+<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/need/{converter:func}&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span><span class="p">}</span> <span class="p">)</span>
+<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/api/more/longer/path&quot;</span><span class="p">)</span>
+<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/api/{foo}&quot;</span><span class="p">)</span>
+<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Index</span><span class="p">:</span>
     <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="c1"># `kw` may contain parsed path params.</span>
