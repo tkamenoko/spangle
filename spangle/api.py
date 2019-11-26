@@ -62,7 +62,6 @@ class Api:
         templates_dir="templates",
         routing="redirect",
         default_route: Optional[str] = None,
-        allowed_patterns: Optional[List[str]] = None,
         middlewares: Optional[List[Tuple[Callable, dict]]] = None,
         components: List[type] = None,
     ) -> None:
@@ -75,12 +74,12 @@ class Api:
         * static_dir (`Optional[str]`): The root directory that contains static files.
             If you want to disable `static_file`, set `None`.
         * favicon (`Optional[str]`): When a client requests `"/favicon.ico"`,
-            `spangle.api.Api` responses `"static_dir/{given_file}"`. Optional; defaults to
-            `None`.
-        * templates_dir (`Optional[str]`): The root directory that contains `Jinja2`
-            templates. If you want to disable rendering templates, set `None`.
+            `spangle.api.Api` responses `"static_dir/{given_file}"`. Optional; defaults
+             to `None`.
         * auto_escape (`bool`): If set `True` (default), `Jinja2` renders templates with
             escaping.
+        * templates_dir (`Optional[str]`): The root directory that contains `Jinja2`
+            templates. If you want to disable rendering templates, set `None`.
         * routing (`str`): Set routing mode:
 
             * `"redirect"` (default): always redirect from `/route` to `/route/` with
@@ -88,6 +87,8 @@ class Api:
             * `"strict"` : distinct `/route` from `/route/` .
             * `"clone"` : return same view between `/route` and `/route/` .
 
+        * default_route (`Optional[str]`): Use the view bound with given path instead
+            of returning 404.
         * middlewares (`Optional[List[Tuple[Callable, dict]]]`): Your custom list of
             asgi middlewares. Add later, called faster.
         * components (`Optional[List[Type]]`): List of class used in your views.
@@ -129,8 +130,7 @@ class Api:
 
         # default route.
         self.router.default_route = default_route
-        self.router.allowed_patterns = allowed_patterns or None
-
+        
         # init before_request.
         self.request_hooks = []
 
@@ -294,8 +294,8 @@ class Api:
         **Args**
 
         * path (`str`): Prefix for the blueprint.
-        * blueprint (`spangle.blueprint.Blueprint`): A `spangle.blueprint.Blueprint` instance
-            to mount.
+        * blueprint (`spangle.blueprint.Blueprint`): A `spangle.blueprint.Blueprint`
+            instance to mount.
 
         """
         _path = "/" + path
@@ -316,19 +316,10 @@ class Api:
             self.router._add(k, _view, _conv)
             _k = re.sub(r"{([^/:]+)(:[^/:]+)}", r"{\1}", k)
             self._reverse_views.setdefault(_view, _k)
-        # set default view if available.
-        if self.router.allowed_patterns:
-            _default_view = self.router.get(self.router.default_route)
-            if _default_view:
-                default_view, converters = _default_view
-                _patterns = self.router.allowed_patterns[:]
-                self.router.allowed_patterns = []
-                for _pattern in _patterns:
-                    self.route(_pattern, converters=converters)(default_view)
 
-        # add ErrorHandler bound by Blueprint!
+        # add ErrorHandler bound by Blueprint.
         self.add_error_handler(blueprint._handler)
-        # add lifecycle events from Blueprint!
+        # add lifecycle events from Blueprint.
         for e in blueprint.events["startup"]:
             self.add_lifespan_handler("startup", e)
         for e in blueprint.events["shutdown"]:
@@ -411,8 +402,8 @@ class Api:
 
         **Args**
 
-        * eh (`spangle.error_handler.ErrorHandler`): An `spangle.error_handler.ErrorHandler`
-            instance.
+        * eh (`spangle.error_handler.ErrorHandler`): An
+            `spangle.error_handler.ErrorHandler` instance.
 
         """
         self.error_handlers.update(eh.handlers)

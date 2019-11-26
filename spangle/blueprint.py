@@ -118,12 +118,11 @@ class Router:
     Manage URLs and views. Do not use this manually.
     """
 
-    __slots__ = ("routes", "routing", "default_route", "allowed_patterns")
+    __slots__ = ("routes", "routing", "default_route")
 
     routes: dict
     routing: str
     default_route: Optional[str]
-    allowed_patterns: Optional[List[str]]
 
     def __init__(self, routing: str) -> None:
         """Initialize self."""

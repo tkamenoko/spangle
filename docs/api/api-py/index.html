@@ -917,8 +917,7 @@
  9
 10
 11
-12
-13</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Api</span><span class="p">(</span>
+12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Api</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
     <span class="n">static_root</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/static&quot;</span><span class="p">,</span>
@@ -928,7 +927,6 @@
     <span class="n">templates_dir</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span>
     <span class="n">routing</span><span class="o">=</span><span class="s2">&quot;redirect&quot;</span><span class="p">,</span>
     <span class="n">default_route</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-    <span class="n">allowed_patterns</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
     <span class="n">middlewares</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
     <span class="n">components</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,)</span>
 </pre></div>
@@ -956,12 +954,12 @@
 <li><strong>static_dir</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): The root directory that contains static files.
     If you want to disable <code class="codehilite"><span class="n">static_file</span></code>, set <code class="codehilite"><span class="k">None</span></code>.</li>
 <li><strong>favicon</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): When a client requests <code class="codehilite"><span class="ss">&quot;/favicon.ico&quot;</span></code>,
-    <a href="./#Api"><code class="codehilite"><span class="n">Api</span></code></a> responses <code class="codehilite"><span class="ss">&quot;static_dir/{given_file}&quot;</span></code>. Optional; defaults to
-    <code class="codehilite"><span class="k">None</span></code>.</li>
-<li><strong>templates_dir</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): The root directory that contains <code class="codehilite"><span class="n">Jinja2</span></code>
-    templates. If you want to disable rendering templates, set <code class="codehilite"><span class="k">None</span></code>.</li>
+    <a href="./#Api"><code class="codehilite"><span class="n">Api</span></code></a> responses <code class="codehilite"><span class="ss">&quot;static_dir/{given_file}&quot;</span></code>. Optional; defaults
+     to <code class="codehilite"><span class="k">None</span></code>.</li>
 <li><strong>auto_escape</strong> (<code class="codehilite"><span class="n">bool</span></code>): If set <code class="codehilite"><span class="k">True</span></code> (default), <code class="codehilite"><span class="n">Jinja2</span></code> renders templates with
     escaping.</li>
+<li><strong>templates_dir</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): The root directory that contains <code class="codehilite"><span class="n">Jinja2</span></code>
+    templates. If you want to disable rendering templates, set <code class="codehilite"><span class="k">None</span></code>.</li>
 <li>
 <p><strong>routing</strong> (<code class="codehilite"><span class="n">str</span></code>): Set routing mode:</p>
 <ul>
@@ -972,9 +970,11 @@
 </ul>
 </li>
 <li>
-<p><strong>middlewares</strong> (<code class="codehilite"><span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">dict</span><span class="p">]]]</span></code>): Your custom list of
-    asgi middlewares. Add later, called faster.</p>
+<p><strong>default_route</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): Use the view bound with given path instead
+    of returning 404.</p>
 </li>
+<li><strong>middlewares</strong> (<code class="codehilite"><span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">dict</span><span class="p">]]]</span></code>): Your custom list of
+    asgi middlewares. Add later, called faster.</li>
 <li><strong>components</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">List[Type</span><span class="o">]</span><span class="err">]</span><span class="w"></span></code>): List of class used in your views.</li>
 </ul>
 <hr />
@@ -988,8 +988,8 @@
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>path</strong> (<code class="codehilite"><span class="n">str</span></code>): Prefix for the blueprint.</li>
-<li><strong>blueprint</strong> (<a href="../blueprint-py#Blueprint"><code class="codehilite"><span class="n">Blueprint</span></code></a>): A <a href="../blueprint-py#Blueprint"><code class="codehilite"><span class="n">Blueprint</span></code></a> instance
-    to mount.</li>
+<li><strong>blueprint</strong> (<a href="../blueprint-py#Blueprint"><code class="codehilite"><span class="n">Blueprint</span></code></a>): A <a href="../blueprint-py#Blueprint"><code class="codehilite"><span class="n">Blueprint</span></code></a>
+    instance to mount.</li>
 </ul>
 <hr />
 <p><a href="#Api.add_component" id="Api.add_component"><strong>add_component</strong></a></p>
@@ -1011,8 +1011,8 @@
 <p>Register <a href="../error_handler-py#ErrorHandler"><code class="codehilite"><span class="n">ErrorHandler</span></code></a> to the api.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>eh</strong> (<a href="../error_handler-py#ErrorHandler"><code class="codehilite"><span class="n">ErrorHandler</span></code></a>): An <a href="../error_handler-py#ErrorHandler"><code class="codehilite"><span class="n">ErrorHandler</span></code></a>
-    instance.</li>
+<li><strong>eh</strong> (<a href="../error_handler-py#ErrorHandler"><code class="codehilite"><span class="n">ErrorHandler</span></code></a>): An
+    <a href="../error_handler-py#ErrorHandler"><code class="codehilite"><span class="n">ErrorHandler</span></code></a> instance.</li>
 </ul>
 <hr />
 <p><a href="#Api.add_lifespan_handler" id="Api.add_lifespan_handler"><strong>add_lifespan_handler</strong></a></p>
