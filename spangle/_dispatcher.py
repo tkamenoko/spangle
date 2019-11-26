@@ -82,7 +82,7 @@ async def _response_http(
     # Normal response.
     _view = root.get(path)
     if _view is None:
-        if root.default_route is None or root.allowed_patterns is not None:
+        if root.default_route is None:
             raise NotFoundError(f"Give path `{path}` was not found.")
         _view = root.get(root.default_route)
     assert _view
