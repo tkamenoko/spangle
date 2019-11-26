@@ -1,6 +1,6 @@
 # Default Routing for Single Page Application
 
-To create single page application, `default_route` and `allowed_patterns` help you.
+To create single page application, `default_route` and multiple routing help you.
 
 ## Default route
 
@@ -19,14 +19,17 @@ class Spam:
 
 In this example, a request to `/spam` gets a response from `Spam` , and the other requests include `/default` get responses from `Default` , so any users get not `404` responses.
 
-## Allowed patterns
+## Multiple routing for allowed patterns
 
-[A soft 404](https://support.google.com/webmasters/answer/181708?hl=en) is a bad practice. Using `allowed_patterns` removes worry of the problem.
+[A soft 404](https://support.google.com/webmasters/answer/181708?hl=en) is a bad practice. Routing allowed patterns to a view removes worry of the problem.
 
 ```python
-api = Api(default_route="/", allowed_patterns=["/api/{foo}", "/api/more/longer/path", "/need/{converter:func}"])
+api = Api()
 
-@api.route("/", converters={"func": lambda x: x*2})
+@api.route("/need/{converter:func}", converters={"func": lambda x: x*2} )
+@api.route("/api/more/longer/path")
+@api.route("/api/{foo}")
+@api.route("/")
 class Index:
     async def on_get(self, req, resp, **kw):
         # `kw` may contain parsed path params.

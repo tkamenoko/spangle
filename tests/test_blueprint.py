@@ -9,11 +9,11 @@ from spangle.exceptions import NotFoundError
 
 class BlueprintTests(TestCase):
     def setUp(self):
-        self.api = Api(
-            default_route="/", allowed_patterns=["/allowed", "/patterns/here/"]
-        )
+        self.api = Api()
         self.bp = Blueprint()
 
+        @self.bp.route("/patterns/here/")
+        @self.bp.route("/allowed")
         @self.bp.route("/")
         class Index:
             pass
@@ -38,8 +38,8 @@ class BlueprintTests(TestCase):
             ("/foo", HTTPStatus.OK),
             ("/notfound", HTTPStatus.NOT_FOUND),
             ("/start/", HTTPStatus.OK),
-            ("/start/allowed", HTTPStatus.NOT_FOUND),
-            ("/start/patterns/here", HTTPStatus.NOT_FOUND),
+            ("/start/allowed", HTTPStatus.OK),
+            ("/start/patterns/here", HTTPStatus.OK),
             ("/start/foo", HTTPStatus.OK),
             ("/start/notfound", HTTPStatus.NOT_FOUND),
         ]
@@ -64,7 +64,7 @@ class BlueprintTests(TestCase):
             ("/notfound", HTTPStatus.NOT_FOUND),
             ("/start/", HTTPStatus.OK),
             ("/start", HTTPStatus.NOT_FOUND),
-            ("/start/allowed", HTTPStatus.NOT_FOUND),
+            ("/start/allowed", HTTPStatus.OK),
             ("/start/patterns/here", HTTPStatus.NOT_FOUND),
             ("/start/foo", HTTPStatus.OK),
             ("/start/notfound", HTTPStatus.NOT_FOUND),
@@ -74,7 +74,8 @@ class BlueprintTests(TestCase):
             for path, status in paths:
                 with self.subTest(path=path):
                     response = client.get(path, allow_redirects=False)
-                    self.assertEqual(response.status_code, status)
+                    self.assertEqual(
+                        response.status_code, status)
 
     def test_route_redirect(self):
         self.api.routing = "redirect"
@@ -91,7 +92,7 @@ class BlueprintTests(TestCase):
             ("/notfound/", HTTPStatus.NOT_FOUND),
             ("/start/", HTTPStatus.OK),
             ("/start", HTTPStatus.PERMANENT_REDIRECT),
-            ("/start/allowed/", HTTPStatus.NOT_FOUND),
+            ("/start/allowed/", HTTPStatus.OK),
             ("/start/patterns/here", HTTPStatus.PERMANENT_REDIRECT),
             ("/start/foo", HTTPStatus.PERMANENT_REDIRECT),
             ("/start/foo/", HTTPStatus.OK),
