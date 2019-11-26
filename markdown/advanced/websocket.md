@@ -22,7 +22,7 @@ class WebSocket:
 
 ```
 
-!!! note
+!!! Note
     HTTP Upgrade Request is processed in an ASGI server, so you don't need to send `101 Switching Protocols` manually.
 
 ## Error handling for WebSocket
