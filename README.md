@@ -6,7 +6,7 @@
 ASGI application framework inspired by [responder](https://github.com/taoufik07/responder), [vibora](https://github.com/vibora-io/vibora), and [express-js](https://github.com/expressjs/express/). 
 
 
-Note: `spangle` is on pre-alpha stage, so any updates may contain broken changes.
+Note: `spangle` is on pre-alpha stage, so any updates may contain breaking changes.
 
 ## Getting Started
 
