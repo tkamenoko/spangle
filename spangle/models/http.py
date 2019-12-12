@@ -30,7 +30,7 @@ from starlette.responses import Response as StarletteResponse
 from starlette.responses import StreamingResponse
 from starlette.types import Receive, Scope, Send
 
-from spangle.exceptions import NotFoundError
+from spangle.exceptions import NotFoundError, TooLargeRequestError
 from spangle.parser import _parse_body
 
 
@@ -82,6 +82,7 @@ class Request:
 
     * headers (`CIMultiDictProxy`): The request headers, case-insensitive dictionary.
     * state (`addict.Dict`): Any object you want to store while the response.
+    * max_upload_bytes (`int`): Limit upload size against each request.
 
     """
 
@@ -97,6 +98,7 @@ class Request:
         "_version",
         "headers",
         "state",
+        "max_upload_bytes",
     )
 
     _request: StarletteRequest
@@ -111,6 +113,7 @@ class Request:
 
     headers: CIMultiDictProxy
     state: addict.Dict
+    max_upload_bytes: int
 
     def __init__(self, scope: Scope, receive: Receive, send: Send) -> None:
         """Do not use manually."""
@@ -129,9 +132,27 @@ class Request:
 
     @property
     async def content(self) -> bytes:
-        """(`bytes`): The request body, as bytes. Must be awaited."""
+        """
+        (`bytes`): The request body, as bytes. Must be awaited.
+        
+        **Raises**
+        
+        * `spangle.exceptions.TooLargeRequestError` : when request body is too large.
+
+        """
         if self._content is None:
-            self._content = await self._request.body()
+            content_length = self.headers.get("content-length", "0")
+            if int(content_length) > self.max_upload_bytes:
+                raise TooLargeRequestError
+
+            body = b""
+            real_length = 0
+            async for chunk in self._request.stream():
+                real_length += len(chunk)
+                if real_length > self.max_upload_bytes:
+                    raise TooLargeRequestError
+                body += chunk
+            self._content = body
         return self._content
 
     @property

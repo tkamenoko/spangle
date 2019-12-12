@@ -41,6 +41,7 @@ async def _dispatch_http(
     scope: Scope, receive: Receive, send: Send, api: "Api"
 ) -> ASGIApp:
     req = http.Request(scope, receive, send)
+    req.max_upload_bytes = api.max_upload_bytes
     resp = http.Response(jinja_env=api._jinja_env, url_for=api.url_for)
     try:
         return await _response_http(scope, receive, send, req, resp, api)
