@@ -739,6 +739,26 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#TooLargeRequestError" class="md-nav__link">
+    TooLargeRequestError
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#TooLargeRequestError-bases" class="md-nav__link">
+    Base classes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1000,6 +1020,26 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#TooLargeRequestError" class="md-nav__link">
+    TooLargeRequestError
+  </a>
+  
+    <nav class="md-nav">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#TooLargeRequestError-bases" class="md-nav__link">
+    Base classes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1112,6 +1152,24 @@
 <h4 id="SpangleError-bases">Base classes<a class="headerlink" href="#SpangleError-bases" title="Permanent link">&para;</a></h4>
 <ul>
 <li><code class="codehilite"><span class="n">builtins</span><span class="p">.</span><span class="k">Exception</span></code></li>
+</ul>
+<hr />
+<h3 id="TooLargeRequestError">TooLargeRequestError<a class="headerlink" href="#TooLargeRequestError" title="Permanent link">&para;</a></h3>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">TooLargeRequestError</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Payload too large.&quot;</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">HTTPStatus</span><span class="o">.</span><span class="n">REQUEST_ENTITY_TOO_LARGE</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+
+<p>413: Payload Too Large.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>message</strong> (<code class="codehilite"><span class="n">str</span></code>): Print on error page.</li>
+<li><strong>status</strong> (<code class="codehilite"><span class="nb">int</span></code>): HTTP status code.</li>
+<li><strong>headers</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">]</span></code>): HTTP headers.</li>
+</ul>
+<hr />
+<h4 id="TooLargeRequestError-bases">Base classes<a class="headerlink" href="#TooLargeRequestError-bases" title="Permanent link">&para;</a></h4>
+<ul>
+<li><a href="./#SpangleError"><code class="codehilite"><span class="n">SpangleError</span></code></a></li>
 </ul>
                 
                   

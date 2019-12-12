@@ -917,7 +917,8 @@
  9
 10
 11
-12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Api</span><span class="p">(</span>
+12
+13</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Api</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
     <span class="n">static_root</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/static&quot;</span><span class="p">,</span>
@@ -928,7 +929,8 @@
     <span class="n">routing</span><span class="o">=</span><span class="s2">&quot;redirect&quot;</span><span class="p">,</span>
     <span class="n">default_route</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
     <span class="n">middlewares</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-    <span class="n">components</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,)</span>
+    <span class="n">components</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">max_upload_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">10</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,)</span>
 </pre></div>
 </td></tr></table>
 
@@ -945,6 +947,7 @@
 <li><strong>routing</strong> (<code class="codehilite"><span class="n">str</span></code>): Routing strategy about trailing slash.</li>
 <li><strong>components</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="k">Type</span><span class="p">,</span> <span class="k">Any</span><span class="p">]</span></code>): Classes shared by any views or hooks.</li>
 <li><strong>templates_dir</strong> (<code class="codehilite"><span class="n">str</span></code>): Path to <code class="codehilite"><span class="n">Jinja2</span></code> templates.</li>
+<li><strong>max_upload_bytes</strong> (<code class="codehilite"><span class="nb">int</span></code>): Allowed user uploads size.</li>
 </ul>
 <p><strong>Args</strong></p>
 <ul>
@@ -976,6 +979,7 @@
 <li><strong>middlewares</strong> (<code class="codehilite"><span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">dict</span><span class="p">]]]</span></code>): Your custom list of
     asgi middlewares. Add later, called faster.</li>
 <li><strong>components</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">List[Type</span><span class="o">]</span><span class="err">]</span><span class="w"></span></code>): List of class used in your views.</li>
+<li><strong>max_upload_bytes</strong> (<code class="codehilite"><span class="nb">int</span></code>): Limit of user upload size. Defaults to 10MB.</li>
 </ul>
 <hr />
 <h4 id="Api-methods">Methods<a class="headerlink" href="#Api-methods" title="Permanent link">&para;</a></h4>

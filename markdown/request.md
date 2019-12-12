@@ -129,6 +129,21 @@ class Custom:
 
 ```
 
+### Limit upload size
+
+You can limit upload size. [`Api`](/api/api-py#Api) accepts application default, and you can set the limit against each request.
+
+```python
+@api.route("limit-upload")
+class Limit:
+    async def on_post(self, req, resp):
+        req.max_upload_bytes = 50 * 1024 ** 2
+        # raise `TooLargeRequestError` if the body is too large.
+        data = await req.media()
+        ...
+
+```
+
 ## Set state
 
 `Request.state` is a flexible data container powered by [`addict`](https://github.com/mewwts/addict) . It is useful to share additional user data between view methods.
