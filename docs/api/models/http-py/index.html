@@ -985,6 +985,7 @@
 <ul>
 <li><strong>headers</strong> (<code class="codehilite"><span class="n">CIMultiDictProxy</span></code>): The request headers, case-insensitive dictionary.</li>
 <li><strong>state</strong> (<code class="codehilite"><span class="n">addict</span><span class="p">.</span><span class="n">Dict</span></code>): Any object you want to store while the response.</li>
+<li><strong>max_upload_bytes</strong> (<code class="codehilite"><span class="nb">int</span></code>): Limit upload size against each request.</li>
 </ul>
 <p>Do not use manually.</p>
 <hr />
@@ -1004,6 +1005,12 @@
 </li>
 <li>
 <p><strong id="Request.content">content</strong> (<code class="codehilite"><span class="n">bytes</span></code>): The request body, as bytes. Must be awaited.</p>
+</li>
+</ul>
+<p><strong>Raises</strong></p>
+<ul>
+<li>
+<p><a href="../../exceptions-py#TooLargeRequestError"><code class="codehilite"><span class="n">TooLargeRequestError</span></code></a> : when request body is too large.</p>
 </li>
 <li>
 <p><strong id="Request.cookies">cookies</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">]</span></code>): The cookies sent in the request, as a dictionary.</p>

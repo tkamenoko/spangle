@@ -17,6 +17,7 @@ Incoming HTTP request class.
 
 * **headers** (`CIMultiDictProxy`): The request headers, case-insensitive dictionary.
 * **state** (`addict.Dict`): Any object you want to store while the response.
+* **max_upload_bytes** (`int`): Limit upload size against each request.
 
 Do not use manually.
 
@@ -36,6 +37,10 @@ Do not use manually.
     * port (`Optional[int]`): The client port, like `1234` .
 
 * **content**{: #Request.content } (`bytes`): The request body, as bytes. Must be awaited.
+
+**Raises**
+
+* [`TooLargeRequestError `](../../exceptions-py#TooLargeRequestError) : when request body is too large.
 
 * **cookies**{: #Request.cookies } (`Dict[str, str]`): The cookies sent in the request, as a dictionary.
 

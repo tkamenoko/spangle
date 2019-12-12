@@ -19,7 +19,8 @@ class Api(
     routing="redirect",
     default_route: Optional[str] = None,
     middlewares: Optional[List[Tuple[Callable, dict]]] = None,
-    components: List[type] = None,)
+    components: List[type] = None,
+    max_upload_bytes: int = 10 * (2 ** 10) ** 2,)
 ```
 
 The main application class.
@@ -36,6 +37,7 @@ The main application class.
 * **routing** (`str`): Routing strategy about trailing slash.
 * **components** (`Dict[Type, Any]`): Classes shared by any views or hooks.
 * **templates_dir** (`str`): Path to `Jinja2` templates.
+* **max_upload_bytes** (`int`): Allowed user uploads size.
 
 **Args**
 
@@ -63,6 +65,7 @@ The main application class.
 * **middlewares** (`Optional[List[Tuple[Callable, dict]]]`): Your custom list of
     asgi middlewares. Add later, called faster.
 * **components** (`Optional[List[Type]]`): List of class used in your views.
+* **max_upload_bytes** (`int`): Limit of user upload size. Defaults to 10MB.
 
 
 ------
