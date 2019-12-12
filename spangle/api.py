@@ -130,7 +130,7 @@ class Api:
 
         # default route.
         self.router.default_route = default_route
-        
+
         # init before_request.
         self.request_hooks = []
 
@@ -281,6 +281,12 @@ class Api:
 
         """
         return HttpTestClient(self, timeout=timeout)
+
+    def async_client(self, timeout: Union[int, float, None] = 1):
+        """
+        Asynchronous test client.
+        """
+        raise NotImplementedError
 
     def before_request(self, cls: Type) -> Type:
         """Decolator to add a class called before each request."""

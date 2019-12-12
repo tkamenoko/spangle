@@ -36,6 +36,7 @@ def _run(coro: Awaitable[T]) -> T:
     # pass awaitable, then resolve it.
     return asyncio.get_event_loop().run_until_complete(coro)
 
+# TODO: use `async-asgi-testclient` , and wrap it.
 
 class _Client(Client):
     async def _get_response(
