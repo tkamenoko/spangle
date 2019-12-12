@@ -1,12 +1,12 @@
 """Types to parse user uploads."""
 
 import asyncio
-import io
 from collections import namedtuple
+from functools import partial
 from json import loads
+from tempfile import SpooledTemporaryFile
 from typing import TYPE_CHECKING, Awaitable, Callable, Optional
 from urllib.parse import parse_qsl
-from functools import partial
 
 from multidict import MultiDict, MultiDictProxy
 from multipart import MultipartParser
@@ -28,7 +28,7 @@ UploadedFile.__doc__ = (
     """Named tuple to accept client's uploads via `multipart/form-data` ."""
 )
 UploadedFile.filename.__doc__ = """(`str`): Filename, includes `.ext` ."""
-UploadedFile.file.__doc__ = """(`BytesIO`): Filedata."""
+UploadedFile.file.__doc__ = """(`SpooledTemporaryFile`): File-like object."""
 UploadedFile.mimetype.__doc__ = """(`str`): File's `"mime/type"` ."""
 
 
@@ -72,7 +72,7 @@ async def _parse_json(req: "Request") -> MultiDictProxy:
 
 
 def _parse_sync(
-    stream: io.BytesIO, boundary: str, content_length: int, **kw
+    stream: SpooledTemporaryFile, boundary: str, content_length: int, **kw
 ) -> MultiDict:
     result: MultiDict = MultiDict()
 
@@ -110,7 +110,10 @@ async def _parse_multipart(req: "Request") -> MultiDictProxy:
     if not boundary:
         raise ParseError("No boundary for multipart/form-data.")
 
-    stream = io.BytesIO(await req.content)
+    MEMORY_LIMIT = 2 * 1024 ** 2
+    stream = SpooledTemporaryFile(max_size=MEMORY_LIMIT)
+    stream.write(await req.content)
+    stream.seek(0)
 
     parsed = await asyncio.get_event_loop().run_in_executor(
         None, partial(_parse_sync, stream, boundary, content_length, **kw)
