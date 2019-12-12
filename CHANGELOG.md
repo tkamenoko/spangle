@@ -1,0 +1,15 @@
+# Changelog
+
+
+## v0.3.0(2019-11-26)
+
+* Remove `allowed_patterns`
+
+## v0.2.0(2019-11-25)
+
+* Fix typo
+* Update dependencies
+
+## v0.1.0(2019-11-17)
+
+* Initial release
