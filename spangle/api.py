@@ -33,6 +33,7 @@ class Api:
     * routing (`str`): Routing strategy about trailing slash.
     * components (`Dict[Type, Any]`): Classes shared by any views or hooks.
     * templates_dir (`str`): Path to `Jinja2` templates.
+    * max_upload_bytes (`int`): Allowed user uploads size.
 
     """
 
@@ -51,6 +52,7 @@ class Api:
     routing: str
     components: Dict[Type, Any]
     templates_dir: str
+    max_upload_bytes: int
 
     def __init__(
         self,
@@ -64,6 +66,7 @@ class Api:
         default_route: Optional[str] = None,
         middlewares: Optional[List[Tuple[Callable, dict]]] = None,
         components: List[type] = None,
+        max_upload_bytes: int = 10 * (2 ** 10) ** 2,
     ) -> None:
         """
         **Args**
@@ -92,6 +95,7 @@ class Api:
         * middlewares (`Optional[List[Tuple[Callable, dict]]]`): Your custom list of
             asgi middlewares. Add later, called faster.
         * components (`Optional[List[Type]]`): List of class used in your views.
+        * max_upload_bytes (`int`): Limit of user upload size. Defaults to 10MB.
 
         """
         self.router = Router(routing)
@@ -101,6 +105,7 @@ class Api:
         self.error_handlers = {}
         self.debug = debug
         self.favicon = None
+        self.max_upload_bytes = max_upload_bytes
 
         # static files.
         if static_dir is not None and static_root is not None:

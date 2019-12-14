@@ -153,6 +153,25 @@ class RequestTests(TestCase):
             response = client.post("/", form=send)
             self.assertEqual(response.status_code, HTTPStatus.OK)
 
+    def test_large_file(self):
+        send = {
+            "foo": "bar",
+            "num": "42",
+            "file": ("file.bin", b"abcde" * 1000 ** 2, "application/octet-stream"),
+        }
+
+        @self.api.route("/")
+        class Index:
+            async def on_post(_, req, resp):
+                await req.media()
+                return resp
+
+        self.api.max_upload_bytes = 1 * 1000 ** 2
+
+        with self.api.client() as client:
+            response = client.post("/", files=send)
+            self.assertEqual(response.status_code, HTTPStatus.REQUEST_ENTITY_TOO_LARGE)
+
 
 class ResponseTest(TestCase):
     def setUp(self):

@@ -56,3 +56,12 @@ class MethodNotAllowedError(SpangleError):
         assert allowed_methods
         headers = {"Allow": ", ".join([m.upper() for m in allowed_methods])}
         super().__init__(message, status, headers)
+
+
+class TooLargeRequestError(SpangleError):
+    """413: Payload Too Large."""
+    def __init__(
+        self, message="Payload too large.", status=HTTPStatus.REQUEST_ENTITY_TOO_LARGE
+    ):
+        super().__init__(message=message, status=status)
+

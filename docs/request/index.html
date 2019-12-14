@@ -434,6 +434,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#limit-upload-size" class="md-nav__link">
+    Limit upload size
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -974,6 +981,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#limit-upload-size" class="md-nav__link">
+    Limit upload size
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1159,6 +1173,24 @@
     <span class="n">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># pass `Callable[[Request],Awaitable[Any]]` .</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">await</span> <span class="n">req</span><span class="o">.</span><span class="n">media</span><span class="p">(</span><span class="n">parser</span><span class="o">=</span><span class="n">async_func</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+
+<h3 id="limit-upload-size">Limit upload size<a class="headerlink" href="#limit-upload-size" title="Permanent link">&para;</a></h3>
+<p>You can limit upload size. <a href="/api/api-py#Api"><code class="codehilite"><span class="n">Api</span></code></a> accepts application default, and you can set the limit against each request.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;limit-upload&quot;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Limit</span><span class="p">:</span>
+    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+        <span class="n">req</span><span class="o">.</span><span class="n">max_upload_bytes</span> <span class="o">=</span> <span class="mi">50</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="c1"># raise `TooLargeRequestError` if the body is too large.</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">await</span> <span class="n">req</span><span class="o">.</span><span class="n">media</span><span class="p">()</span>
+        <span class="o">...</span>
 </pre></div>
 </td></tr></table>
 

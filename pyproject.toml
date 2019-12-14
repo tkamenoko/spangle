@@ -40,7 +40,6 @@ starlette = "^0.13.0"
 
 
 [tool.poetry.dev-dependencies]
-black = {version = "*", allows-prereleases = true}
 flake8 = "*"
 green = "*"
 mypy = "*"
@@ -50,6 +49,12 @@ mkdocs = "*"
 inari = "*"
 hypercorn = "*"
 uvloop = "*"
+black = "^19.10b0"
 
 [tool.poetry.scripts]
 spangle = "spangle.cli.run:main"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
+
