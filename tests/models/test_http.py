@@ -1,11 +1,12 @@
 import asyncio
 from http import HTTPStatus
 from json import loads
-from unittest import TestCase
 
 from jinja2 import escape
 
 from spangle import Api
+
+from .._compat import _Case as TestCase
 
 
 class RequestTests(TestCase):

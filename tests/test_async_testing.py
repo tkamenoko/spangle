@@ -1,14 +1,14 @@
-# try:
-#     from unittest import IsolatedAsyncioTestCase
-#     from spangle import Api
+from unittest import TestCase, skipIf
 
-#     class AsyncClientTests(IsolatedAsyncioTestCase):
-#         async def test_request(self):
-#             self.fail("NotImplementedYet")
+from spangle import Api
 
-#         async def test_lifespan(self):
-#             pass
+from ._compat import _Case
 
 
-# except ImportError:
-#     pass
+@skipIf(_Case is TestCase, "`IsolatedAsyncioTestCase` is notsupported for this python.")
+class AsyncClientTests(_Case):
+    async def test_request(self):
+        self.fail("NotImplementedYet")
+
+    async def test_lifespan(self):
+        pass

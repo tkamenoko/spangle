@@ -1,8 +1,10 @@
-from unittest import TestCase
+from http import HTTPStatus
+
 from spangle import Api
 from spangle.error_handler import ErrorHandler
-from spangle.exceptions import SpangleError, NotFoundError
-from http import HTTPStatus
+from spangle.exceptions import NotFoundError, SpangleError
+
+from ._compat import _Case as TestCase
 
 
 class ErrorHandlerTests(TestCase):
