@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from unittest import TestCase, skipIf
 
 from spangle import Api
@@ -7,8 +8,45 @@ from ._compat import _Case
 
 @skipIf(_Case is TestCase, "`IsolatedAsyncioTestCase` is notsupported for this python.")
 class AsyncClientTests(_Case):
-    async def test_request(self):
-        self.fail("NotImplementedYet")
+    def setUp(self):
+        self.api = Api()
 
-    async def test_lifespan(self):
-        pass
+        @self.api.route("/")
+        class Index:
+            async def on_get(_, req, resp):
+                pass
+
+        @self.api.route("/websocket")
+        class Text:
+            async def on_ws(_, conn):
+                await conn.accept()
+                while True:
+                    name = await conn.receive(str)
+                    if name == "end":
+                        break
+                    await conn.send(f"hello, {name}!")
+                await conn.send("bye")
+                await conn.close(1000)
+
+        from unittest.mock import AsyncMock
+
+        self.start = self.api.on_start(AsyncMock())
+
+    async def test_async(self):
+        async with self.api.async_client() as client:
+            response = await client.get("/")
+            self.assertEqual(response.status_code, HTTPStatus.OK)
+            async with client.ws_connect("/websocket") as connection:
+                await connection.send("FOO")
+                resp = await connection.receive(str)
+                self.assertEqual(resp, "hello, FOO!")
+                await connection.send("BAR")
+                resp = await connection.receive(str)
+                self.assertEqual(resp, "hello, BAR!")
+                await connection.send("end")
+                resp = await connection.receive(str)
+                self.assertEqual(resp, "bye")
+                await connection.send("FOO")
+                with self.assertRaises(RuntimeError):
+                    await connection.receive(str)
+        self.start.assert_called_once()

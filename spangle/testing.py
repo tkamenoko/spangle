@@ -81,21 +81,7 @@ class HttpTestResponse:
         return self._resp.cookies
 
 
-class WebsocketClient:
-    """
-    WebSocket test client. It is expected to be called from
-        `spangle.testing.HttpTestClient` .
-
-    **Attributes**
-
-    * host(`str`): Dummy domain.
-    * path(`str`): WebSocket endpoint.
-    * headers(`CIMultiDict`): Headers used to connect.
-    * params(`Params`): Parsed querystrings.
-    * timeout(`Optional[int]`): How long test client waits for.
-
-    """
-
+class BaseWebSocket:
     _app: ASGIApp
     host: str
     path: str
@@ -105,16 +91,13 @@ class WebsocketClient:
 
     def __init__(
         self,
-        http: "HttpTestClient",
+        http: "BaseClient",
         path: str = "",
         headers: CIMultiDict = None,
         params: Params = None,
         cookies: Mapping = None,
         timeout: int = None,
     ):
-        """
-        Do not use manually.
-        """
         self._app = http._app
         self.host = http.host
         self._client = http._client
@@ -127,15 +110,7 @@ class WebsocketClient:
         self.params = params or []
         self.timeout = timeout
 
-    def connect(self, path: str = None):
-        """
-        Emulate WebSocket Connection.
-
-        **Args**
-
-        * path(`Optional[str]`): Overwrite `self.path` .
-
-        """
+    async def _connect(self, path: str = None):
         self.path = path or self.path
         params = self.params or []
         if hasattr(params, "items"):
@@ -165,13 +140,180 @@ class WebsocketClient:
         }
 
         self._connection = ApplicationCommunicator(self._app, scope)
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(
-            self._connection.send_input({"type": "websocket.connect"})
-        )
-        message = loop.run_until_complete(self._connection.receive_output(self.timeout))
+        await self._connection.send_input({"type": "websocket.connect"})
+        message = await (self._connection.receive_output(self.timeout))
         if message["type"] != "websocket.accept":
             raise RuntimeError("Connection refused.")
+
+    async def _close(self, status_code=1000):
+        message = {"type": "websocket.disconnect", "code": status_code}
+        await self._connection.send_input(message)
+        await self._connection.receive_nothing()
+        del self._connection
+
+    async def _receive(self, mode: Type[AnyStr]) -> AnyStr:
+        message = await self._connection.receive_output(self.timeout)
+        if mode is str:
+            type_key = "text"
+        elif mode is bytes:
+            type_key = "bytes"
+        result = message.get(type_key, None)
+        if result is None:
+            if message["type"] == "websocket.close":
+                raise RuntimeError("Connection already closed.")
+            raise TypeError(f"Server did not send `{type_key}` content.")
+        return result
+
+    async def _send(self, data: AnyStr):
+        message: dict = {"type": "websocket.receive"}
+        if isinstance(data, str):
+            type_key = "text"
+        elif isinstance(data, bytes):
+            type_key = "bytes"
+        message[type_key] = data
+        await self._connection.send_input(message)
+
+    async def __aenter__(self) -> "BaseWebSocket":
+        await self._connect()
+        return self
+
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
+        await self._close()
+
+
+class AsyncWebsocketClient(BaseWebSocket):
+    """
+    Asynchronous WebSocket test client. It is expected to be called from
+        `spangle.testing.AsyncHttpTestClient` .
+
+    **Attributes**
+
+    * host(`str`): Dummy domain.
+    * path(`str`): WebSocket endpoint.
+    * headers(`CIMultiDict`): Headers used to connect.
+    * params(`Params`): Parsed querystrings.
+    * timeout(`Optional[int]`): How long test client waits for.
+
+    """
+
+    _app: ASGIApp
+    host: str
+    path: str
+    headers: CIMultiDict
+    params: Params
+    timeout: Optional[int]
+
+    def __init__(
+        self,
+        http: "AsyncHttpTestClient",
+        path: str = "",
+        headers: CIMultiDict = None,
+        params: Params = None,
+        cookies: Mapping = None,
+        timeout: int = None,
+    ):
+        """
+        Do not use manually.
+        """
+        super().__init__(http, path, headers, params, cookies, timeout)
+
+    async def connect(self, path: str = None):
+        """
+        Emulate WebSocket Connection.
+
+        **Args**
+
+        * path(`Optional[str]`): Overwrite `self.path` .
+
+        """
+        return await self._connect(path)
+
+    async def close(self, status_code=1000):
+        """
+        Close the connection.
+
+        **Args**
+
+        * status_code(`int`): WebSocket status code.
+
+        """
+        return await self._close(status_code)
+
+    async def receive(self, mode: Type[AnyStr]) -> AnyStr:
+        """
+        Receive data from the endpoint.
+
+        **Args**
+
+        * mode(`Type[AnyStr]`): Receiving type, `str` or `bytes` .
+
+        **Returns**
+
+        * `AnyStr`: Data with specified type.
+
+        """
+        return await self._receive(mode)
+
+    async def send(self, data: AnyStr):
+        """
+        Send data to the endpoint.
+
+        **Args**
+
+        * data(`AnyStr`): Data sent to the endpoint, must be `str` or `bytes` .
+
+        """
+        return await self._send(data)
+
+
+class WebsocketClient(BaseWebSocket):
+    """
+    WebSocket test client. It is expected to be called from
+        `spangle.testing.HttpTestClient` .
+
+    **Attributes**
+
+    * host(`str`): Dummy domain.
+    * path(`str`): WebSocket endpoint.
+    * headers(`CIMultiDict`): Headers used to connect.
+    * params(`Params`): Parsed querystrings.
+    * timeout(`Optional[int]`): How long test client waits for.
+
+    """
+
+    _app: ASGIApp
+    host: str
+    path: str
+    headers: CIMultiDict
+    params: Params
+    timeout: Optional[int]
+    _loop: asyncio.AbstractEventLoop
+
+    def __init__(
+        self,
+        http: "HttpTestClient",
+        path: str = "",
+        headers: CIMultiDict = None,
+        params: Params = None,
+        cookies: Mapping = None,
+        timeout: int = None,
+    ):
+        """
+        Do not use manually.
+        """
+        super().__init__(http, path, headers, params, cookies, timeout)
+        self._loop = asyncio.get_event_loop()
+
+    def connect(self, path: str = None):
+        """
+        Emulate WebSocket Connection.
+
+        **Args**
+
+        * path(`Optional[str]`): Overwrite `self.path` .
+
+        """
+        return self._loop.run_until_complete(self._connect(path))
 
     def close(self, status_code=1000):
         """
@@ -182,11 +324,7 @@ class WebsocketClient:
         * status_code(`int`): WebSocket status code.
 
         """
-        message = {"type": "websocket.disconnect", "code": status_code}
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._connection.send_input(message))
-        loop.run_until_complete(self._connection.receive_nothing())
-        del self._connection
+        return self._loop.run_until_complete(self._close(status_code))
 
     def receive(self, mode: Type[AnyStr]) -> AnyStr:
         """
@@ -201,19 +339,7 @@ class WebsocketClient:
         * `AnyStr`: Data with specified type.
 
         """
-        message = asyncio.get_event_loop().run_until_complete(
-            self._connection.receive_output(self.timeout)
-        )
-        if mode is str:
-            type_key = "text"
-        elif mode is bytes:
-            type_key = "bytes"
-        result = message.get(type_key, None)
-        if result is None:
-            if message["type"] == "websocket.close":
-                raise RuntimeError("Connection already closed.")
-            raise TypeError(f"Server did not send `{type_key}` content.")
-        return result
+        return self._loop.run_until_complete(self._receive(mode))
 
     def send(self, data: AnyStr):
         """
@@ -224,22 +350,15 @@ class WebsocketClient:
         * data(`AnyStr`): Data sent to the endpoint, must be `str` or `bytes` .
 
         """
-        message: dict = {"type": "websocket.receive"}
-        if isinstance(data, str):
-            type_key = "text"
-        elif isinstance(data, bytes):
-            type_key = "bytes"
-        message[type_key] = data
-        asyncio.get_event_loop().run_until_complete(
-            self._connection.send_input(message)
-        )
+        return self._loop.run_until_complete(self._send(data))
 
     def __enter__(self) -> "WebsocketClient":
-        self.connect()
-        return self
+        return self._loop.run_until_complete(self.__aenter__())
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
-        self.close()
+        return self._loop.run_until_complete(
+            self.__aexit__(exc_type, exc_value, traceback)
+        )
 
 
 class BaseClient:
@@ -366,6 +485,27 @@ class AsyncHttpTestClient(BaseClient):
             timeout=timeout,
             allow_redirects=allow_redirects,
         )
+
+    def ws_connect(
+        self,
+        path: str,
+        subprotocols: List[str] = None,
+        params: Params = None,
+        headers: Headers = None,
+        cookies: Mapping = None,
+        timeout: int = None,
+    ) -> AsyncWebsocketClient:
+        """
+        Create asynchronous WebSocket Connection.
+        """
+        headers = CIMultiDict(headers or {})
+        headers.setdefault("connection", "upgrade")
+        headers.setdefault("sec-websocket-key", "testserver==")
+        headers.setdefault("sec-websocket-version", "13")
+        if subprotocols is not None:
+            headers.setdefault("sec-websocket-protocol", ", ".join(subprotocols))
+
+        return AsyncWebsocketClient(self, path, headers, params, cookies, timeout)
 
     async def get(
         self,
