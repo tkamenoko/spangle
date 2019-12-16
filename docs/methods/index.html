@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -861,9 +861,9 @@
                 
                 
                 <h1 id="http-methods">HTTP Methods<a class="headerlink" href="#http-methods" title="Permanent link">&para;</a></h1>
-<p><code class="codehilite"><span class="n">on_request</span></code> accepts only safe methods:<code class="codehilite"><span class="k">GET</span><span class="p">,</span> <span class="n">HEAD</span><span class="p">,</span> <span class="k">OPTIONS</span></code> by default. There are 2 ways to allow unsafe methods.</p>
-<h2 id="define-on_method">Define <code class="codehilite"><span class="n">on_</span><span class="err">{</span><span class="k">method</span><span class="err">}</span></code><a class="headerlink" href="#define-on_method" title="Permanent link">&para;</a></h2>
-<p>This example shows how to define allowed methods in a view class. You can use <code class="codehilite"><span class="n">on_request</span></code> to do common processes.</p>
+<p><code class="codehilite"><span class="err">on_request</span></code> accepts only safe methods:<code class="codehilite"><span class="err">GET, HEAD, OPTIONS</span></code> by default. There are 2 ways to allow unsafe methods.</p>
+<h2 id="define-on_method">Define <code class="codehilite"><span class="err">on_{method}</span></code><a class="headerlink" href="#define-on_method" title="Permanent link">&para;</a></h2>
+<p>This example shows how to define allowed methods in a view class. You can use <code class="codehilite"><span class="err">on_request</span></code> to do common processes.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -876,24 +876,24 @@
 10
 11
 12
-13</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/new-user&quot;</span><span class="p">)</span>
+13</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/new-user&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">User</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># called before any methods.</span>
         <span class="k">pass</span>
 
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># process only `GET` method.</span>
         <span class="k">pass</span>
 
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># process only `POST` method.</span>
         <span class="k">pass</span>
 </pre></div>
 </td></tr></table>
 
-<h2 id="set-allowed_methods">Set <code class="codehilite"><span class="n">allowed_methods</span></code><a class="headerlink" href="#set-allowed_methods" title="Permanent link">&para;</a></h2>
-<p>Another way is to set <code class="codehilite"><span class="n">allowed_methods</span></code> in a view class.</p>
+<h2 id="set-allowed_methods">Set <code class="codehilite"><span class="err">allowed_methods</span></code><a class="headerlink" href="#set-allowed_methods" title="Permanent link">&para;</a></h2>
+<p>Another way is to set <code class="codehilite"><span class="err">allowed_methods</span></code> in a view class.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -904,23 +904,24 @@
  8
  9
 10
-11</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/new-comment&quot;</span><span class="p">)</span>
+11</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/new-comment&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Comment</span><span class="p">:</span>
     <span class="n">allowed_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;post&quot;</span><span class="p">]</span>
 
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># able to response against `POST`!</span>
         <span class="k">pass</span>
 
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># `on_{method}` is also available.</span>
         <span class="k">pass</span>
 </pre></div>
 </td></tr></table>
 
-<p>This example allows safe methods and some unsafe methods(<code class="codehilite"><span class="n">POST</span><span class="p">,</span> <span class="k">DELETE</span></code>) . Other unsafe requests like <code class="codehilite"><span class="n">PUT</span></code> will get <code class="codehilite"><span class="mi">405</span> <span class="k">Method</span> <span class="k">Not</span> <span class="n">Allowed</span></code> .</p>
+<p>This example allows safe methods and some unsafe methods(<code class="codehilite"><span class="err">POST, DELETE</span></code>) . Other unsafe requests like <code class="codehilite"><span class="err">PUT</span></code> will get <code class="codehilite"><span class="err">405 Method Not Allowed</span></code> .</p>
                 
                   
+                
                 
               
               
@@ -988,7 +989,7 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       

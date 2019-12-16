@@ -152,6 +152,27 @@ ASGI middleware. Add faster, called later.
 
 ------
 
+[**async_client**](#Api.async_client){: #Api.async_client }
+
+```python
+def async_client(self, timeout: Union[int, float, None] = 1) -> AsyncHttpTestClient
+```
+
+Asynchronous test client.
+
+To test lifespan events, use `async with` statement.
+
+**Args**
+
+* **timeout** (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
+    to disable, set `None` . Default: `1` .
+
+**Returns**
+
+* [`AsyncHttpTestClient `](../testing-py#AsyncHttpTestClient)
+
+------
+
 [**before_request**](#Api.before_request){: #Api.before_request }
 
 ```python
@@ -176,6 +197,10 @@ To test lifespan events, use `with` statement.
 
 * **timeout** (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
     to disable, set `None` . Default: `1` .
+
+**Returns**
+
+* [`HttpTestClient `](../testing-py#HttpTestClient)
 
 ------
 

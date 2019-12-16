@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -853,7 +853,7 @@
                 <h1 id="use-decorator">Use Decorator<a class="headerlink" href="#use-decorator" title="Permanent link">&para;</a></h1>
 <p>To append common routines to views, you can make your own decorator.</p>
 <h2 id="simple-decorator-example">Simple decorator example<a class="headerlink" href="#simple-decorator-example" title="Permanent link">&para;</a></h2>
-<p>This is an example to implement your <code class="codehilite"><span class="n">login_required</span></code> decorator.</p>
+<p>This is an example to implement your <code class="codehilite"><span class="err">login_required</span></code> decorator.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -879,34 +879,35 @@
 23
 24
 25</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">login_required</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">req</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">resp</span><span class="p">:</span> <span class="n">Response</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">inner</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">req</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">resp</span><span class="p">:</span> <span class="n">Response</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
         <span class="n">token</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;authorization&quot;</span><span class="p">]</span>
-        <span class="n">user</span> <span class="o">=</span> <span class="n">await</span> <span class="n">view</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
+        <span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="n">view</span><span class="o">.</span><span class="n">auth</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">token</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="p">:</span>
             <span class="k">raise</span> <span class="n">AuthError</span><span class="p">(</span><span class="s2">&quot;Need to login.&quot;</span><span class="p">)</span>
         <span class="n">req</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
-        <span class="k">return</span> <span class="n">await</span> <span class="n">f</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">await</span> <span class="n">f</span><span class="p">(</span><span class="n">view</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">inner</span>
 
 <span class="c1"># usage</span>
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/secrets&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/secrets&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Secret</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">auth</span><span class="p">:</span> <span class="n">AuthComp</span><span class="p">):</span>
         <span class="c1"># a decorated view must have components used in decorators.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">auth</span> <span class="o">=</span> <span class="n">auth</span>
 
     <span class="nd">@login_required</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">req</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">user</span>
 
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># login required for all methods.</span>
         <span class="k">assert</span> <span class="n">req</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">user</span>
 </pre></div>
 </td></tr></table>
                 
                   
+                
                 
               
               
@@ -974,7 +975,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

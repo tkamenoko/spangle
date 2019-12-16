@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -920,16 +920,16 @@
 12
 13</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Api</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+    <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">static_root</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/static&quot;</span><span class="p">,</span>
     <span class="n">static_dir</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;static&quot;</span><span class="p">,</span>
-    <span class="n">favicon</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-    <span class="n">auto_escape</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">favicon</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">auto_escape</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">templates_dir</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span>
     <span class="n">routing</span><span class="o">=</span><span class="s2">&quot;redirect&quot;</span><span class="p">,</span>
-    <span class="n">default_route</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-    <span class="n">middlewares</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-    <span class="n">components</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">default_route</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">middlewares</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">components</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_upload_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">10</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,)</span>
 </pre></div>
 </td></tr></table>
@@ -937,115 +937,132 @@
 <p>The main application class.</p>
 <p><strong>Attributes</strong></p>
 <ul>
-<li><strong>router</strong> (<a href="../blueprint-py#Router"><code class="codehilite"><span class="n">Router</span></code></a>): Manage URLs and views.</li>
-<li><strong>mounted_app</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]</span></code>): ASGI apps mounted under <code class="codehilite"><span class="n">Api</span></code> .</li>
-<li><strong>error_handlers</strong> (<code class="codehilite"><span class="n">Dict</span><span class="o">[</span><span class="n">Type[Exception</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="err">]</span><span class="w"></span></code>): Called when <code class="codehilite"><span class="k">Exception</span></code> occurs.</li>
+<li><strong>router</strong> (<a href="../blueprint-py#Router"><code class="codehilite"><span class="err">Router</span></code></a>): Manage URLs and views.</li>
+<li><strong>mounted_app</strong> (<code class="codehilite"><span class="err">Dict[str, Callable]</span></code>): ASGI apps mounted under <code class="codehilite"><span class="err">Api</span></code> .</li>
+<li><strong>error_handlers</strong> (<code class="codehilite"><span class="n">Dict</span><span class="o">[</span><span class="n">Type[Exception</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">type</span><span class="err">]</span><span class="w"></span></code>): Called when <code class="codehilite"><span class="err">Exception</span></code> occurs.</li>
 <li><strong>request_hooks</strong> (<code class="codehilite"><span class="n">List</span><span class="o">[</span><span class="n">type</span><span class="o">]</span><span class="w"></span></code>): Called against every request.</li>
 <li><strong>lifespan_handlers</strong> (<code class="codehilite"><span class="n">Dict</span><span class="o">[</span><span class="n">str, List[Callable</span><span class="o">]</span><span class="err">]</span><span class="w"></span></code>): Registered lifespan hooks.</li>
-<li><strong>favicon</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): Place of <code class="codehilite"><span class="n">favicon</span><span class="p">.</span><span class="n">ico</span></code> in <code class="codehilite"><span class="n">static_dir</span></code>.</li>
-<li><strong>debug</strong> (<code class="codehilite"><span class="n">bool</span></code>): Server running mode.</li>
-<li><strong>routing</strong> (<code class="codehilite"><span class="n">str</span></code>): Routing strategy about trailing slash.</li>
-<li><strong>components</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="k">Type</span><span class="p">,</span> <span class="k">Any</span><span class="p">]</span></code>): Classes shared by any views or hooks.</li>
-<li><strong>templates_dir</strong> (<code class="codehilite"><span class="n">str</span></code>): Path to <code class="codehilite"><span class="n">Jinja2</span></code> templates.</li>
-<li><strong>max_upload_bytes</strong> (<code class="codehilite"><span class="nb">int</span></code>): Allowed user uploads size.</li>
+<li><strong>favicon</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): Place of <code class="codehilite"><span class="err">favicon.ico</span></code> in <code class="codehilite"><span class="err">static_dir</span></code>.</li>
+<li><strong>debug</strong> (<code class="codehilite"><span class="err">bool</span></code>): Server running mode.</li>
+<li><strong>routing</strong> (<code class="codehilite"><span class="err">str</span></code>): Routing strategy about trailing slash.</li>
+<li><strong>components</strong> (<code class="codehilite"><span class="err">Dict[Type, Any]</span></code>): Classes shared by any views or hooks.</li>
+<li><strong>templates_dir</strong> (<code class="codehilite"><span class="err">str</span></code>): Path to <code class="codehilite"><span class="err">Jinja2</span></code> templates.</li>
+<li><strong>max_upload_bytes</strong> (<code class="codehilite"><span class="err">int</span></code>): Allowed user uploads size.</li>
 </ul>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>debug</strong> (<code class="codehilite"><span class="n">bool</span></code>): If set <code class="codehilite"><span class="k">True</span></code>, the app will run in dev-mode.</li>
+<li><strong>debug</strong> (<code class="codehilite"><span class="err">bool</span></code>): If set <code class="codehilite"><span class="err">True</span></code>, the app will run in dev-mode.</li>
 <li><strong>static_root</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): The root path that clients access statics. If
-    you want to disable <code class="codehilite"><span class="n">static_file</span></code>, set <code class="codehilite"><span class="k">None</span></code>.</li>
+    you want to disable <code class="codehilite"><span class="err">static_file</span></code>, set <code class="codehilite"><span class="err">None</span></code>.</li>
 <li><strong>static_dir</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): The root directory that contains static files.
-    If you want to disable <code class="codehilite"><span class="n">static_file</span></code>, set <code class="codehilite"><span class="k">None</span></code>.</li>
-<li><strong>favicon</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): When a client requests <code class="codehilite"><span class="ss">&quot;/favicon.ico&quot;</span></code>,
-    <a href="./#Api"><code class="codehilite"><span class="n">Api</span></code></a> responses <code class="codehilite"><span class="ss">&quot;static_dir/{given_file}&quot;</span></code>. Optional; defaults
-     to <code class="codehilite"><span class="k">None</span></code>.</li>
-<li><strong>auto_escape</strong> (<code class="codehilite"><span class="n">bool</span></code>): If set <code class="codehilite"><span class="k">True</span></code> (default), <code class="codehilite"><span class="n">Jinja2</span></code> renders templates with
+    If you want to disable <code class="codehilite"><span class="err">static_file</span></code>, set <code class="codehilite"><span class="err">None</span></code>.</li>
+<li><strong>favicon</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): When a client requests <code class="codehilite"><span class="err">&quot;/favicon.ico&quot;</span></code>,
+    <a href="./#Api"><code class="codehilite"><span class="err">Api</span></code></a> responses <code class="codehilite"><span class="err">&quot;static_dir/{given_file}&quot;</span></code>. Optional; defaults
+     to <code class="codehilite"><span class="err">None</span></code>.</li>
+<li><strong>auto_escape</strong> (<code class="codehilite"><span class="err">bool</span></code>): If set <code class="codehilite"><span class="err">True</span></code> (default), <code class="codehilite"><span class="err">Jinja2</span></code> renders templates with
     escaping.</li>
-<li><strong>templates_dir</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): The root directory that contains <code class="codehilite"><span class="n">Jinja2</span></code>
-    templates. If you want to disable rendering templates, set <code class="codehilite"><span class="k">None</span></code>.</li>
+<li><strong>templates_dir</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): The root directory that contains <code class="codehilite"><span class="err">Jinja2</span></code>
+    templates. If you want to disable rendering templates, set <code class="codehilite"><span class="err">None</span></code>.</li>
 <li>
-<p><strong>routing</strong> (<code class="codehilite"><span class="n">str</span></code>): Set routing mode:</p>
+<p><strong>routing</strong> (<code class="codehilite"><span class="err">str</span></code>): Set routing mode:</p>
 <ul>
-<li><code class="codehilite"><span class="ss">&quot;redirect&quot;</span></code> (default): always redirect from <code class="codehilite"><span class="o">/</span><span class="n">route</span></code> to <code class="codehilite"><span class="o">/</span><span class="n">route</span><span class="o">/</span></code> with
-    <code class="codehilite"><span class="mi">308</span> <span class="n">PERMANENT_REDIRECT</span></code> (even if <code class="codehilite"><span class="o">/</span><span class="n">route</span></code> was not found!).</li>
-<li><code class="codehilite"><span class="ss">&quot;strict&quot;</span></code> : distinct <code class="codehilite"><span class="o">/</span><span class="n">route</span></code> from <code class="codehilite"><span class="o">/</span><span class="n">route</span><span class="o">/</span></code> .</li>
-<li><code class="codehilite"><span class="ss">&quot;clone&quot;</span></code> : return same view between <code class="codehilite"><span class="o">/</span><span class="n">route</span></code> and <code class="codehilite"><span class="o">/</span><span class="n">route</span><span class="o">/</span></code> .</li>
+<li><code class="codehilite"><span class="err">&quot;redirect&quot;</span></code> (default): always redirect from <code class="codehilite"><span class="err">/route</span></code> to <code class="codehilite"><span class="err">/route/</span></code> with
+    <code class="codehilite"><span class="err">308 PERMANENT_REDIRECT</span></code> (even if <code class="codehilite"><span class="err">/route</span></code> was not found!).</li>
+<li><code class="codehilite"><span class="err">&quot;strict&quot;</span></code> : distinct <code class="codehilite"><span class="err">/route</span></code> from <code class="codehilite"><span class="err">/route/</span></code> .</li>
+<li><code class="codehilite"><span class="err">&quot;clone&quot;</span></code> : return same view between <code class="codehilite"><span class="err">/route</span></code> and <code class="codehilite"><span class="err">/route/</span></code> .</li>
 </ul>
 </li>
 <li>
 <p><strong>default_route</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): Use the view bound with given path instead
     of returning 404.</p>
 </li>
-<li><strong>middlewares</strong> (<code class="codehilite"><span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">dict</span><span class="p">]]]</span></code>): Your custom list of
+<li><strong>middlewares</strong> (<code class="codehilite"><span class="err">Optional[List[Tuple[Callable, dict]]]</span></code>): Your custom list of
     asgi middlewares. Add later, called faster.</li>
 <li><strong>components</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">List[Type</span><span class="o">]</span><span class="err">]</span><span class="w"></span></code>): List of class used in your views.</li>
-<li><strong>max_upload_bytes</strong> (<code class="codehilite"><span class="nb">int</span></code>): Limit of user upload size. Defaults to 10MB.</li>
+<li><strong>max_upload_bytes</strong> (<code class="codehilite"><span class="err">int</span></code>): Limit of user upload size. Defaults to 10MB.</li>
 </ul>
 <hr />
 <h4 id="Api-methods">Methods<a class="headerlink" href="#Api-methods" title="Permanent link">&para;</a></h4>
 <p><a href="#Api.add_blueprint" id="Api.add_blueprint"><strong>add_blueprint</strong></a></p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_blueprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">blueprint</span><span class="p">:</span> <span class="n">Blueprint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_blueprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">blueprint</span><span class="p">:</span> <span class="n">Blueprint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </pre></div>
 </td></tr></table>
 
 <p>Mount a blueprint under the given path, and register error/event handlers.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>path</strong> (<code class="codehilite"><span class="n">str</span></code>): Prefix for the blueprint.</li>
-<li><strong>blueprint</strong> (<a href="../blueprint-py#Blueprint"><code class="codehilite"><span class="n">Blueprint</span></code></a>): A <a href="../blueprint-py#Blueprint"><code class="codehilite"><span class="n">Blueprint</span></code></a>
+<li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>): Prefix for the blueprint.</li>
+<li><strong>blueprint</strong> (<a href="../blueprint-py#Blueprint"><code class="codehilite"><span class="err">Blueprint</span></code></a>): A <a href="../blueprint-py#Blueprint"><code class="codehilite"><span class="err">Blueprint</span></code></a>
     instance to mount.</li>
 </ul>
 <hr />
 <p><a href="#Api.add_component" id="Api.add_component"><strong>add_component</strong></a></p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </pre></div>
 </td></tr></table>
 
 <p>Register your component class.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>c</strong> (<code class="codehilite"><span class="k">Type</span></code>): The component class.</li>
+<li><strong>c</strong> (<code class="codehilite"><span class="err">Type</span></code>): The component class.</li>
 </ul>
 <hr />
 <p><a href="#Api.add_error_handler" id="Api.add_error_handler"><strong>add_error_handler</strong></a></p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_error_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eh</span><span class="p">:</span> <span class="n">ErrorHandler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_error_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">eh</span><span class="p">:</span> <span class="n">ErrorHandler</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </pre></div>
 </td></tr></table>
 
-<p>Register <a href="../error_handler-py#ErrorHandler"><code class="codehilite"><span class="n">ErrorHandler</span></code></a> to the api.</p>
+<p>Register <a href="../error_handler-py#ErrorHandler"><code class="codehilite"><span class="err">ErrorHandler</span></code></a> to the api.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>eh</strong> (<a href="../error_handler-py#ErrorHandler"><code class="codehilite"><span class="n">ErrorHandler</span></code></a>): An
-    <a href="../error_handler-py#ErrorHandler"><code class="codehilite"><span class="n">ErrorHandler</span></code></a> instance.</li>
+<li><strong>eh</strong> (<a href="../error_handler-py#ErrorHandler"><code class="codehilite"><span class="err">ErrorHandler</span></code></a>): An
+    <a href="../error_handler-py#ErrorHandler"><code class="codehilite"><span class="err">ErrorHandler</span></code></a> instance.</li>
 </ul>
 <hr />
 <p><a href="#Api.add_lifespan_handler" id="Api.add_lifespan_handler"><strong>add_lifespan_handler</strong></a></p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_lifespan_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_lifespan_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </pre></div>
 </td></tr></table>
 
 <p>Register functions called at startup/shutdown.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>event_type</strong> (<code class="codehilite"><span class="n">str</span></code>): The event type, <code class="codehilite"><span class="ss">&quot;startup&quot;</span></code> or <code class="codehilite"><span class="ss">&quot;shutdown&quot;</span></code> .</li>
-<li><strong>handler</strong> (<code class="codehilite"><span class="n">Callable</span></code>): The function called at the event. Can accept
+<li><strong>event_type</strong> (<code class="codehilite"><span class="err">str</span></code>): The event type, <code class="codehilite"><span class="err">&quot;startup&quot;</span></code> or <code class="codehilite"><span class="err">&quot;shutdown&quot;</span></code> .</li>
+<li><strong>handler</strong> (<code class="codehilite"><span class="err">Callable</span></code>): The function called at the event. Can accept
     registered components by setting type hints to args.</li>
 </ul>
 <p><strong>Raises</strong></p>
 <ul>
-<li><code class="codehilite"><span class="n">ValueError</span></code>: If <code class="codehilite"><span class="n">event_type</span></code> is invalid event name.</li>
+<li><code class="codehilite"><span class="err">ValueError</span></code>: If <code class="codehilite"><span class="err">event_type</span></code> is invalid event name.</li>
 </ul>
 <hr />
 <p><a href="#Api.add_middleware" id="Api.add_middleware"><strong>add_middleware</strong></a></p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_middleware</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">middleware</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ASGIApp</span><span class="p">],</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_middleware</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">middleware</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">ASGIApp</span><span class="p">],</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </pre></div>
 </td></tr></table>
 
 <p>ASGI middleware. Add faster, called later.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>middleware</strong> (<code class="codehilite"><span class="n">Callable</span></code>): An ASGI middleware.</li>
+<li><strong>middleware</strong> (<code class="codehilite"><span class="err">Callable</span></code>): An ASGI middleware.</li>
 <li><strong>**config</strong> : params for the middleware.</li>
+</ul>
+<hr />
+<p><a href="#Api.async_client" id="Api.async_client"><strong>async_client</strong></a></p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">async_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncHttpTestClient</span>
+</pre></div>
+</td></tr></table>
+
+<p>Asynchronous test client.</p>
+<p>To test lifespan events, use <code class="codehilite"><span class="err">async with</span></code> statement.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>timeout</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">int</span><span class="o">]</span><span class="w"></span></code>): Seconds waiting for startup/shutdown/requests.
+    to disable, set <code class="codehilite"><span class="err">None</span></code> . Default: <code class="codehilite"><span class="err">1</span></code> .</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><a href="../testing-py#AsyncHttpTestClient"><code class="codehilite"><span class="err">AsyncHttpTestClient</span></code></a></li>
 </ul>
 <hr />
 <p><a href="#Api.before_request" id="Api.before_request"><strong>before_request</strong></a></p>
@@ -1056,16 +1073,20 @@
 <p>Decolator to add a class called before each request.</p>
 <hr />
 <p><a href="#Api.client" id="Api.client"><strong>client</strong></a></p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="bp">None</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpTestClient</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpTestClient</span>
 </pre></div>
 </td></tr></table>
 
 <p>Dummy client for testing.</p>
-<p>To test lifespan events, use <code class="codehilite"><span class="k">with</span></code> statement.</p>
+<p>To test lifespan events, use <code class="codehilite"><span class="err">with</span></code> statement.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>timeout</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">int</span><span class="o">]</span><span class="w"></span></code>): Seconds waiting for startup/shutdown/requests.
-    to disable, set <code class="codehilite"><span class="k">None</span></code> . Default: <code class="codehilite"><span class="mi">1</span></code> .</li>
+    to disable, set <code class="codehilite"><span class="err">None</span></code> . Default: <code class="codehilite"><span class="err">1</span></code> .</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><a href="../testing-py#HttpTestClient"><code class="codehilite"><span class="err">HttpTestClient</span></code></a></li>
 </ul>
 <hr />
 <p><a href="#Api.handle" id="Api.handle"><strong>handle</strong></a></p>
@@ -1073,22 +1094,22 @@
 </pre></div>
 </td></tr></table>
 
-<p>Bind <code class="codehilite"><span class="k">Exception</span></code> to the decolated view.</p>
+<p>Bind <code class="codehilite"><span class="err">Exception</span></code> to the decolated view.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>e</strong> (<code class="codehilite"><span class="k">Exception</span></code>): Subclass of <code class="codehilite"><span class="k">Exception</span></code> you want to handle.</li>
+<li><strong>e</strong> (<code class="codehilite"><span class="err">Exception</span></code>): Subclass of <code class="codehilite"><span class="err">Exception</span></code> you want to handle.</li>
 </ul>
 <hr />
 <p><a href="#Api.mount" id="Api.mount"><strong>mount</strong></a></p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">mount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">ASGIApp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">mount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">app</span><span class="p">:</span> <span class="n">ASGIApp</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </pre></div>
 </td></tr></table>
 
-<p>Mount any ASGI3 app under the <code class="codehilite"><span class="n">path</span></code>.</p>
+<p>Mount any ASGI3 app under the <code class="codehilite"><span class="err">path</span></code>.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>path</strong> (<code class="codehilite"><span class="n">str</span></code>): The root of given app.</li>
-<li><strong>app</strong> (<code class="codehilite"><span class="n">ASGIApp</span></code>): ASGI app to mount.</li>
+<li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>): The root of given app.</li>
+<li><strong>app</strong> (<code class="codehilite"><span class="err">ASGIApp</span></code>): ASGI app to mount.</li>
 </ul>
 <hr />
 <p><a href="#Api.on_start" id="Api.on_start"><strong>on_start</strong></a></p>
@@ -1109,7 +1130,7 @@
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">route</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">converters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">converters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Type</span><span class="p">],</span> <span class="n">Type</span><span class="p">]</span>
 </pre></div>
 </td></tr></table>
@@ -1117,22 +1138,23 @@
 <p>Mount the decolated view to the given path directly.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>path</strong> (<code class="codehilite"><span class="n">str</span></code>): The location for the view.</li>
+<li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>): The location for the view.</li>
 </ul>
 <hr />
 <p><a href="#Api.url_for" id="Api.url_for"><strong>url_for</strong></a></p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">url_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">url_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
 </pre></div>
 </td></tr></table>
 
 <p>Map view-class to path formatted with given params.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>view</strong> (<code class="codehilite"><span class="k">Type</span></code>): The view-class for the url.</li>
-<li><strong>params</strong> (<code class="codehilite"><span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="k">Any</span><span class="p">]]</span></code>): Used to format dynamic path.</li>
+<li><strong>view</strong> (<code class="codehilite"><span class="err">Type</span></code>): The view-class for the url.</li>
+<li><strong>params</strong> (<code class="codehilite"><span class="err">Optional[Dict[str, Any]]</span></code>): Used to format dynamic path.</li>
 </ul>
                 
                   
+                
                 
               
               
@@ -1200,7 +1222,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

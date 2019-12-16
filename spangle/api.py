@@ -14,7 +14,7 @@ from spangle._dispatcher import _dispatch_http, _dispatch_websocket
 from spangle._utils import _normalize_path
 from spangle.blueprint import Blueprint, Router
 from spangle.error_handler import ErrorHandler
-from spangle.testing import HttpTestClient
+from spangle.testing import HttpTestClient, AsyncHttpTestClient
 
 
 class Api:
@@ -284,8 +284,30 @@ class Api:
         * timeout (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
             to disable, set `None` . Default: `1` .
 
+        **Returns**
+
+        * `spangle.testing.HttpTestClient`
+
         """
         return HttpTestClient(self, timeout=timeout)
+
+    def async_client(self, timeout: Union[int, float, None] = 1) -> AsyncHttpTestClient:
+        """
+        Asynchronous test client.
+
+        To test lifespan events, use `async with` statement.
+
+        **Args**
+
+        * timeout (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
+            to disable, set `None` . Default: `1` .
+
+        **Returns**
+
+        * `spangle.testing.AsyncHttpTestClient`
+
+        """
+        return AsyncHttpTestClient(self, timeout=timeout)
 
     def before_request(self, cls: Type) -> Type:
         """Decolator to add a class called before each request."""

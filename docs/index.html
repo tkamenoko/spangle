@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -985,10 +985,10 @@
                 <h1 id="spangle">spangle<a class="headerlink" href="#spangle" title="Permanent link">&para;</a></h1>
 <p><img alt="PyPI" src="https://img.shields.io/pypi/v/spangle" />
 <img alt="PyPI - License" src="https://img.shields.io/pypi/l/spangle" /></p>
-<p><code class="codehilite"><span class="n">spangle</span></code> is an ASGI application framework inspired by <a href="https://github.com/taoufik07/responder">responder</a>, <a href="https://github.com/vibora-io/vibora">vibora</a>, and <a href="https://github.com/expressjs/express/">express-js</a>. </p>
+<p><code class="codehilite"><span class="err">spangle</span></code> is an ASGI application framework inspired by <a href="https://github.com/taoufik07/responder">responder</a>, <a href="https://github.com/vibora-io/vibora">vibora</a>, and <a href="https://github.com/expressjs/express/">express-js</a>. </p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><code class="codehilite"><span class="n">spangle</span></code> is on pre-alpha stage, so any updates may contain breaking changes.</p>
+<p><code class="codehilite"><span class="err">spangle</span></code> is on pre-alpha stage, so any updates may contain breaking changes.</p>
 </div>
 <h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
 <h3 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h3>
@@ -1018,9 +1018,9 @@ pip install hypercorn <span class="c1"># or your favorite asgi server</span>
 
 <span class="n">api</span> <span class="o">=</span> <span class="n">spangle</span><span class="o">.</span><span class="n">Api</span><span class="p">()</span>
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Index</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">set_status</span><span class="p">(</span><span class="mi">418</span><span class="p">)</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s2">&quot;Hello world!&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">resp</span>
 </pre></div>
@@ -1032,9 +1032,9 @@ pip install hypercorn <span class="c1"># or your favorite asgi server</span>
 
 <h2 id="features">Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Component (from <code class="codehilite"><span class="n">vibora</span></code>!)</li>
+<li>Component (from <code class="codehilite"><span class="err">vibora</span></code>!)</li>
 <li>Flexible URL params</li>
-<li><code class="codehilite"><span class="n">Jinja2</span></code> built-in support</li>
+<li><code class="codehilite"><span class="err">Jinja2</span></code> built-in support</li>
 <li>Uniformed API</li>
 <li>Single page application friendly</li>
 </ul>
@@ -1077,6 +1077,7 @@ yarn install
 </td></tr></table>
                 
                   
+                
                 
               
               
@@ -1130,7 +1131,7 @@ yarn install
       
     </div>
     
-      <script src="assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"."}})</script>
       

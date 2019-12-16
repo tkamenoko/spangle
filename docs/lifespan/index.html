@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -861,7 +861,7 @@
                 
                 
                 <h1 id="lifespan-event">Lifespan Event<a class="headerlink" href="#lifespan-event" title="Permanent link">&para;</a></h1>
-<p><code class="codehilite"><span class="n">spangle</span></code> supports <a href="https://asgi.readthedocs.io/en/latest/specs/lifespan.html">lifespan events</a> .</p>
+<p><code class="codehilite"><span class="err">spangle</span></code> supports <a href="https://asgi.readthedocs.io/en/latest/specs/lifespan.html">lifespan events</a> .</p>
 <h2 id="define-events-in-components">Define events in components<a class="headerlink" href="#define-events-in-components" title="Permanent link">&para;</a></h2>
 <p>As you read <a href="/component">this</a> , components have lifecycle event hooks.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
@@ -872,7 +872,7 @@
 6
 7
 8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Life</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="c1"># called once while starting server.</span>
         <span class="k">pass</span>
 
@@ -892,12 +892,12 @@
 6
 7
 8
-9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.on_start</span>
-<span class="n">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">on_start</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="c1"># called AFTER component&#39;s hooks.</span>
     <span class="k">pass</span>
 
-<span class="nd">@api.on_stop</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">on_stop</span>
 <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="c1"># called BEFORE component&#39;s hooks.</span>
     <span class="k">pass</span>
@@ -905,6 +905,7 @@
 </td></tr></table>
                 
                   
+                
                 
               
               
@@ -972,7 +973,7 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       

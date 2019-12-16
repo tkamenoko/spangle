@@ -1,11 +1,12 @@
 import asyncio
 from http import HTTPStatus
 from json import loads
-from unittest import TestCase
 
 from jinja2 import escape
 
 from spangle import Api
+
+from .._compat import _Case as TestCase
 
 
 class RequestTests(TestCase):
@@ -285,7 +286,7 @@ class ResponseTest(TestCase):
                 resp.streaming = streaming()
 
         with self.api.client() as client:
-            response = client.get("/stream")
+            response = client.get("/stream", timeout=2)
             self.assertEqual(response.status_code, HTTPStatus.OK)
             expected_str = "".join([f"count {i}\n" for i in range(10)])
             self.assertEqual(response.text, expected_str)

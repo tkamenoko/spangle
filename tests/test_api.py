@@ -1,9 +1,10 @@
 from http import HTTPStatus
-from unittest import TestCase
 from unittest.mock import MagicMock
 
 import spangle
 from spangle.exceptions import NotFoundError
+
+from ._compat import _Case as TestCase
 
 
 class ApiTests(TestCase):
@@ -154,4 +155,3 @@ class ApiTests(TestCase):
             allowed = response.headers["allow"]
             self.assertIn("POST", allowed)
             self.assertIn("GET", allowed)
-
