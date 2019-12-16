@@ -1,6 +1,6 @@
-from unittest import TestCase
-
 from spangle import Api
+
+from .._compat import _Case as TestCase
 
 
 class WebSocketTests(TestCase):

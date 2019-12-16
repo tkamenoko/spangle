@@ -14,7 +14,7 @@ from spangle._dispatcher import _dispatch_http, _dispatch_websocket
 from spangle._utils import _normalize_path
 from spangle.blueprint import Blueprint, Router
 from spangle.error_handler import ErrorHandler
-from spangle.testing import HttpTestClient
+from spangle.testing import HttpTestClient, AsyncHttpTestClient
 
 
 class Api:
@@ -33,6 +33,7 @@ class Api:
     * routing (`str`): Routing strategy about trailing slash.
     * components (`Dict[Type, Any]`): Classes shared by any views or hooks.
     * templates_dir (`str`): Path to `Jinja2` templates.
+    * max_upload_bytes (`int`): Allowed user uploads size.
 
     """
 
@@ -51,6 +52,7 @@ class Api:
     routing: str
     components: Dict[Type, Any]
     templates_dir: str
+    max_upload_bytes: int
 
     def __init__(
         self,
@@ -64,6 +66,7 @@ class Api:
         default_route: Optional[str] = None,
         middlewares: Optional[List[Tuple[Callable, dict]]] = None,
         components: List[type] = None,
+        max_upload_bytes: int = 10 * (2 ** 10) ** 2,
     ) -> None:
         """
         **Args**
@@ -92,6 +95,7 @@ class Api:
         * middlewares (`Optional[List[Tuple[Callable, dict]]]`): Your custom list of
             asgi middlewares. Add later, called faster.
         * components (`Optional[List[Type]]`): List of class used in your views.
+        * max_upload_bytes (`int`): Limit of user upload size. Defaults to 10MB.
 
         """
         self.router = Router(routing)
@@ -101,6 +105,7 @@ class Api:
         self.error_handlers = {}
         self.debug = debug
         self.favicon = None
+        self.max_upload_bytes = max_upload_bytes
 
         # static files.
         if static_dir is not None and static_root is not None:
@@ -130,7 +135,7 @@ class Api:
 
         # default route.
         self.router.default_route = default_route
-        
+
         # init before_request.
         self.request_hooks = []
 
@@ -279,8 +284,30 @@ class Api:
         * timeout (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
             to disable, set `None` . Default: `1` .
 
+        **Returns**
+
+        * `spangle.testing.HttpTestClient`
+
         """
         return HttpTestClient(self, timeout=timeout)
+
+    def async_client(self, timeout: Union[int, float, None] = 1) -> AsyncHttpTestClient:
+        """
+        Asynchronous test client.
+
+        To test lifespan events, use `async with` statement.
+
+        **Args**
+
+        * timeout (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
+            to disable, set `None` . Default: `1` .
+
+        **Returns**
+
+        * `spangle.testing.AsyncHttpTestClient`
+
+        """
+        return AsyncHttpTestClient(self, timeout=timeout)
 
     def before_request(self, cls: Type) -> Type:
         """Decolator to add a class called before each request."""

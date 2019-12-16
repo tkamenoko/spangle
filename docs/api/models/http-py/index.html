@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -983,52 +983,59 @@
 <p>Incoming HTTP request class.</p>
 <p><strong>Attributes</strong></p>
 <ul>
-<li><strong>headers</strong> (<code class="codehilite"><span class="n">CIMultiDictProxy</span></code>): The request headers, case-insensitive dictionary.</li>
-<li><strong>state</strong> (<code class="codehilite"><span class="n">addict</span><span class="p">.</span><span class="n">Dict</span></code>): Any object you want to store while the response.</li>
+<li><strong>headers</strong> (<code class="codehilite"><span class="err">CIMultiDictProxy</span></code>): The request headers, case-insensitive dictionary.</li>
+<li><strong>state</strong> (<code class="codehilite"><span class="err">addict.Dict</span></code>): Any object you want to store while the response.</li>
+<li><strong>max_upload_bytes</strong> (<code class="codehilite"><span class="err">int</span></code>): Limit upload size against each request.</li>
 </ul>
 <p>Do not use manually.</p>
 <hr />
 <h4 id="Request-attrs">Instance attributes<a class="headerlink" href="#Request-attrs" title="Permanent link">&para;</a></h4>
 <ul>
 <li>
-<p><strong id="Request.apparent_encoding">apparent_encoding</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="k">Union</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span></code>): Guess the content encoding, provided by the
-    <code class="codehilite"><span class="n">chardet</span></code> library. Must be awaited.</p>
+<p><strong id="Request.apparent_encoding">apparent_encoding</strong> (<code class="codehilite"><span class="err">Dict[str, Union[str, float]]</span></code>): Guess the content encoding, provided by the
+    <code class="codehilite"><span class="err">chardet</span></code> library. Must be awaited.</p>
 </li>
 <li>
-<p><strong id="Request.client">client</strong> (<code class="codehilite"><span class="n">Address</span></code>): The client address.</p>
+<p><strong id="Request.client">client</strong> (<code class="codehilite"><span class="err">Address</span></code>): The client address.</p>
 <p><strong>Attributes</strong></p>
 <ul>
-<li>host (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): The client address, like <code class="codehilite"><span class="ss">&quot;127.0.0.1&quot;</span></code> .</li>
-<li>port (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">int</span><span class="o">]</span><span class="w"></span></code>): The client port, like <code class="codehilite"><span class="mi">1234</span></code> .</li>
+<li>host (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): The client address, like <code class="codehilite"><span class="err">&quot;127.0.0.1&quot;</span></code> .</li>
+<li>port (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">int</span><span class="o">]</span><span class="w"></span></code>): The client port, like <code class="codehilite"><span class="err">1234</span></code> .</li>
 </ul>
 </li>
 <li>
-<p><strong id="Request.content">content</strong> (<code class="codehilite"><span class="n">bytes</span></code>): The request body, as bytes. Must be awaited.</p>
+<p><strong id="Request.content">content</strong> (<code class="codehilite"><span class="err">bytes</span></code>): The request body, as bytes. Must be awaited.</p>
+</li>
+</ul>
+<p><strong>Raises</strong></p>
+<ul>
+<li>
+<p><a href="../../exceptions-py#TooLargeRequestError"><code class="codehilite"><span class="err">TooLargeRequestError</span></code></a> : when request body is too large.</p>
 </li>
 <li>
-<p><strong id="Request.cookies">cookies</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">]</span></code>): The cookies sent in the request, as a dictionary.</p>
+<p><strong id="Request.cookies">cookies</strong> (<code class="codehilite"><span class="err">Dict[str, str]</span></code>): The cookies sent in the request, as a dictionary.</p>
 </li>
 <li>
-<p><strong id="Request.full_url">full_url</strong> (<code class="codehilite"><span class="n">str</span></code>): The full URL of the request.</p>
+<p><strong id="Request.full_url">full_url</strong> (<code class="codehilite"><span class="err">str</span></code>): The full URL of the request.</p>
 </li>
 <li>
-<p><strong id="Request.method">method</strong> (<code class="codehilite"><span class="n">str</span></code>): The request method, lower-cased.</p>
+<p><strong id="Request.method">method</strong> (<code class="codehilite"><span class="err">str</span></code>): The request method, lower-cased.</p>
 </li>
 <li>
-<p><strong id="Request.mimetype">mimetype</strong> (<code class="codehilite"><span class="n">str</span></code>): Mimetype of the request’s body, or <code class="codehilite"><span class="ss">&quot;&quot;</span></code> .</p>
+<p><strong id="Request.mimetype">mimetype</strong> (<code class="codehilite"><span class="err">str</span></code>): Mimetype of the request’s body, or <code class="codehilite"><span class="err">&quot;&quot;</span></code> .</p>
 </li>
 <li>
-<p><strong id="Request.params">params</strong> (<code class="codehilite"><span class="n">MultiDictProxy</span></code>): The parsed query parameters used for the request.</p>
+<p><strong id="Request.params">params</strong> (<code class="codehilite"><span class="err">MultiDictProxy</span></code>): The parsed query parameters used for the request.</p>
 </li>
 <li>
-<p><strong id="Request.text">text</strong> (<code class="codehilite"><span class="n">str</span></code>): The request body, as unicode-decoded. Must be awaited.</p>
+<p><strong id="Request.text">text</strong> (<code class="codehilite"><span class="err">str</span></code>): The request body, as unicode-decoded. Must be awaited.</p>
 </li>
 <li>
-<p><strong id="Request.url">url</strong> (<code class="codehilite"><span class="n">URL</span></code>): The parsed URL of the request. For more details, see
+<p><strong id="Request.url">url</strong> (<code class="codehilite"><span class="err">URL</span></code>): The parsed URL of the request. For more details, see
     <a href="https://www.starlette.io/requests/#url">Starlette docs</a> .</p>
 </li>
 <li>
-<p><strong id="Request.version">version</strong> (<code class="codehilite"><span class="n">str</span></code>): The HTTP version, like <code class="codehilite"><span class="ss">&quot;1.1&quot;</span></code> , <code class="codehilite"><span class="ss">&quot;2&quot;</span></code> .</p>
+<p><strong id="Request.version">version</strong> (<code class="codehilite"><span class="err">str</span></code>): The HTTP version, like <code class="codehilite"><span class="err">&quot;1.1&quot;</span></code> , <code class="codehilite"><span class="err">&quot;2&quot;</span></code> .</p>
 </li>
 </ul>
 <hr />
@@ -1041,12 +1048,12 @@
 <p>Test given type is acceptable or not.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>content_type</strong> (<code class="codehilite"><span class="n">str</span></code>): Testing <code class="codehilite"><span class="ss">&quot;mime/type&quot;</span></code> .</li>
+<li><strong>content_type</strong> (<code class="codehilite"><span class="err">str</span></code>): Testing <code class="codehilite"><span class="err">&quot;mime/type&quot;</span></code> .</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li>Optional[<code class="codehilite"><span class="n">Tuple</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span></code>]: The first accepted type and its priority in
-    the range: <code class="codehilite"><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="o">&lt;=</span><span class="n">q</span><span class="o">&lt;=</span><span class="mi">1</span><span class="p">.</span><span class="mi">0</span></code> , or <code class="codehilite"><span class="k">None</span></code> .</li>
+<li>Optional[<code class="codehilite"><span class="err">Tuple[str, float]</span></code>]: The first accepted type and its priority in
+    the range: <code class="codehilite"><span class="err">0.0&lt;=q&lt;=1.0</span></code> , or <code class="codehilite"><span class="err">None</span></code> .</li>
 </ul>
 <hr />
 <p><a href="#Request.media" id="Request.media"><strong>media</strong></a></p>
@@ -1054,10 +1061,10 @@
 2
 3
 4
-5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">async</span> <span class="k">def</span> <span class="nf">media</span><span class="p">(</span>
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">media</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
-    <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;Request&quot;</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-    <span class="n">parse_as</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;Request&quot;</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">parse_as</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">MultiDictProxy</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>
 </pre></div>
 </td></tr></table>
@@ -1067,43 +1074,43 @@
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>parser</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">Callable[[Request</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="n">Awaitable</span><span class="o">[</span><span class="n">Any</span><span class="o">]</span><span class="err">]]</span><span class="w"></span></code>): Custom parser,
-    must be async function. If not given, <a href="../../"><code class="codehilite"><span class="n">spangle</span></code></a> uses builtin parser.</li>
+    must be async function. If not given, <a href="../../"><code class="codehilite"><span class="err">spangle</span></code></a> uses builtin parser.</li>
 <li><strong>parse_as</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): Select parser to decode the body. Accept
-    <code class="codehilite"><span class="ss">&quot;json&quot;</span></code> , <code class="codehilite"><span class="ss">&quot;form&quot;</span></code> , or <code class="codehilite"><span class="ss">&quot;multipart&quot;</span></code> .</li>
+    <code class="codehilite"><span class="err">&quot;json&quot;</span></code> , <code class="codehilite"><span class="err">&quot;form&quot;</span></code> , or <code class="codehilite"><span class="err">&quot;multipart&quot;</span></code> .</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li><code class="codehilite"><span class="n">MultiDictProxy</span></code>: May be overridden by custom parser.</li>
+<li><code class="codehilite"><span class="err">MultiDictProxy</span></code>: May be overridden by custom parser.</li>
 </ul>
 <hr />
 <p><a href="#Request.push" id="Request.push"><strong>push</strong></a></p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">async</span> <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </pre></div>
 </td></tr></table>
 
 <p>HTTP2 push-promise.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>path</strong> (<code class="codehilite"><span class="n">str</span></code>): A content location in the app.</li>
+<li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>): A content location in the app.</li>
 </ul>
 <hr />
 <h3 id="Response">Response<a class="headerlink" href="#Response" title="Permanent link">&para;</a></h3>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jinja_env</span><span class="p">:</span> <span class="n">jinja2</span><span class="o">.</span><span class="n">Environment</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">url_for</span><span class="o">=</span><span class="bp">None</span><span class="p">)</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jinja_env</span><span class="p">:</span> <span class="n">jinja2</span><span class="o">.</span><span class="n">Environment</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">url_for</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
-<p>Outgoing HTTP response class. <code class="codehilite"><span class="n">Response</span></code> instance is ASGI3 application.</p>
+<p>Outgoing HTTP response class. <code class="codehilite"><span class="err">Response</span></code> instance is ASGI3 application.</p>
 <p><strong>Attributes</strong></p>
 <ul>
-<li><strong>headers</strong> (<code class="codehilite"><span class="n">CIMultiDict</span></code>): The response headers, case-insensitive dictionary. To set
-    values having same key, use <code class="codehilite"><span class="n">headers</span><span class="p">.</span><span class="k">add</span><span class="p">()</span></code> .</li>
-<li><strong>cookies</strong> (<code class="codehilite"><span class="n">SimpleCookie</span></code>): Dict-like http cookies. <code class="codehilite"><span class="k">Set</span><span class="o">-</span><span class="n">Cookie</span></code> header refers this.
+<li><strong>headers</strong> (<code class="codehilite"><span class="err">CIMultiDict</span></code>): The response headers, case-insensitive dictionary. To set
+    values having same key, use <code class="codehilite"><span class="err">headers.add()</span></code> .</li>
+<li><strong>cookies</strong> (<code class="codehilite"><span class="err">SimpleCookie</span></code>): Dict-like http cookies. <code class="codehilite"><span class="err">Set-Cookie</span></code> header refers this.
     You can set cookie-attributes.</li>
-<li><strong>status</strong> (<code class="codehilite"><span class="nb">int</span></code>): The response&rsquo;s status code.</li>
+<li><strong>status</strong> (<code class="codehilite"><span class="err">int</span></code>): The response&rsquo;s status code.</li>
 <li><strong>streaming</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">AsyncGenerator</span><span class="o">]</span><span class="w"></span></code>): Async generator for streaming. If set,
-    other response body attrs like <code class="codehilite"><span class="n">media</span></code> are ignored.</li>
-<li><strong>mimetype</strong> (<code class="codehilite"><span class="n">str</span></code>): The mediatype of the response body.</li>
-<li><strong>reraise</strong> (<code class="codehilite"><span class="n">bool</span></code>): In ErrorHandler, if set true, reraise the exception after
+    other response body attrs like <code class="codehilite"><span class="err">media</span></code> are ignored.</li>
+<li><strong>mimetype</strong> (<code class="codehilite"><span class="err">str</span></code>): The mediatype of the response body.</li>
+<li><strong>reraise</strong> (<code class="codehilite"><span class="err">bool</span></code>): In ErrorHandler, if set true, reraise the exception after
     sending data.</li>
 </ul>
 <p>Do not use manually.</p>
@@ -1111,15 +1118,15 @@
 <h4 id="Response-attrs">Instance attributes<a class="headerlink" href="#Response-attrs" title="Permanent link">&para;</a></h4>
 <ul>
 <li>
-<p><strong id="Response.content">content</strong> (<code class="codehilite"><span class="n">bytes</span></code>): Bytes of the response body. Default-type:
-    <code class="codehilite"><span class="ss">&quot;application/octet-stream&quot;</span></code> .</p>
+<p><strong id="Response.content">content</strong> (<code class="codehilite"><span class="err">bytes</span></code>): Bytes of the response body. Default-type:
+    <code class="codehilite"><span class="err">&quot;application/octet-stream&quot;</span></code> .</p>
 </li>
 <li>
-<p><strong id="Response.json">json</strong> (<code class="codehilite"><span class="k">Any</span></code>): A dict sent to the client. Default-type: <code class="codehilite"><span class="ss">&quot;application/json&quot;</span></code> .
-    You can set values like <code class="codehilite"><span class="n">resp</span><span class="p">.</span><span class="n">json</span><span class="p">.</span><span class="n">keyName</span><span class="p">.</span><span class="n">you</span> <span class="o">=</span> <span class="ss">&quot;want&quot;</span></code> .</p>
+<p><strong id="Response.json">json</strong> (<code class="codehilite"><span class="err">Any</span></code>): A dict sent to the client. Default-type: <code class="codehilite"><span class="err">&quot;application/json&quot;</span></code> .
+    You can set values like <code class="codehilite"><span class="err">resp.json.keyName.you = &quot;want&quot;</span></code> .</p>
 </li>
 <li>
-<p><strong id="Response.text">text</strong> (<code class="codehilite"><span class="n">str</span></code>): A unicode string of the response body. Default-type: <code class="codehilite"><span class="ss">&quot;text/plain&quot;</span></code> .</p>
+<p><strong id="Response.text">text</strong> (<code class="codehilite"><span class="err">str</span></code>): A unicode string of the response body. Default-type: <code class="codehilite"><span class="err">&quot;text/plain&quot;</span></code> .</p>
 </li>
 </ul>
 <hr />
@@ -1129,23 +1136,23 @@
 </pre></div>
 </td></tr></table>
 
-<p>Append new header. To overwrite, use <a href="./#Response.set_header"><code class="codehilite"><span class="n">Response</span><span class="p">.</span><span class="n">set_header</span></code></a> .
+<p>Append new header. To overwrite, use <a href="./#Response.set_header"><code class="codehilite"><span class="err">Response.set_header</span></code></a> .
     Chainable</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>key</strong> (<code class="codehilite"><span class="n">str</span></code>): Header&rsquo;s key.</li>
-<li><strong>value</strong> (<code class="codehilite"><span class="n">str</span></code>): Header&rsquo;s value.</li>
+<li><strong>key</strong> (<code class="codehilite"><span class="err">str</span></code>): Header&rsquo;s key.</li>
+<li><strong>value</strong> (<code class="codehilite"><span class="err">str</span></code>): Header&rsquo;s value.</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li><a href="./#Response"><code class="codehilite"><span class="n">Response</span></code></a>: Return self.</li>
+<li><a href="./#Response"><code class="codehilite"><span class="err">Response</span></code></a>: Return self.</li>
 </ul>
 <hr />
 <p><a href="#Response.delete_cookie" id="Response.delete_cookie"><strong>delete_cookie</strong></a></p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">delete_cookie</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </pre></div>
 </td></tr></table>
@@ -1154,46 +1161,46 @@
 <p><strong>Args</strong></p>
 <ul>
 <li>
-<p><strong>key</strong> (<code class="codehilite"><span class="n">str</span></code>)
+<p><strong>key</strong> (<code class="codehilite"><span class="err">str</span></code>)
 Cookie options:</p>
 </li>
 <li>
-<p><strong>path</strong> (<code class="codehilite"><span class="n">str</span></code>)</p>
+<p><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>)</p>
 </li>
 <li>
-<p><strong>domain</strong> (<code class="codehilite"><span class="n">str</span></code>)
+<p><strong>domain</strong> (<code class="codehilite"><span class="err">str</span></code>)
 <strong>Returns</strong></p>
 </li>
 <li>
-<p><a href="./#Response"><code class="codehilite"><span class="n">Response</span></code></a>: Return self.</p>
+<p><a href="./#Response"><code class="codehilite"><span class="err">Response</span></code></a>: Return self.</p>
 </li>
 </ul>
 <hr />
 <p><a href="#Response.load_template" id="Response.load_template"><strong>load_template</strong></a></p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
-3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">async</span> <span class="k">def</span> <span class="nf">load_template</span><span class="p">(</span>
+3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">load_template</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span> <span class="n">template_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;text/html&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </pre></div>
 </td></tr></table>
 
-<p>Load <code class="codehilite"><span class="n">jinja2</span></code> template, render, set headers &amp; text. Chainable</p>
+<p>Load <code class="codehilite"><span class="err">jinja2</span></code> template, render, set headers &amp; text. Chainable</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>template_name</strong> (<code class="codehilite"><span class="n">str</span></code>): The template <code class="codehilite"><span class="ss">&quot;path/name&quot;</span></code> .</li>
-<li><strong>content_type</strong> (<code class="codehilite"><span class="n">str</span></code>): <code class="codehilite"><span class="ss">&quot;text/html&quot;</span></code> .</li>
-<li><strong>**params</strong> : Variables used in the template. <code class="codehilite"><span class="n">api</span></code> is reserved by
-    <a href="../../api-py#Api"><code class="codehilite"><span class="n">Api</span></code></a> instance by default.</li>
+<li><strong>template_name</strong> (<code class="codehilite"><span class="err">str</span></code>): The template <code class="codehilite"><span class="err">&quot;path/name&quot;</span></code> .</li>
+<li><strong>content_type</strong> (<code class="codehilite"><span class="err">str</span></code>): <code class="codehilite"><span class="err">&quot;text/html&quot;</span></code> .</li>
+<li><strong>**params</strong> : Variables used in the template. <code class="codehilite"><span class="err">api</span></code> is reserved by
+    <a href="../../api-py#Api"><code class="codehilite"><span class="err">Api</span></code></a> instance by default.</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li><a href="./#Response"><code class="codehilite"><span class="n">Response</span></code></a>: Return self.</li>
+<li><a href="./#Response"><code class="codehilite"><span class="err">Response</span></code></a>: Return self.</li>
 </ul>
 <p><strong>Raises</strong></p>
 <ul>
-<li><code class="codehilite"><span class="n">ValueError</span></code>: Missing <code class="codehilite"><span class="n">jinja2</span></code> env in <a href="../../api-py#Api"><code class="codehilite"><span class="n">Api</span></code></a> instance.</li>
-<li><code class="codehilite"><span class="n">NotFoundError</span></code>: Missing requested template.</li>
+<li><code class="codehilite"><span class="err">ValueError</span></code>: Missing <code class="codehilite"><span class="err">jinja2</span></code> env in <a href="../../api-py#Api"><code class="codehilite"><span class="err">Api</span></code></a> instance.</li>
+<li><code class="codehilite"><span class="err">NotFoundError</span></code>: Missing requested template.</li>
 </ul>
 <hr />
 <p><a href="#Response.redirect" id="Response.redirect"><strong>redirect</strong></a></p>
@@ -1207,26 +1214,26 @@ Cookie options:</p>
 8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">redirect</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">view</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">view</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">status</span><span class="o">=</span><span class="n">HTTPStatus</span><span class="o">.</span><span class="n">TEMPORARY_REDIRECT</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </pre></div>
 </td></tr></table>
 
 <p>Set redirect view/location. Positional args are not allowed. Chainable</p>
-<p>If both <code class="codehilite"><span class="k">view</span></code> and <code class="codehilite"><span class="n">url</span></code> are set, <code class="codehilite"><span class="n">url</span></code> is ignored.</p>
+<p>If both <code class="codehilite"><span class="err">view</span></code> and <code class="codehilite"><span class="err">url</span></code> are set, <code class="codehilite"><span class="err">url</span></code> is ignored.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>view</strong> (<code class="codehilite"><span class="k">Type</span></code>): View class that the client redirect to.</li>
-<li><strong>params</strong> (<code class="codehilite"><span class="n">dict</span></code>): Dynamic URL params passed to the view.</li>
-<li><strong>url</strong> (<code class="codehilite"><span class="n">str</span></code>): The location out of the app.</li>
-<li><strong>status</strong> (<code class="codehilite"><span class="nb">int</span></code>): HTTP status code. Must be <code class="codehilite"><span class="mi">300</span><span class="o">&lt;=</span><span class="n">status</span><span class="o">&lt;</span><span class="mi">400</span></code> .</li>
+<li><strong>view</strong> (<code class="codehilite"><span class="err">Type</span></code>): View class that the client redirect to.</li>
+<li><strong>params</strong> (<code class="codehilite"><span class="err">dict</span></code>): Dynamic URL params passed to the view.</li>
+<li><strong>url</strong> (<code class="codehilite"><span class="err">str</span></code>): The location out of the app.</li>
+<li><strong>status</strong> (<code class="codehilite"><span class="err">int</span></code>): HTTP status code. Must be <code class="codehilite"><span class="err">300&lt;=status&lt;400</span></code> .</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li><a href="./#Response"><code class="codehilite"><span class="n">Response</span></code></a>: Return self.</li>
+<li><a href="./#Response"><code class="codehilite"><span class="err">Response</span></code></a>: Return self.</li>
 </ul>
 <hr />
 <p><a href="#Response.set_content" id="Response.set_content"><strong>set_content</strong></a></p>
@@ -1241,12 +1248,12 @@ Cookie options:</p>
 <p>Set bytes to response body with content type. Chainable</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>content</strong> (<code class="codehilite"><span class="n">bytes</span></code>): Response body as bytes.</li>
-<li><strong>content_type</strong> (<code class="codehilite"><span class="n">str</span></code>): Response content type.</li>
+<li><strong>content</strong> (<code class="codehilite"><span class="err">bytes</span></code>): Response body as bytes.</li>
+<li><strong>content_type</strong> (<code class="codehilite"><span class="err">str</span></code>): Response content type.</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li><a href="./#Response"><code class="codehilite"><span class="n">Response</span></code></a>: Return self.</li>
+<li><a href="./#Response"><code class="codehilite"><span class="err">Response</span></code></a>: Return self.</li>
 </ul>
 <hr />
 <p><a href="#Response.set_cookie" id="Response.set_cookie"><strong>set_cookie</strong></a></p>
@@ -1264,12 +1271,12 @@ Cookie options:</p>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">max_age</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-    <span class="n">expires</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="n">max_age</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">expires</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
-    <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
-    <span class="n">secure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
-    <span class="n">httponly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">secure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">httponly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </pre></div>
 </td></tr></table>
@@ -1277,24 +1284,24 @@ Cookie options:</p>
 <p>Set cookie value to given key with params. Chainable</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>key</strong> (<code class="codehilite"><span class="n">str</span></code>)</li>
+<li><strong>key</strong> (<code class="codehilite"><span class="err">str</span></code>)</li>
 <li>
-<p><strong>value</strong> (<code class="codehilite"><span class="n">str</span></code>)
+<p><strong>value</strong> (<code class="codehilite"><span class="err">str</span></code>)
 Cookie options:</p>
 </li>
 <li>
-<p><strong>max_age</strong> (<code class="codehilite"><span class="nb">int</span></code>)</p>
+<p><strong>max_age</strong> (<code class="codehilite"><span class="err">int</span></code>)</p>
 </li>
-<li><strong>expires</strong> (<code class="codehilite"><span class="nb">int</span></code>)</li>
-<li><strong>path</strong> (<code class="codehilite"><span class="n">str</span></code>)</li>
-<li><strong>domain</strong> (<code class="codehilite"><span class="n">str</span></code>)</li>
-<li><strong>secure</strong> (<code class="codehilite"><span class="n">bool</span></code>)</li>
+<li><strong>expires</strong> (<code class="codehilite"><span class="err">int</span></code>)</li>
+<li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>)</li>
+<li><strong>domain</strong> (<code class="codehilite"><span class="err">str</span></code>)</li>
+<li><strong>secure</strong> (<code class="codehilite"><span class="err">bool</span></code>)</li>
 <li>
-<p><strong>httponly</strong> (<code class="codehilite"><span class="n">bool</span></code>)
+<p><strong>httponly</strong> (<code class="codehilite"><span class="err">bool</span></code>)
 <strong>Returns</strong></p>
 </li>
 <li>
-<p><a href="./#Response"><code class="codehilite"><span class="n">Response</span></code></a>: Return self.</p>
+<p><a href="./#Response"><code class="codehilite"><span class="err">Response</span></code></a>: Return self.</p>
 </li>
 </ul>
 <hr />
@@ -1306,12 +1313,12 @@ Cookie options:</p>
 <p>Set HTTP header value to given key. It overwrites value if exists. Chainable</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>key</strong> (<code class="codehilite"><span class="n">str</span></code>): Header&rsquo;s key.</li>
-<li><strong>value</strong> (<code class="codehilite"><span class="n">str</span></code>): Header&rsquo;s value.</li>
+<li><strong>key</strong> (<code class="codehilite"><span class="err">str</span></code>): Header&rsquo;s key.</li>
+<li><strong>value</strong> (<code class="codehilite"><span class="err">str</span></code>): Header&rsquo;s value.</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li><a href="./#Response"><code class="codehilite"><span class="n">Response</span></code></a>: Return self.</li>
+<li><a href="./#Response"><code class="codehilite"><span class="err">Response</span></code></a>: Return self.</li>
 </ul>
 <hr />
 <p><a href="#Response.set_status" id="Response.set_status"><strong>set_status</strong></a></p>
@@ -1322,11 +1329,11 @@ Cookie options:</p>
 <p>Set HTTP status code. Chainable</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>status</strong> (<code class="codehilite"><span class="nb">int</span></code>): HTTP status code.</li>
+<li><strong>status</strong> (<code class="codehilite"><span class="err">int</span></code>): HTTP status code.</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li><a href="./#Response"><code class="codehilite"><span class="n">Response</span></code></a> : Return self.</li>
+<li><a href="./#Response"><code class="codehilite"><span class="err">Response</span></code></a> : Return self.</li>
 </ul>
 <hr />
 <p><a href="#Response.set_text" id="Response.set_text"><strong>set_text</strong></a></p>
@@ -1337,15 +1344,16 @@ Cookie options:</p>
 <p>Set given text to response body with content type. Chainable</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>text</strong> (<code class="codehilite"><span class="n">str</span></code>): Response body as UTF-8 string.</li>
-<li><strong>content_type</strong> (<code class="codehilite"><span class="n">str</span></code>): Response content type.</li>
+<li><strong>text</strong> (<code class="codehilite"><span class="err">str</span></code>): Response body as UTF-8 string.</li>
+<li><strong>content_type</strong> (<code class="codehilite"><span class="err">str</span></code>): Response content type.</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li><a href="./#Response"><code class="codehilite"><span class="n">Response</span></code></a>: Return self.</li>
+<li><a href="./#Response"><code class="codehilite"><span class="err">Response</span></code></a>: Return self.</li>
 </ul>
                 
                   
+                
                 
               
               
@@ -1413,7 +1421,7 @@ Cookie options:</p>
       
     </div>
     
-      <script src="../../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../../.."}})</script>
       

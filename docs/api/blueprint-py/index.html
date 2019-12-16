@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -953,7 +953,7 @@
 <p>Application component contains child paths with views.</p>
 <p><strong>Attributes</strong></p>
 <ul>
-<li><strong>views</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="k">Type</span><span class="p">,</span> <span class="n">Converters</span><span class="p">]]</span></code>): Collected view classes.</li>
+<li><strong>views</strong> (<code class="codehilite"><span class="err">Dict[str, Tuple[Type, Converters]]</span></code>): Collected view classes.</li>
 <li><strong>events</strong> (<code class="codehilite"><span class="n">Dict</span><span class="o">[</span><span class="n">str, List[Callable</span><span class="o">]</span><span class="err">]</span><span class="w"></span></code>): Registered lifespan handlers.</li>
 <li><strong>request_hooks</strong> (<code class="codehilite"><span class="n">List</span><span class="o">[</span><span class="n">Type</span><span class="o">]</span><span class="w"></span></code>): Called against every request.</li>
 </ul>
@@ -961,15 +961,15 @@
 <hr />
 <h4 id="Blueprint-methods">Methods<a class="headerlink" href="#Blueprint-methods" title="Permanent link">&para;</a></h4>
 <p><a href="#Blueprint.add_blueprint" id="Blueprint.add_blueprint"><strong>add_blueprint</strong></a></p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_blueprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bp</span><span class="p">:</span> <span class="s2">&quot;Blueprint&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="bp">None</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">add_blueprint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">bp</span><span class="p">:</span> <span class="s2">&quot;Blueprint&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </pre></div>
 </td></tr></table>
 
-<p>Nest a <code class="codehilite"><span class="n">Blueprint</span></code> in another one.</p>
+<p>Nest a <code class="codehilite"><span class="err">Blueprint</span></code> in another one.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>path</strong> (<code class="codehilite"><span class="n">str</span></code>): Prefix for the blueprint.</li>
-<li><strong>bp</strong> (<a href="./#Blueprint"><code class="codehilite"><span class="n">Blueprint</span></code></a>): Another instance to mount.</li>
+<li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>): Prefix for the blueprint.</li>
+<li><strong>bp</strong> (<a href="./#Blueprint"><code class="codehilite"><span class="err">Blueprint</span></code></a>): Another instance to mount.</li>
 </ul>
 <hr />
 <p><a href="#Blueprint.before_request" id="Blueprint.before_request"><strong>before_request</strong></a></p>
@@ -984,10 +984,10 @@
 </pre></div>
 </td></tr></table>
 
-<p>Bind <code class="codehilite"><span class="k">Exception</span></code> to the decolated view.</p>
+<p>Bind <code class="codehilite"><span class="err">Exception</span></code> to the decolated view.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>e</strong> (<code class="codehilite"><span class="k">Exception</span></code>): Subclass of <code class="codehilite"><span class="k">Exception</span></code> you want to handle.</li>
+<li><strong>e</strong> (<code class="codehilite"><span class="err">Exception</span></code>): Subclass of <code class="codehilite"><span class="err">Exception</span></code> you want to handle.</li>
 </ul>
 <hr />
 <p><a href="#Blueprint.on_start" id="Blueprint.on_start"><strong>on_start</strong></a></p>
@@ -1008,7 +1008,7 @@
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">route</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">converters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Converters</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">converters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Converters</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Type</span><span class="p">],</span> <span class="n">Type</span><span class="p">]</span>
 </pre></div>
 </td></tr></table>
@@ -1016,8 +1016,8 @@
 <p>Bind a path to the decolated view. The path will be fixed by routing mode.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>path</strong> (<code class="codehilite"><span class="n">str</span></code>): The location of your view.</li>
-<li><strong>converters</strong> (<code class="codehilite"><span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span><span class="n">Callable</span><span class="p">]]</span></code>): If given, dynamic url&rsquo;s params
+<li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>): The location of your view.</li>
+<li><strong>converters</strong> (<code class="codehilite"><span class="err">Optional[Dict[str,Callable]]</span></code>): If given, dynamic url&rsquo;s params
     are converted before passed to the view.</li>
 </ul>
 <hr />
@@ -1035,18 +1035,19 @@
 </pre></div>
 </td></tr></table>
 
-<p>Find a view matching to <code class="codehilite"><span class="n">path</span></code>, or return <code class="codehilite"><span class="k">None</span></code> .</p>
+<p>Find a view matching to <code class="codehilite"><span class="err">path</span></code>, or return <code class="codehilite"><span class="err">None</span></code> .</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>path</strong> (<code class="codehilite"><span class="n">str</span></code>): Requested location.</li>
+<li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>): Requested location.</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li><code class="codehilite"><span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="k">Type</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="k">Any</span><span class="p">]]]</span></code>: View instance and params parsed from
-    <code class="codehilite"><span class="n">path</span></code> .</li>
+<li><code class="codehilite"><span class="err">Optional[Tuple[Type, Dict[str, Any]]]</span></code>: View instance and params parsed from
+    <code class="codehilite"><span class="err">path</span></code> .</li>
 </ul>
                 
                   
+                
                 
               
               
@@ -1114,7 +1115,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

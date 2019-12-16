@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -430,6 +430,13 @@
           <li class="md-nav__item">
   <a href="#custom-parser" class="md-nav__link">
     Custom parser
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limit-upload-size" class="md-nav__link">
+    Limit upload size
   </a>
   
 </li>
@@ -974,6 +981,13 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#limit-upload-size" class="md-nav__link">
+    Limit upload size
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1011,18 +1025,18 @@
                 
                 
                 <h1 id="request">Request<a class="headerlink" href="#request" title="Permanent link">&para;</a></h1>
-<p><a href="/api/models/http-py#Request"><code class="codehilite"><span class="n">Request</span></code></a> contains data sent by client. Most attributes are read-only, but you can use <code class="codehilite"><span class="k">state</span></code> to store objects like user ID.</p>
+<p><a href="/api/models/http-py#Request"><code class="codehilite"><span class="err">Request</span></code></a> contains data sent by client. Most attributes are read-only, but you can use <code class="codehilite"><span class="err">state</span></code> to store objects like user ID.</p>
 <h2 id="get-request-headers">Get request headers<a class="headerlink" href="#get-request-headers" title="Permanent link">&para;</a></h2>
-<p>Request headers are <a href="https://github.com/aio-libs/multidict"><code class="codehilite"><span class="n">CIMultiDictProxy</span></code></a> .</p>
+<p>Request headers are <a href="https://github.com/aio-libs/multidict"><code class="codehilite"><span class="err">CIMultiDictProxy</span></code></a> .</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4
 5
 6
-7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Index</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="n">headers</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">headers</span>
         <span class="n">lower</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;authorization&quot;</span><span class="p">)</span>
         <span class="n">Camel</span> <span class="o">=</span> <span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Authorization&quot;</span><span class="p">)</span>
@@ -1030,7 +1044,7 @@
 </pre></div>
 </td></tr></table>
 
-<p><code class="codehilite"><span class="n">Request</span></code> provides utilities to access the head of HTTP request. </p>
+<p><code class="codehilite"><span class="err">Request</span></code> provides utilities to access the head of HTTP request. </p>
 <h3 id="method-and-url">Method and URL<a class="headerlink" href="#method-and-url" title="Permanent link">&para;</a></h3>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
@@ -1038,10 +1052,10 @@
 4
 5
 6
-7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/example&quot;</span><span class="p">)</span>
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/example&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">UrlExample</span><span class="p">:</span>
     <span class="n">allowed_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;post&quot;</span><span class="p">,</span> <span class="s2">&quot;put&quot;</span><span class="p">]</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">req</span><span class="o">.</span><span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;get&quot;</span><span class="p">,</span> <span class="s2">&quot;post&quot;</span><span class="p">,</span> <span class="s2">&quot;put&quot;</span><span class="p">,</span> <span class="s2">&quot;head&quot;</span><span class="p">,</span> <span class="s2">&quot;options&quot;</span><span class="p">]</span>
         <span class="k">assert</span> <span class="s2">&quot;/example&quot;</span> <span class="ow">in</span> <span class="n">req</span><span class="o">.</span><span class="n">full_url</span>
         <span class="k">assert</span> <span class="n">req</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;/example&quot;</span><span class="p">)</span>
@@ -1049,39 +1063,39 @@
 </td></tr></table>
 
 <h3 id="query-string">Query string<a class="headerlink" href="#query-string" title="Permanent link">&para;</a></h3>
-<p><code class="codehilite"><span class="n">params</span></code> is <a href="https://github.com/aio-libs/multidict"><code class="codehilite"><span class="n">MultiDictProxy</span></code></a> that contains parsed query strings.</p>
+<p><code class="codehilite"><span class="err">params</span></code> is <a href="https://github.com/aio-libs/multidict"><code class="codehilite"><span class="err">MultiDictProxy</span></code></a> that contains parsed query strings.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4
 5
-6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/search&quot;</span><span class="p">)</span>
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/search&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Search</span><span class="p">:</span>
     <span class="c1"># parse `/search?q=somevalue`</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="n">queries</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">params</span>
         <span class="n">value</span> <span class="o">=</span> <span class="n">queries</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;q&quot;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
 <h3 id="cookies">Cookies<a class="headerlink" href="#cookies" title="Permanent link">&para;</a></h3>
-<p>Received HTTP Cookies are stored in <code class="codehilite"><span class="n">cookies</span></code> as <code class="codehilite"><span class="n">dict</span></code> . </p>
+<p>Received HTTP Cookies are stored in <code class="codehilite"><span class="err">cookies</span></code> as <code class="codehilite"><span class="err">dict</span></code> . </p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4
 5
-6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/cookies&quot;</span><span class="p">)</span>
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/cookies&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Cookies</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="n">cookies</span> <span class="o">=</span> <span class="n">req</span><span class="o">.</span><span class="n">cookies</span>
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">cookies</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="k">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;{k}: {v}&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{k}</span><span class="s2">: </span><span class="si">{v}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
 <h3 id="acceptable-types">Acceptable types<a class="headerlink" href="#acceptable-types" title="Permanent link">&para;</a></h3>
-<p>To test what types are allowed by a client, use <a href="/api/models/http-py#Request.accept"><code class="codehilite"><span class="n">accept</span></code></a> .</p>
+<p>To test what types are allowed by a client, use <a href="/api/models/http-py#Request.accept"><code class="codehilite"><span class="err">accept</span></code></a> .</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -1094,9 +1108,9 @@
 10
 11
 12
-13</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/accepts&quot;</span><span class="p">)</span>
+13</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/accepts&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Accepts</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># client&#39;s `Accept` header.</span>
         <span class="k">assert</span> <span class="n">req</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;accept&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;text/html,text/*,application/json;q=0.9&quot;</span>
         <span class="c1"># `text/html` is acceptable.</span>
@@ -1106,64 +1120,82 @@
         <span class="c1"># `application/json` is allowed, but it has less priority than `text/*` .</span>
         <span class="k">assert</span> <span class="n">req</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="s2">&quot;application/json&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="s2">&quot;application/json&quot;</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span>
         <span class="c1"># `image/png` is not allowed!</span>
-        <span class="k">assert</span> <span class="n">req</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="s2">&quot;image/png&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="bp">None</span>
+        <span class="k">assert</span> <span class="n">req</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="s2">&quot;image/png&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span>
 </pre></div>
 </td></tr></table>
 
 <h2 id="receive-uploaded-data">Receive uploaded data<a class="headerlink" href="#receive-uploaded-data" title="Permanent link">&para;</a></h2>
-<p>You can get request body as <code class="codehilite"><span class="n">bytes</span></code> , <code class="codehilite"><span class="n">str</span></code> , or <code class="codehilite"><span class="n">MultiDict</span></code> .</p>
+<p>You can get request body as <code class="codehilite"><span class="err">bytes</span></code> , <code class="codehilite"><span class="err">str</span></code> , or <code class="codehilite"><span class="err">MultiDict</span></code> .</p>
 <h3 id="receive-texts-and-bytes">Receive texts and bytes<a class="headerlink" href="#receive-texts-and-bytes" title="Permanent link">&para;</a></h3>
-<p><code class="codehilite"><span class="n">content</span></code> is the raw body of request as <code class="codehilite"><span class="n">bytes</span></code>, and <code class="codehilite"><span class="nb">text</span></code> decodes it to <code class="codehilite"><span class="n">str</span></code>.</p>
+<p><code class="codehilite"><span class="err">content</span></code> is the raw body of request as <code class="codehilite"><span class="err">bytes</span></code>, and <code class="codehilite"><span class="err">text</span></code> decodes it to <code class="codehilite"><span class="err">str</span></code>.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4
 5
 6
-7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/strings&quot;</span><span class="p">)</span>
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/strings&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Strings</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># as bytes</span>
-        <span class="n">body</span> <span class="o">=</span> <span class="n">await</span> <span class="n">req</span><span class="o">.</span><span class="n">content</span>
+        <span class="n">body</span> <span class="o">=</span> <span class="k">await</span> <span class="n">req</span><span class="o">.</span><span class="n">content</span>
         <span class="c1"># as str; may raise `UnicodeDecodeError` .</span>
-        <span class="n">text</span> <span class="o">=</span> <span class="n">await</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="k">await</span> <span class="n">req</span><span class="o">.</span><span class="n">text</span>
 </pre></div>
 </td></tr></table>
 
 <h3 id="receive-form-data">Receive form data<a class="headerlink" href="#receive-form-data" title="Permanent link">&para;</a></h3>
-<p>In many cases, the request body has a structure. <a href="/api/models/http-py#Request.media"><code class="codehilite"><span class="n">media</span></code></a> parses the body to <code class="codehilite"><span class="n">MultiDict</span></code> . <code class="codehilite"><span class="n">application</span><span class="o">/</span><span class="n">x</span><span class="o">-</span><span class="n">www</span><span class="o">-</span><span class="n">form</span><span class="o">-</span><span class="n">urlencoded</span></code> (<code class="codehilite"><span class="n">form</span></code>) , <code class="codehilite"><span class="n">multipart</span><span class="o">/</span><span class="n">form</span><span class="o">-</span><span class="k">data</span></code> (<code class="codehilite"><span class="n">multipart</span></code>) , and <code class="codehilite"><span class="n">application</span><span class="o">/</span><span class="n">json</span></code> (<code class="codehilite"><span class="n">json</span></code>) are supported.</p>
+<p>In many cases, the request body has a structure. <a href="/api/models/http-py#Request.media"><code class="codehilite"><span class="err">media</span></code></a> parses the body to <code class="codehilite"><span class="err">MultiDict</span></code> . <code class="codehilite"><span class="err">application/x-www-form-urlencoded</span></code> (<code class="codehilite"><span class="err">form</span></code>) , <code class="codehilite"><span class="err">multipart/form-data</span></code> (<code class="codehilite"><span class="err">multipart</span></code>) , and <code class="codehilite"><span class="err">application/json</span></code> (<code class="codehilite"><span class="err">json</span></code>) are supported.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4
 5
 6
-7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/form&quot;</span><span class="p">)</span>
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/form&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Form</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># detect the format automatically.</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">await</span> <span class="n">req</span><span class="o">.</span><span class="n">media</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">req</span><span class="o">.</span><span class="n">media</span><span class="p">()</span>
         <span class="c1"># ... or choose manually.</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">await</span> <span class="n">req</span><span class="o">.</span><span class="n">media</span><span class="p">(</span><span class="n">parse_as</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">req</span><span class="o">.</span><span class="n">media</span><span class="p">(</span><span class="n">parse_as</span><span class="o">=</span><span class="s2">&quot;json&quot;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
 <h3 id="custom-parser">Custom parser<a class="headerlink" href="#custom-parser" title="Permanent link">&para;</a></h3>
-<p>Want to parse other format like <code class="codehilite"><span class="n">YAML</span></code> ? You can use your own parser.</p>
+<p>Want to parse other format like <code class="codehilite"><span class="err">YAML</span></code> ? You can use your own parser.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4
-5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/custom-format&quot;</span><span class="p">)</span>
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/custom-format&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Custom</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># pass `Callable[[Request],Awaitable[Any]]` .</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">await</span> <span class="n">req</span><span class="o">.</span><span class="n">media</span><span class="p">(</span><span class="n">parser</span><span class="o">=</span><span class="n">async_func</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">req</span><span class="o">.</span><span class="n">media</span><span class="p">(</span><span class="n">parser</span><span class="o">=</span><span class="n">async_func</span><span class="p">)</span>
+</pre></div>
+</td></tr></table>
+
+<h3 id="limit-upload-size">Limit upload size<a class="headerlink" href="#limit-upload-size" title="Permanent link">&para;</a></h3>
+<p>You can limit upload size. <a href="/api/api-py#Api"><code class="codehilite"><span class="err">Api</span></code></a> accepts application default, and you can set the limit against each request.</p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;limit-upload&quot;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">Limit</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_post</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+        <span class="n">req</span><span class="o">.</span><span class="n">max_upload_bytes</span> <span class="o">=</span> <span class="mi">50</span> <span class="o">*</span> <span class="mi">1024</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="c1"># raise `TooLargeRequestError` if the body is too large.</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">req</span><span class="o">.</span><span class="n">media</span><span class="p">()</span>
+        <span class="o">...</span>
 </pre></div>
 </td></tr></table>
 
 <h2 id="set-state">Set state<a class="headerlink" href="#set-state" title="Permanent link">&para;</a></h2>
-<p><code class="codehilite"><span class="n">Request</span><span class="p">.</span><span class="k">state</span></code> is a flexible data container powered by <a href="https://github.com/mewwts/addict"><code class="codehilite"><span class="n">addict</span></code></a> . It is useful to share additional user data between view methods.</p>
+<p><code class="codehilite"><span class="err">Request.state</span></code> is a flexible data container powered by <a href="https://github.com/mewwts/addict"><code class="codehilite"><span class="err">addict</span></code></a> . It is useful to share additional user data between view methods.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -1171,13 +1203,13 @@
 5
 6
 7
-8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/restricted&quot;</span><span class="p">)</span>
+8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/restricted&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">NeedAuth</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="o">...</span> <span class="c1"># process authentication</span>
         <span class="n">req</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="s2">&quot;user id&quot;</span>
 
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">req</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">user</span> <span class="o">==</span> <span class="s2">&quot;user id&quot;</span>
 </pre></div>
 </td></tr></table>
@@ -1189,16 +1221,17 @@
 3
 4
 5
-6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/push&quot;</span><span class="p">)</span>
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/push&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Push</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># `push` does nothing if not available.</span>
-        <span class="n">await</span> <span class="n">req</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="s2">&quot;/statics/style.css&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">req</span><span class="o">.</span><span class="n">push</span><span class="p">(</span><span class="s2">&quot;/statics/style.css&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">resp</span>
 </pre></div>
 </td></tr></table>
                 
                   
+                
                 
               
               
@@ -1266,7 +1299,7 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       

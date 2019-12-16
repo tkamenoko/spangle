@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -686,13 +686,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#UploadedFile-attrs" class="md-nav__link">
-    Instance attributes
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -882,13 +875,6 @@
   
 </li>
         
-          <li class="md-nav__item">
-  <a href="#UploadedFile-attrs" class="md-nav__link">
-    Instance attributes
-  </a>
-  
-</li>
-        
       </ul>
     </nav>
   
@@ -920,31 +906,19 @@
 <p>Types to parse user uploads.</p>
 <h2 id="classes">Classes<a class="headerlink" href="#classes" title="Permanent link">&para;</a></h2>
 <h3 id="UploadedFile">UploadedFile<a class="headerlink" href="#UploadedFile" title="Permanent link">&para;</a></h3>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">UploadedFile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">mimetype</span><span class="p">)</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">UploadedFile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mimetype</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
-<p>Named tuple to accept client&rsquo;s uploads via <code class="codehilite"><span class="n">multipart</span><span class="o">/</span><span class="n">form</span><span class="o">-</span><span class="k">data</span></code> .</p>
+<p>Named tuple to accept client&rsquo;s uploads via <code class="codehilite"><span class="err">multipart/form-data</span></code> .</p>
 <hr />
 <h4 id="UploadedFile-bases">Base classes<a class="headerlink" href="#UploadedFile-bases" title="Permanent link">&para;</a></h4>
 <ul>
-<li><code class="codehilite"><span class="n">builtins</span><span class="p">.</span><span class="n">tuple</span></code></li>
-</ul>
-<hr />
-<h4 id="UploadedFile-attrs">Instance attributes<a class="headerlink" href="#UploadedFile-attrs" title="Permanent link">&para;</a></h4>
-<ul>
-<li>
-<p><strong id="UploadedFile.file">file</strong> (<code class="codehilite"><span class="n">BytesIO</span></code>): Filedata.</p>
-</li>
-<li>
-<p><strong id="UploadedFile.filename">filename</strong> (<code class="codehilite"><span class="n">str</span></code>): Filename, includes <code class="codehilite"><span class="na">.ext</span></code> .</p>
-</li>
-<li>
-<p><strong id="UploadedFile.mimetype">mimetype</strong> (<code class="codehilite"><span class="n">str</span></code>): File&rsquo;s <code class="codehilite"><span class="ss">&quot;mime/type&quot;</span></code> .</p>
-</li>
+<li><code class="codehilite"><span class="err">builtins.tuple</span></code></li>
 </ul>
                 
                   
+                
                 
               
               
@@ -1012,7 +986,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

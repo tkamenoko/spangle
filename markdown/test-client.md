@@ -28,4 +28,10 @@ with api.client() as client:
     assert response.text = "spam"
 # shutdown hooks are called here.
 
+# asynchronous client is also available.
+async with api.async_client() as client:
+    # console shows `App is starting...` .
+    response = await client.get(...)
+    ...
+
 ```

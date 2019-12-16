@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -917,17 +917,17 @@
                 
                 
                 <h1 id="response">Response<a class="headerlink" href="#response" title="Permanent link">&para;</a></h1>
-<p>You can send data to clients by setting values to <a href="/api/models/http-py#Response"><code class="codehilite"><span class="n">Response</span></code></a> instance. The instance is a valid ASGI app.</p>
-<h2 id="set-headers-to-response">Set headers to <code class="codehilite"><span class="n">Response</span></code><a class="headerlink" href="#set-headers-to-response" title="Permanent link">&para;</a></h2>
-<p><code class="codehilite"><span class="n">Response</span></code> has attributes similar to <code class="codehilite"><span class="n">Request</span></code> , but they are writable.</p>
+<p>You can send data to clients by setting values to <a href="/api/models/http-py#Response"><code class="codehilite"><span class="err">Response</span></code></a> instance. The instance is a valid ASGI app.</p>
+<h2 id="set-headers-to-response">Set headers to <code class="codehilite"><span class="err">Response</span></code><a class="headerlink" href="#set-headers-to-response" title="Permanent link">&para;</a></h2>
+<p><code class="codehilite"><span class="err">Response</span></code> has attributes similar to <code class="codehilite"><span class="err">Request</span></code> , but they are writable.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4
 5
-6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/resp-head&quot;</span><span class="p">)</span>
+6</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/resp-head&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Head</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;X-Foo&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;bar&quot;</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="mi">418</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">cookies</span><span class="p">[</span><span class="s2">&quot;its&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;dict&quot;</span>
@@ -935,7 +935,7 @@
 </td></tr></table>
 
 <h2 id="send-response-body">Send response body<a class="headerlink" href="#send-response-body" title="Permanent link">&para;</a></h2>
-<p>Of course, you can send a response body. <code class="codehilite"><span class="n">Response</span></code> sets <code class="codehilite"><span class="n">Content</span><span class="o">-</span><span class="k">Type</span></code> header automatically.</p>
+<p>Of course, you can send a response body. <code class="codehilite"><span class="err">Response</span></code> sets <code class="codehilite"><span class="err">Content-Type</span></code> header automatically.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -954,30 +954,30 @@
 16
 17
 18
-19</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/text&quot;</span><span class="p">)</span>
+19</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/text&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Text</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># Content-Type: text/plain; charset=utf-8</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;hello!&quot;</span>
 
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/bytes&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/bytes&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Bytes</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># Content-Type: application/octet-stream</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">content</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;hello!&quot;</span>
 
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/json&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/json&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">JSON</span><span class="p">:</span>
     <span class="c1"># Content-Type: application/json</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">hello</span> <span class="o">=</span> <span class="s2">&quot;world!&quot;</span>
 </pre></div>
 </td></tr></table>
 
 <h2 id="jinja2-template">Jinja2 template<a class="headerlink" href="#jinja2-template" title="Permanent link">&para;</a></h2>
-<p>To send html, you can use <a href="https://github.com/pallets/jinja/"><code class="codehilite"><span class="n">Jinja2</span></code></a> template.</p>
+<p>To send html, you can use <a href="https://github.com/pallets/jinja/"><code class="codehilite"><span class="err">Jinja2</span></code></a> template.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -986,28 +986,28 @@
 6
 7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">templates_dir</span><span class="o">=</span><span class="s2">&quot;templates/here&quot;</span><span class="p">)</span>
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/template&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/template&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Template</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># Content-Type: text/html</span>
-        <span class="n">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">load_template</span><span class="p">(</span><span class="s2">&quot;example.html&quot;</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s2">&quot;foobar&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">load_template</span><span class="p">(</span><span class="s2">&quot;example.html&quot;</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s2">&quot;foobar&quot;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
 <h2 id="chainable-methods">Chainable methods<a class="headerlink" href="#chainable-methods" title="Permanent link">&para;</a></h2>
-<p>There are setter methods inspired by <a href="https://github.com/expressjs/express/"><code class="codehilite"><span class="n">express</span></code></a> . These methods return <code class="codehilite"><span class="n">Response</span></code> itself, so you can chain them.</p>
+<p>There are setter methods inspired by <a href="https://github.com/expressjs/express/"><code class="codehilite"><span class="err">express</span></code></a> . These methods return <code class="codehilite"><span class="err">Response</span></code> itself, so you can chain them.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
-4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/chain&quot;</span><span class="p">)</span>
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/chain&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Chain</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
-        <span class="n">resp</span><span class="o">.</span><span class="n">set_status</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">secure</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s2">&quot;long chain!&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">set_header</span><span class="p">(</span><span class="s2">&quot;X-somehead&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">set_status</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span><span class="o">.</span><span class="n">set_cookie</span><span class="p">(</span><span class="s2">&quot;key&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">,</span> <span class="n">secure</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s2">&quot;long chain!&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">set_header</span><span class="p">(</span><span class="s2">&quot;X-somehead&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
 <h2 id="redirect">Redirect<a class="headerlink" href="#redirect" title="Permanent link">&para;</a></h2>
-<p><code class="codehilite"><span class="n">redirect</span></code> has 2 ways: view class or URL.</p>
+<p><code class="codehilite"><span class="err">redirect</span></code> has 2 ways: view class or URL.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -1019,23 +1019,23 @@
  9
 10
 11
-12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/redirect/internal&quot;</span><span class="p">)</span>
+12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/redirect/internal&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Redirect</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># redirect to the view class.</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="n">view</span><span class="o">=</span><span class="n">Index</span><span class="p">)</span>
 
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/redirect/external&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/redirect/external&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">GoOuterPage</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="c1"># specify URL.</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">redirect</span><span class="p">(</span><span class="n">url</span><span class="o">=</span><span class="s2">&quot;http://www.example.com&quot;</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
 <h2 id="streaming">Streaming<a class="headerlink" href="#streaming" title="Permanent link">&para;</a></h2>
-<p>Using <code class="codehilite"><span class="n">Response</span><span class="p">.</span><span class="n">streaming</span></code> allows you to send data successively.</p>
+<p>Using <code class="codehilite"><span class="err">Response.streaming</span></code> allows you to send data successively.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -1046,21 +1046,22 @@
  8
  9
 10
-11</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">async</span> <span class="k">def</span> <span class="nf">generate</span><span class="p">():</span>
+11</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">generate</span><span class="p">():</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
-        <span class="n">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-        <span class="k">yield</span> <span class="n">f</span><span class="s2">&quot;count: {i}&quot;</span>
+        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="sa">f</span><span class="s2">&quot;count: </span><span class="si">{i}</span><span class="s2">&quot;</span>
     <span class="k">yield</span> <span class="s2">&quot;Completed!&quot;</span>
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/generator&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/generator&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Stream</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;content-type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;text/plain&quot;</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">streaming</span> <span class="o">=</span> <span class="n">generate</span><span class="p">()</span>
 </pre></div>
 </td></tr></table>
                 
                   
+                
                 
               
               
@@ -1128,7 +1129,7 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       

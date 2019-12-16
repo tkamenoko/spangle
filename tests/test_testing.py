@@ -1,11 +1,12 @@
 from asyncio import TimeoutError, sleep
-from unittest import TestCase
 
 from spangle import Api
 from spangle.exceptions import NotFoundError
 
+from ._compat import _Case as TestCase
 
-class TestClientTests(TestCase):
+
+class ClientTests(TestCase):
     def setUp(self):
         self.api = Api()
 

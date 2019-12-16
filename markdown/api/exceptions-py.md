@@ -76,8 +76,8 @@ class ParseError(self, message="Unsupported format.", status=HTTPStatus.BAD_REQU
 
 #### Base classes {: #ParseError-bases }
 
-* [`SpangleError `](./#SpangleError)
 * `builtins.ValueError`
+* [`SpangleError `](./#SpangleError)
 
 
 ------
@@ -106,3 +106,27 @@ class SpangleError(
 #### Base classes {: #SpangleError-bases }
 
 * `builtins.Exception`
+
+
+------
+
+### TooLargeRequestError {: #TooLargeRequestError }
+
+```python
+class TooLargeRequestError(self, message="Payload too large.", status=HTTPStatus.REQUEST_ENTITY_TOO_LARGE)
+```
+
+413: Payload Too Large.
+
+**Args**
+
+* **message** (`str`): Print on error page.
+* **status** (`int`): HTTP status code.
+* **headers** (`Dict[str, str]`): HTTP headers.
+
+
+------
+
+#### Base classes {: #TooLargeRequestError-bases }
+
+* [`SpangleError `](./#SpangleError)

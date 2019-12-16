@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -893,9 +893,9 @@
                 
                 
                 <h1 id="websocket">WebSocket<a class="headerlink" href="#websocket" title="Permanent link">&para;</a></h1>
-<p><code class="codehilite"><span class="n">spangle</span></code> supports WebSocket connection.</p>
+<p><code class="codehilite"><span class="err">spangle</span></code> supports WebSocket connection.</p>
 <h2 id="websocket-view-class">WebSocket view class<a class="headerlink" href="#websocket-view-class" title="Permanent link">&para;</a></h2>
-<p>You can define a WebSocket endpoint the same as HTTP endpoint, but the name is <code class="codehilite"><span class="n">on_ws</span></code> . </p>
+<p>You can define a WebSocket endpoint the same as HTTP endpoint, but the name is <code class="codehilite"><span class="err">on_ws</span></code> . </p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -907,36 +907,36 @@
  9
 10
 11
-12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/websocket/{name}&quot;</span><span class="p">)</span>
+12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/websocket/</span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">WebSocket</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_ws</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-        <span class="n">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;hello, {name}!&quot;</span><span class="p">)</span>
-        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_ws</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;hello, </span><span class="si">{name}</span><span class="s2">!&quot;</span><span class="p">)</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;end&quot;</span><span class="p">:</span>
                 <span class="k">break</span>
-            <span class="n">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;you said `{data}` .&quot;</span><span class="p">)</span>
-        <span class="n">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;bye.&quot;</span><span class="p">)</span>
-        <span class="n">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+            <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;you said `</span><span class="si">{data}</span><span class="s2">` .&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;bye.&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>HTTP Upgrade Request is processed in an ASGI server, so you don&rsquo;t need to send <code class="codehilite"><span class="mi">101</span> <span class="n">Switching</span> <span class="n">Protocols</span></code> manually.</p>
+<p>HTTP Upgrade Request is processed in an ASGI server, so you don&rsquo;t need to send <code class="codehilite"><span class="err">101 Switching Protocols</span></code> manually.</p>
 </div>
 <h2 id="error-handling-for-websocket">Error handling for WebSocket<a class="headerlink" href="#error-handling-for-websocket" title="Permanent link">&para;</a></h2>
-<p>You can process WebSocket errors with <a href="../error-handling"><code class="codehilite"><span class="n">ErrorHandler</span></code></a>.</p>
+<p>You can process WebSocket errors with <a href="../error-handling"><code class="codehilite"><span class="err">ErrorHandler</span></code></a>.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4
-5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.handle</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">)</span>
+5</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Handler</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_ws_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span><span class="ne">TypeError</span><span class="p">):</span>
-        <span class="n">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;Invalid data.&quot;</span><span class="p">)</span>
-        <span class="n">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="mi">1007</span><span class="p">)</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_ws_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span><span class="ne">TypeError</span><span class="p">):</span>
+        <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;Invalid data.&quot;</span><span class="p">)</span>
+        <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="mi">1007</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
@@ -945,32 +945,51 @@
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
-4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.before_requesst</span>
+4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">before_requesst</span>
 <span class="k">class</span> <span class="nc">Hook</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_ws</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_ws</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">42</span>
 </pre></div>
 </td></tr></table>
 
 <h2 id="websocket-testing">WebSocket Testing<a class="headerlink" href="#websocket-testing" title="Permanent link">&para;</a></h2>
 <p>WebSocket test cllient is also available.</p>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4
-5
-6
-7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">with</span> <span class="n">api</span><span class="o">.</span><span class="n">client</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12
+13
+14
+15
+16</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">with</span> <span class="n">api</span><span class="o">.</span><span class="n">client</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">ws_connect</span><span class="p">(</span><span class="s2">&quot;/websocket/spam&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;hello, spam!&quot;</span>
         <span class="n">connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;snakes&quot;</span><span class="p">)</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;you said `snakes` .&quot;</span>
+
+<span class="c1"># async version.</span>
+<span class="k">async</span> <span class="k">with</span> <span class="n">api</span><span class="o">.</span><span class="n">async_client</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">ws_connect</span><span class="p">(</span><span class="s2">&quot;/websocket/spam&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;hello, spam!&quot;</span>
+        <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;async!&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;you said `async!` .&quot;</span>
 </pre></div>
 </td></tr></table>
                 
                   
+                
                 
               
               
@@ -1038,7 +1057,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

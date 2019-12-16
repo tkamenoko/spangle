@@ -1,10 +1,11 @@
 from http import HTTPStatus
-from unittest import TestCase
 from unittest.mock import MagicMock
 
 from spangle import Api
 from spangle.blueprint import Blueprint
 from spangle.exceptions import NotFoundError
+
+from ._compat import _Case as TestCase
 
 
 class BlueprintTests(TestCase):

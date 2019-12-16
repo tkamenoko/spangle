@@ -1,11 +1,12 @@
 import asyncio
 from http import HTTPStatus
 from json import loads
-from unittest import TestCase
 
 from jinja2 import escape
 
 from spangle import Api
+
+from .._compat import _Case as TestCase
 
 
 class RequestTests(TestCase):
@@ -153,6 +154,25 @@ class RequestTests(TestCase):
             response = client.post("/", form=send)
             self.assertEqual(response.status_code, HTTPStatus.OK)
 
+    def test_large_file(self):
+        send = {
+            "foo": "bar",
+            "num": "42",
+            "file": ("file.bin", b"abcde" * 1000 ** 2, "application/octet-stream"),
+        }
+
+        @self.api.route("/")
+        class Index:
+            async def on_post(_, req, resp):
+                await req.media()
+                return resp
+
+        self.api.max_upload_bytes = 1 * 1000 ** 2
+
+        with self.api.client() as client:
+            response = client.post("/", files=send)
+            self.assertEqual(response.status_code, HTTPStatus.REQUEST_ENTITY_TOO_LARGE)
+
 
 class ResponseTest(TestCase):
     def setUp(self):
@@ -266,7 +286,7 @@ class ResponseTest(TestCase):
                 resp.streaming = streaming()
 
         with self.api.client() as client:
-            response = client.get("/stream")
+            response = client.get("/stream", timeout=2)
             self.assertEqual(response.status_code, HTTPStatus.OK)
             expected_str = "".join([f"count {i}\n" for i in range(10)])
             self.assertEqual(response.text, expected_str)
