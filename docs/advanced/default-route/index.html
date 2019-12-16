@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -865,7 +865,7 @@
                 
                 
                 <h1 id="default-routing-for-single-page-application">Default Routing for Single Page Application<a class="headerlink" href="#default-routing-for-single-page-application" title="Permanent link">&para;</a></h1>
-<p>To create single page application, <code class="codehilite"><span class="n">default_route</span></code> and multiple routing help you.</p>
+<p>To create single page application, <code class="codehilite"><span class="err">default_route</span></code> and multiple routing help you.</p>
 <h2 id="default-route">Default route<a class="headerlink" href="#default-route" title="Permanent link">&para;</a></h2>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
@@ -877,17 +877,17 @@
 8
 9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">(</span><span class="n">default_route</span><span class="o">=</span><span class="s2">&quot;/default&quot;</span><span class="p">)</span>
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/default&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/default&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Default</span><span class="p">:</span>
     <span class="k">pass</span>
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/spam&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/spam&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Spam</span><span class="p">:</span>
     <span class="k">pass</span>
 </pre></div>
 </td></tr></table>
 
-<p>In this example, a request to <code class="codehilite"><span class="o">/</span><span class="n">spam</span></code> gets a response from <code class="codehilite"><span class="n">Spam</span></code> , and the other requests include <code class="codehilite"><span class="o">/</span><span class="k">default</span></code> get responses from <code class="codehilite"><span class="k">Default</span></code> , so any users get not <code class="codehilite"><span class="mi">404</span></code> responses.</p>
+<p>In this example, a request to <code class="codehilite"><span class="err">/spam</span></code> gets a response from <code class="codehilite"><span class="err">Spam</span></code> , and the other requests include <code class="codehilite"><span class="err">/default</span></code> get responses from <code class="codehilite"><span class="err">Default</span></code> , so any users get not <code class="codehilite"><span class="err">404</span></code> responses.</p>
 <h2 id="multiple-routing-for-allowed-patterns">Multiple routing for allowed patterns<a class="headerlink" href="#multiple-routing-for-allowed-patterns" title="Permanent link">&para;</a></h2>
 <p><a href="https://support.google.com/webmasters/answer/181708?hl=en">A soft 404</a> is a bad practice. Routing allowed patterns to a view removes worry of the problem.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
@@ -901,20 +901,21 @@
  9
 10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">()</span>
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/need/{converter:func}&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span><span class="p">}</span> <span class="p">)</span>
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/api/more/longer/path&quot;</span><span class="p">)</span>
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/api/{foo}&quot;</span><span class="p">)</span>
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/need/{converter:func}&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="mi">2</span><span class="p">}</span> <span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/more/longer/path&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/api/</span><span class="si">{foo}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Index</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="c1"># `kw` may contain parsed path params.</span>
         <span class="k">pass</span>
 </pre></div>
 </td></tr></table>
 
-<p><code class="codehilite"><span class="n">api</span></code> returns <code class="codehilite"><span class="k">Index</span></code> to matched requests, and others get <code class="codehilite"><span class="mi">404</span></code> .</p>
+<p><code class="codehilite"><span class="err">api</span></code> returns <code class="codehilite"><span class="err">Index</span></code> to matched requests, and others get <code class="codehilite"><span class="err">404</span></code> .</p>
                 
                   
+                
                 
               
               
@@ -982,7 +983,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -1063,7 +1063,7 @@
                 
                 
                 <h1 id="module-spangleexceptions">Module spangle.exceptions<a class="headerlink" href="#module-spangleexceptions" title="Permanent link">&para;</a></h1>
-<p><a href="../"><code class="codehilite"><span class="n">spangle</span></code></a> exceptions.</p>
+<p><a href="../"><code class="codehilite"><span class="err">spangle</span></code></a> exceptions.</p>
 <h2 id="classes">Classes<a class="headerlink" href="#classes" title="Permanent link">&para;</a></h2>
 <h3 id="MethodNotAllowedError">MethodNotAllowedError<a class="headerlink" href="#MethodNotAllowedError" title="Permanent link">&para;</a></h3>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
@@ -1074,21 +1074,21 @@
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Method not allowed.&quot;</span><span class="p">,</span>
     <span class="n">status</span><span class="o">=</span><span class="n">HTTPStatus</span><span class="o">.</span><span class="n">METHOD_NOT_ALLOWED</span><span class="p">,</span>
-    <span class="n">allowed_methods</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,)</span>
+    <span class="n">allowed_methods</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,)</span>
 </pre></div>
 </td></tr></table>
 
-<p>405: Unexpected method. Safe methods like <code class="codehilite"><span class="k">GET</span></code> will be accepted anytime.</p>
+<p>405: Unexpected method. Safe methods like <code class="codehilite"><span class="err">GET</span></code> will be accepted anytime.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>message</strong> (<code class="codehilite"><span class="n">str</span></code>): Print on error page.</li>
-<li><strong>status</strong> (<code class="codehilite"><span class="nb">int</span></code>): HTTP status code.</li>
-<li><strong>headers</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">]</span></code>): HTTP headers.</li>
+<li><strong>message</strong> (<code class="codehilite"><span class="err">str</span></code>): Print on error page.</li>
+<li><strong>status</strong> (<code class="codehilite"><span class="err">int</span></code>): HTTP status code.</li>
+<li><strong>headers</strong> (<code class="codehilite"><span class="err">Dict[str, str]</span></code>): HTTP headers.</li>
 </ul>
 <hr />
 <h4 id="MethodNotAllowedError-bases">Base classes<a class="headerlink" href="#MethodNotAllowedError-bases" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="./#SpangleError"><code class="codehilite"><span class="n">SpangleError</span></code></a></li>
+<li><a href="./#SpangleError"><code class="codehilite"><span class="err">SpangleError</span></code></a></li>
 </ul>
 <hr />
 <h3 id="NotFoundError">NotFoundError<a class="headerlink" href="#NotFoundError" title="Permanent link">&para;</a></h3>
@@ -1099,14 +1099,14 @@
 <p>404: Missing resources, views, etc.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>message</strong> (<code class="codehilite"><span class="n">str</span></code>): Print on error page.</li>
-<li><strong>status</strong> (<code class="codehilite"><span class="nb">int</span></code>): HTTP status code.</li>
-<li><strong>headers</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">]</span></code>): HTTP headers.</li>
+<li><strong>message</strong> (<code class="codehilite"><span class="err">str</span></code>): Print on error page.</li>
+<li><strong>status</strong> (<code class="codehilite"><span class="err">int</span></code>): HTTP status code.</li>
+<li><strong>headers</strong> (<code class="codehilite"><span class="err">Dict[str, str]</span></code>): HTTP headers.</li>
 </ul>
 <hr />
 <h4 id="NotFoundError-bases">Base classes<a class="headerlink" href="#NotFoundError-bases" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="./#SpangleError"><code class="codehilite"><span class="n">SpangleError</span></code></a></li>
+<li><a href="./#SpangleError"><code class="codehilite"><span class="err">SpangleError</span></code></a></li>
 </ul>
 <hr />
 <h3 id="ParseError">ParseError<a class="headerlink" href="#ParseError" title="Permanent link">&para;</a></h3>
@@ -1117,15 +1117,15 @@
 <p>400: Raised by parser.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>message</strong> (<code class="codehilite"><span class="n">str</span></code>): Print on error page.</li>
-<li><strong>status</strong> (<code class="codehilite"><span class="nb">int</span></code>): HTTP status code.</li>
-<li><strong>headers</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">]</span></code>): HTTP headers.</li>
+<li><strong>message</strong> (<code class="codehilite"><span class="err">str</span></code>): Print on error page.</li>
+<li><strong>status</strong> (<code class="codehilite"><span class="err">int</span></code>): HTTP status code.</li>
+<li><strong>headers</strong> (<code class="codehilite"><span class="err">Dict[str, str]</span></code>): HTTP headers.</li>
 </ul>
 <hr />
 <h4 id="ParseError-bases">Base classes<a class="headerlink" href="#ParseError-bases" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="./#SpangleError"><code class="codehilite"><span class="n">SpangleError</span></code></a></li>
-<li><code class="codehilite"><span class="n">builtins</span><span class="p">.</span><span class="n">ValueError</span></code></li>
+<li><code class="codehilite"><span class="err">builtins.ValueError</span></code></li>
+<li><a href="./#SpangleError"><code class="codehilite"><span class="err">SpangleError</span></code></a></li>
 </ul>
 <hr />
 <h3 id="SpangleError">SpangleError<a class="headerlink" href="#SpangleError" title="Permanent link">&para;</a></h3>
@@ -1137,21 +1137,21 @@
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Something wrong.&quot;</span><span class="p">,</span>
     <span class="n">status</span><span class="o">=</span><span class="n">HTTPStatus</span><span class="o">.</span><span class="n">INTERNAL_SERVER_ERROR</span><span class="p">,</span>
-    <span class="n">headers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,)</span>
+    <span class="n">headers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,)</span>
 </pre></div>
 </td></tr></table>
 
 <p>500: Base class of spangle-errors.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>message</strong> (<code class="codehilite"><span class="n">str</span></code>): Print on error page.</li>
-<li><strong>status</strong> (<code class="codehilite"><span class="nb">int</span></code>): HTTP status code.</li>
-<li><strong>headers</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">]</span></code>): HTTP headers.</li>
+<li><strong>message</strong> (<code class="codehilite"><span class="err">str</span></code>): Print on error page.</li>
+<li><strong>status</strong> (<code class="codehilite"><span class="err">int</span></code>): HTTP status code.</li>
+<li><strong>headers</strong> (<code class="codehilite"><span class="err">Dict[str, str]</span></code>): HTTP headers.</li>
 </ul>
 <hr />
 <h4 id="SpangleError-bases">Base classes<a class="headerlink" href="#SpangleError-bases" title="Permanent link">&para;</a></h4>
 <ul>
-<li><code class="codehilite"><span class="n">builtins</span><span class="p">.</span><span class="k">Exception</span></code></li>
+<li><code class="codehilite"><span class="err">builtins.Exception</span></code></li>
 </ul>
 <hr />
 <h3 id="TooLargeRequestError">TooLargeRequestError<a class="headerlink" href="#TooLargeRequestError" title="Permanent link">&para;</a></h3>
@@ -1162,17 +1162,18 @@
 <p>413: Payload Too Large.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>message</strong> (<code class="codehilite"><span class="n">str</span></code>): Print on error page.</li>
-<li><strong>status</strong> (<code class="codehilite"><span class="nb">int</span></code>): HTTP status code.</li>
-<li><strong>headers</strong> (<code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="n">str</span><span class="p">,</span> <span class="n">str</span><span class="p">]</span></code>): HTTP headers.</li>
+<li><strong>message</strong> (<code class="codehilite"><span class="err">str</span></code>): Print on error page.</li>
+<li><strong>status</strong> (<code class="codehilite"><span class="err">int</span></code>): HTTP status code.</li>
+<li><strong>headers</strong> (<code class="codehilite"><span class="err">Dict[str, str]</span></code>): HTTP headers.</li>
 </ul>
 <hr />
 <h4 id="TooLargeRequestError-bases">Base classes<a class="headerlink" href="#TooLargeRequestError-bases" title="Permanent link">&para;</a></h4>
 <ul>
-<li><a href="./#SpangleError"><code class="codehilite"><span class="n">SpangleError</span></code></a></li>
+<li><a href="./#SpangleError"><code class="codehilite"><span class="err">SpangleError</span></code></a></li>
 </ul>
                 
                   
+                
                 
               
               
@@ -1240,7 +1241,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

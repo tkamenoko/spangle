@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -889,7 +889,7 @@
                 
                 
                 <h1 id="routing">Routing<a class="headerlink" href="#routing" title="Permanent link">&para;</a></h1>
-<p><code class="codehilite"><span class="n">spangle</span></code> provides simple and flexible routing powered by <a href="https://github.com/r1chardj0n3s/parse"><code class="codehilite"><span class="n">parse</span></code></a> .</p>
+<p><code class="codehilite"><span class="err">spangle</span></code> provides simple and flexible routing powered by <a href="https://github.com/r1chardj0n3s/parse"><code class="codehilite"><span class="err">parse</span></code></a> .</p>
 <h2 id="static-routing">Static routing<a class="headerlink" href="#static-routing" title="Permanent link">&para;</a></h2>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
@@ -904,9 +904,9 @@
 
 <span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">()</span>
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/path/to/page&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/path/to/page&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">StaticRoute</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="k">pass</span>
 </pre></div>
 </td></tr></table>
@@ -925,22 +925,22 @@
 10
 11
 12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># routing.py</span>
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/path/to/{name}&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/path/to/</span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">DynamicRoute</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span><span class="nb">str</span><span class="p">):</span>
         <span class="c1"># `spangle` tries to get a view from static routes first.</span>
         <span class="k">assert</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;page&quot;</span>
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/use/{multiple}/{allowed}&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/use/</span><span class="si">{multiple}</span><span class="s2">/</span><span class="si">{allowed}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Multiple</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
         <span class="k">assert</span> <span class="s2">&quot;multiple&quot;</span> <span class="ow">in</span> <span class="n">kw</span>
         <span class="k">assert</span> <span class="s2">&quot;allowed&quot;</span> <span class="ow">in</span> <span class="n">kw</span>
 </pre></div>
 </td></tr></table>
 
 <h2 id="convert-values">Convert values<a class="headerlink" href="#convert-values" title="Permanent link">&para;</a></h2>
-<p>View methods accept URL arguments as <code class="codehilite"><span class="n">str</span></code> by default. You can change this behavior to set converters.</p>
+<p>View methods accept URL arguments as <code class="codehilite"><span class="err">str</span></code> by default. You can change this behavior to set converters.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -973,9 +973,9 @@
 30</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="c1"># routing.py</span>
 
 <span class="c1"># `int` and `float` are built-in converters.</span>
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/use/{dynamic:int}&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/use/{dynamic:int}&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">IntArg</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">dynamic</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">dynamic</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dynamic</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 
 <span class="k">def</span> <span class="nf">month</span><span class="p">(</span><span class="n">v</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
@@ -984,9 +984,9 @@
         <span class="k">raise</span> <span class="ne">ValueError</span>
 
 <span class="c1"># You can define custom converters as `Dict[str,Callable]` .</span>
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/articles-in-{m:month}&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;month&quot;</span><span class="p">:</span><span class="n">month</span><span class="p">})</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/articles-in-{m:month}&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;month&quot;</span><span class="p">:</span><span class="n">month</span><span class="p">})</span>
 <span class="k">class</span> <span class="nc">CustomConverter</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
         <span class="k">assert</span> <span class="mi">1</span><span class="o">&lt;=</span><span class="n">m</span><span class="o">&lt;=</span><span class="mi">12</span>
 
 <span class="k">def</span> <span class="nf">regex</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
@@ -996,24 +996,25 @@
 
 <span class="c1"># URL args has no slash by default.</span>
 <span class="c1"># You can use regular expression to set pattern to `converter.pattern` .</span>
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/accept/toolong/{path:regex}&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;regex&quot;</span><span class="p">:</span><span class="n">regex</span><span class="p">})</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/accept/toolong/{path:regex}&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;regex&quot;</span><span class="p">:</span><span class="n">regex</span><span class="p">})</span>
 <span class="k">class</span> <span class="nc">LongASCII</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">assert</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">path</span>
 </pre></div>
 </td></tr></table>
 
-<p>See <a href="https://github.com/r1chardj0n3s/parse"><code class="codehilite"><span class="n">parse</span></code></a> for more details.</p>
+<p>See <a href="https://github.com/r1chardj0n3s/parse"><code class="codehilite"><span class="err">parse</span></code></a> for more details.</p>
 <h2 id="routing-strategies">Routing Strategies<a class="headerlink" href="#routing-strategies" title="Permanent link">&para;</a></h2>
-<p><code class="codehilite"><span class="n">spangle</span></code> has 3 strategies about trailing slash.</p>
+<p><code class="codehilite"><span class="err">spangle</span></code> has 3 strategies about trailing slash.</p>
 <ul>
-<li><code class="codehilite"><span class="ss">&quot;redirect&quot;</span></code> (default): always redirect from <code class="codehilite"><span class="o">/</span><span class="n">route</span></code> to <code class="codehilite"><span class="o">/</span><span class="n">route</span><span class="o">/</span></code> with <code class="codehilite"><span class="mi">308</span> <span class="n">PERMANENT_REDIRECT</span></code> (even if <code class="codehilite"><span class="o">/</span><span class="n">route</span><span class="o">/</span></code> is not found!).</li>
-<li><code class="codehilite"><span class="ss">&quot;strict&quot;</span></code> : distinct <code class="codehilite"><span class="o">/</span><span class="n">route</span></code> from <code class="codehilite"><span class="o">/</span><span class="n">route</span><span class="o">/</span></code> .</li>
-<li><code class="codehilite"><span class="ss">&quot;clone&quot;</span></code> : return same view between <code class="codehilite"><span class="o">/</span><span class="n">route</span></code> and <code class="codehilite"><span class="o">/</span><span class="n">route</span><span class="o">/</span></code> .</li>
+<li><code class="codehilite"><span class="err">&quot;redirect&quot;</span></code> (default): always redirect from <code class="codehilite"><span class="err">/route</span></code> to <code class="codehilite"><span class="err">/route/</span></code> with <code class="codehilite"><span class="err">308 PERMANENT_REDIRECT</span></code> (even if <code class="codehilite"><span class="err">/route/</span></code> is not found!).</li>
+<li><code class="codehilite"><span class="err">&quot;strict&quot;</span></code> : distinct <code class="codehilite"><span class="err">/route</span></code> from <code class="codehilite"><span class="err">/route/</span></code> .</li>
+<li><code class="codehilite"><span class="err">&quot;clone&quot;</span></code> : return same view between <code class="codehilite"><span class="err">/route</span></code> and <code class="codehilite"><span class="err">/route/</span></code> .</li>
 </ul>
-<p>To change the strategy, create <code class="codehilite"><span class="n">Api</span></code> instance with an argument like <code class="codehilite"><span class="n">Api</span><span class="p">(</span><span class="n">routing</span><span class="o">=</span><span class="ss">&quot;clone&quot;</span><span class="p">)</span></code> .</p>
+<p>To change the strategy, create <code class="codehilite"><span class="err">Api</span></code> instance with an argument like <code class="codehilite"><span class="err">Api(routing=&quot;clone&quot;)</span></code> .</p>
                 
                   
+                
                 
               
               
@@ -1081,7 +1082,7 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       

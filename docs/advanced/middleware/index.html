@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -865,9 +865,9 @@
                 
                 
                 <h1 id="asgi-middleware">ASGI Middleware<a class="headerlink" href="#asgi-middleware" title="Permanent link">&para;</a></h1>
-<p><code class="codehilite"><span class="n">spangle</span></code> uses only one middleware: <a href="https://github.com/encode/starlette/blob/master/starlette/middleware/errors.py"><code class="codehilite"><span class="n">starlette</span><span class="p">.</span><span class="n">ServerErrorMiddleware</span></code></a> . You can use other ASGI middlewares with <code class="codehilite"><span class="n">spangle</span></code> .</p>
+<p><code class="codehilite"><span class="err">spangle</span></code> uses only one middleware: <a href="https://github.com/encode/starlette/blob/master/starlette/middleware/errors.py"><code class="codehilite"><span class="err">starlette.ServerErrorMiddleware</span></code></a> . You can use other ASGI middlewares with <code class="codehilite"><span class="err">spangle</span></code> .</p>
 <h2 id="append-middlewares">Append middlewares<a class="headerlink" href="#append-middlewares" title="Permanent link">&para;</a></h2>
-<p>To use middlewares, call <a href="/api/api-py#Api.add_middleware"><code class="codehilite"><span class="n">Api</span><span class="p">.</span><span class="n">add_middleware</span></code></a> with callable and its config.</p>
+<p>To use middlewares, call <a href="/api/api-py#Api.add_middleware"><code class="codehilite"><span class="err">Api.add_middleware</span></code></a> with callable and its config.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -900,22 +900,23 @@
  7
  8
  9
-10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">call</span> <span class="nl">m3</span><span class="ss">(</span><span class="nv">scope</span>, <span class="nv">receive</span>, <span class="k">send</span><span class="ss">)</span>:
-    <span class="o">*</span><span class="nv">m3</span> <span class="nv">preprocess</span><span class="o">*</span>
-    <span class="k">call</span> <span class="nl">m2</span><span class="ss">(</span><span class="nv">scope</span>, <span class="nv">receive</span>, <span class="k">send</span><span class="ss">)</span>:
-        <span class="o">*</span><span class="nv">m2</span> <span class="nv">preprocess</span><span class="o">*</span>
-        <span class="k">call</span> <span class="nl">m1</span><span class="ss">(</span><span class="nv">scope</span>, <span class="nv">receive</span>, <span class="k">send</span><span class="ss">)</span>:
-            <span class="o">*</span><span class="nv">m1</span> <span class="nv">preprocess</span><span class="o">*</span>
-            <span class="k">call</span> <span class="nl">api</span><span class="ss">(</span><span class="nv">scope</span>, <span class="nv">receive</span>, <span class="k">send</span><span class="ss">)</span> 
-            <span class="o">*</span><span class="nv">m1</span> <span class="nv">postprosess</span><span class="o">*</span>  
-        <span class="o">*</span><span class="nv">m2</span> <span class="nv">postprosess</span><span class="o">*</span>
-    <span class="o">*</span><span class="nv">m3</span> <span class="nv">postprosess</span><span class="o">*</span>
+10</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="err">call m3(scope, receive, send):</span>
+<span class="err">    *m3 preprocess*</span>
+<span class="err">    call m2(scope, receive, send):</span>
+<span class="err">        *m2 preprocess*</span>
+<span class="err">        call m1(scope, receive, send):</span>
+<span class="err">            *m1 preprocess*</span>
+<span class="err">            call api(scope, receive, send) </span>
+<span class="err">            *m1 postprosess*  </span>
+<span class="err">        *m2 postprosess*</span>
+<span class="err">    *m3 postprosess*</span>
 </pre></div>
 </td></tr></table>
 
 <p>Be careful in order of middlewares.</p>
                 
                   
+                
                 
               
               
@@ -983,7 +984,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

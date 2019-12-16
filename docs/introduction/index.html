@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -861,7 +861,7 @@
                 
                 
                 <h1 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h1>
-<p>This document explains basic usage of <code class="codehilite"><span class="n">spangle</span></code> . </p>
+<p>This document explains basic usage of <code class="codehilite"><span class="err">spangle</span></code> . </p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <p>Python&gt;=3.7 is required.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
@@ -891,10 +891,10 @@ pip install hypercorn <span class="c1"># or your favorite ASGI server.</span>
 
 
 <span class="c1"># a view is defined as a class, and `api.route` decorates it.</span>
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Hello</span><span class="p">:</span>
     <span class="c1"># view methods must be asynchronous.</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="o">.</span><span class="n">hello</span> <span class="o">=</span> <span class="s2">&quot;world&quot;</span>
         <span class="k">return</span> <span class="n">resp</span> <span class="c1"># `return` is optional.</span>
 </pre></div>
@@ -904,10 +904,11 @@ pip install hypercorn <span class="c1"># or your favorite ASGI server.</span>
 </pre></div>
 </td></tr></table>
 
-<p>Now your first <code class="codehilite"><span class="n">spangle</span></code> app is running on your machine! Let&rsquo;s access <code class="codehilite"><span class="mi">127</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="p">.</span><span class="mi">1</span><span class="p">:</span><span class="mi">8000</span></code> .</p>
+<p>Now your first <code class="codehilite"><span class="err">spangle</span></code> app is running on your machine! Let&rsquo;s access <code class="codehilite"><span class="err">127.0.0.1:8000</span></code> .</p>
 <p>To config ASGI server, visit <a href="https://gitlab.com/pgjones/hypercorn">hypercorn&rsquo;s repository</a> .</p>
                 
                   
+                
                 
               
               
@@ -975,7 +976,7 @@ pip install hypercorn <span class="c1"># or your favorite ASGI server.</span>
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       

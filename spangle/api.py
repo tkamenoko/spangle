@@ -284,6 +284,10 @@ class Api:
         * timeout (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
             to disable, set `None` . Default: `1` .
 
+        **Returns**
+
+        * `spangle.testing.HttpTestClient`
+
         """
         return HttpTestClient(self, timeout=timeout)
 
@@ -297,6 +301,10 @@ class Api:
 
         * timeout (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
             to disable, set `None` . Default: `1` .
+
+        **Returns**
+
+        * `spangle.testing.AsyncHttpTestClient`
 
         """
         return AsyncHttpTestClient(self, timeout=timeout)

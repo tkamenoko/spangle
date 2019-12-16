@@ -22,6 +22,15 @@ Headers = Union[Mapping, List[Tuple[str, str]]]
 Params = Union[Mapping, List[Tuple[str, str]]]
 
 
+__all__ = [
+    "HttpTestResponse",
+    "AsyncWebsocketClient",
+    "WebsocketClient",
+    "AsyncHttpTestClient",
+    "HttpTestClient",
+]
+
+
 class HttpTestResponse:
     """
     Response for testing.
@@ -77,11 +86,11 @@ class HttpTestResponse:
 
     @property
     def cookies(self):
-        """(`RequestsCookieJar`): Dict-like response cookies."""
+        """(`Cookies`): Dict-like response cookies."""
         return self._resp.cookies
 
 
-class BaseWebSocket:
+class _BaseWebSocket:
     _app: ASGIApp
     host: str
     path: str
@@ -91,7 +100,7 @@ class BaseWebSocket:
 
     def __init__(
         self,
-        http: "BaseClient",
+        http: "_BaseClient",
         path: str = "",
         headers: CIMultiDict = None,
         params: Params = None,
@@ -173,7 +182,7 @@ class BaseWebSocket:
         message[type_key] = data
         await self._connection.send_input(message)
 
-    async def __aenter__(self) -> "BaseWebSocket":
+    async def __aenter__(self) -> "_BaseWebSocket":
         await self._connect()
         return self
 
@@ -181,7 +190,7 @@ class BaseWebSocket:
         await self._close()
 
 
-class AsyncWebsocketClient(BaseWebSocket):
+class AsyncWebsocketClient(_BaseWebSocket):
     """
     Asynchronous WebSocket test client. It is expected to be called from
         `spangle.testing.AsyncHttpTestClient` .
@@ -266,7 +275,7 @@ class AsyncWebsocketClient(BaseWebSocket):
         return await self._send(data)
 
 
-class WebsocketClient(BaseWebSocket):
+class WebsocketClient(_BaseWebSocket):
     """
     WebSocket test client. It is expected to be called from
         `spangle.testing.HttpTestClient` .
@@ -361,7 +370,7 @@ class WebsocketClient(BaseWebSocket):
         )
 
 
-class BaseClient:
+class _BaseClient:
     def __init__(
         self,
         app: ASGIApp,
@@ -457,7 +466,29 @@ class BaseClient:
         return HttpTestResponse(response)
 
 
-class AsyncHttpTestClient(BaseClient):
+class AsyncHttpTestClient(_BaseClient):
+    """
+    Mock HTTP client without running server. Lifespan-event is supported by
+        `async with` statement.
+    """
+
+    def __init__(
+        self,
+        app: ASGIApp,
+        timeout: Union[int, float, None] = 1,
+        host="www.example.com",
+        client=("127.0.0.1", 123),
+    ):
+        """
+        **Args**
+
+        * app (`ASGIApp`): Application instance.
+        * timeout (`Optional[int]`): Timeout seconds.
+        * host (`str`): Temporary host name.
+        * client(`Tuple[str, int]`): Client address.
+        """
+        super().__init__(app, timeout, host, client)
+
     async def request(
         self,
         method: str,
@@ -472,6 +503,29 @@ class AsyncHttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send request to `app`.
+
+        **Args**
+
+        * method (`str`): HTTP request method.
+        * path (`str`): Requesting location.
+        * params (`Params`): Querystring as `dict` or `list` of `(name, value)`.
+        * headers (`Headers`): HTTP headers.
+        * cookies (`Mapping`): Sending HTTP cookies.
+        * json (`Mapping`): Request body as json.
+        * files (`Mapping`): Multipart form.
+        * form (`Mapping`): URL encoded form.
+        * content (`bytes`): Request body as bytes.
+        * timeout (`int`): Wait limits.
+        * allow_redirects (`bool`): If `False` , a client gets `30X` response
+            instead of redirection.
+
+        **Returns**
+
+        * `spangle.testing.HttpTestResponse`
+
+        """
         return await self._request(
             method,
             path,
@@ -516,6 +570,10 @@ class AsyncHttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send `GET` request to `app` . See
+            `spangle.testing.AsyncHttpTestClient.request` .
+        """
         return await self.request(
             "get",
             path,
@@ -539,6 +597,10 @@ class AsyncHttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send `POST` request to `app` . See
+            `spangle.testing.AsyncHttpTestClient.request` .
+        """
         return await self.request(
             "post",
             path,
@@ -566,6 +628,10 @@ class AsyncHttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send `PUT` request to `app` . See
+            `spangle.testing.AsyncHttpTestClient.request` .
+        """
         return await self.request(
             "put",
             path,
@@ -593,6 +659,10 @@ class AsyncHttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send `PATCH` request to `app` . See
+            `spangle.testing.AsyncHttpTestClient.request` .
+        """
         return await self.request(
             "patch",
             path,
@@ -616,6 +686,10 @@ class AsyncHttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send `DELETE` request to `app` . See
+            `spangle.testing.AsyncHttpTestClient.request` .
+        """
         return await self.request(
             "delete",
             path,
@@ -627,7 +701,12 @@ class AsyncHttpTestClient(BaseClient):
         )
 
 
-class HttpTestClient(BaseClient):
+class HttpTestClient(_BaseClient):
+    """
+    Mock HTTP client without running server. Lifespan-event is supported by `with`
+        statement.
+    """
+
     def __init__(
         self,
         app: ASGIApp,
@@ -635,6 +714,15 @@ class HttpTestClient(BaseClient):
         host="www.example.com",
         client=("127.0.0.1", 123),
     ):
+        """
+        **Args**
+
+        * app (`ASGIApp`): Application instance.
+        * timeout (`Optional[int]`): Timeout seconds.
+        * host (`str`): Temporary host name.
+        * client(`Tuple[str, int]`): Client address.
+
+        """
         super().__init__(app, timeout, host, client)
         self._loop = asyncio.get_event_loop()
 
@@ -658,6 +746,29 @@ class HttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send request to `app`.
+
+        **Args**
+
+        * method (`str`): HTTP request method.
+        * path (`str`): Requesting location.
+        * params (`Params`): Querystring as `dict` or `list` of `(name, value)`.
+        * headers (`Headers`): HTTP headers.
+        * cookies (`Mapping`): Sending HTTP cookies.
+        * json (`Mapping`): Request body as json.
+        * files (`Mapping`): Multipart form.
+        * form (`Mapping`): URL encoded form.
+        * content (`bytes`): Request body as bytes.
+        * timeout (`int`): Wait limits.
+        * allow_redirects (`bool`): If `False` , a client gets `30X` response
+            instead of redirection.
+
+        **Returns**
+
+        * `spangle.testing.HttpTestResponse`
+
+        """
         return self._loop.run_until_complete(
             self._request(
                 method,
@@ -704,6 +815,9 @@ class HttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send `GET` request to `app` . See `spangle.testing.HttpTestClient.request` .
+        """
         return self.request(
             "get",
             path,
@@ -727,6 +841,9 @@ class HttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send `POST` request to `app` . See `spangle.testing.HttpTestClient.request` .
+        """
         return self.request(
             "post",
             path,
@@ -754,6 +871,9 @@ class HttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send `PUT` request to `app` . See `spangle.testing.HttpTestClient.request` .
+        """
         return self.request(
             "put",
             path,
@@ -781,6 +901,9 @@ class HttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send `PATCH` request to `app` . See `spangle.testing.HttpTestClient.request` .
+        """
         return self.request(
             "patch",
             path,
@@ -804,6 +927,9 @@ class HttpTestClient(BaseClient):
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        """
+        Send `DELETE` request to `app` . See `spangle.testing.HttpTestClient.request` .
+        """
         return self.request(
             "delete",
             path,

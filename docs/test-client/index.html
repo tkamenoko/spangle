@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -847,9 +847,9 @@
                 
                 
                 <h1 id="test-client">Test Client<a class="headerlink" href="#test-client" title="Permanent link">&para;</a></h1>
-<p><a href="/api/api-py#Api.client"><code class="codehilite"><span class="n">Api</span><span class="p">.</span><span class="n">client</span></code></a> is useful for unittest. The client is based on <a href="https://github.com/encode/httpx"><code class="codehilite"><span class="n">httpx</span></code></a> .</p>
+<p><a href="/api/api-py#Api.client"><code class="codehilite"><span class="err">Api.client</span></code></a> is useful for unittest. The client is based on <a href="https://github.com/encode/httpx"><code class="codehilite"><span class="err">httpx</span></code></a> .</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p>Using <code class="codehilite"><span class="n">Api</span><span class="p">.</span><span class="n">client</span></code> allows you to run your api without starting an actual server. Lifespan events are also available.</p>
+<p>Using <code class="codehilite"><span class="err">Api.client</span></code> allows you to run your api without starting an actual server. Lifespan events are also available.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -869,17 +869,23 @@
 17
 18
 19
-20</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">()</span>
+20
+21
+22
+23
+24
+25
+26</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">()</span>
 
-<span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/testing/{value}&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/testing/</span><span class="si">{value}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">TestView</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="mi">418</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">value</span>
 
-<span class="nd">@api.on_start</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">on_start</span>
 <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="n">comps</span><span class="p">):</span>
-    <span class="k">print</span><span class="p">(</span><span class="s2">&quot;App is starting...&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;App is starting...&quot;</span><span class="p">)</span>
 
 <span class="c1"># `with` statement emulates lifespan events.</span>
 <span class="k">with</span> <span class="n">api</span><span class="o">.</span><span class="n">client</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
@@ -889,10 +895,17 @@
     <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="mi">418</span>
     <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;spam&quot;</span>
 <span class="c1"># shutdown hooks are called here.</span>
+
+<span class="c1"># asynchronous client is also available.</span>
+<span class="k">async</span> <span class="k">with</span> <span class="n">api</span><span class="o">.</span><span class="n">async_client</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+    <span class="c1"># console shows `App is starting...` .</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+    <span class="o">...</span>
 </pre></div>
 </td></tr></table>
                 
                   
+                
                 
               
               
@@ -960,7 +973,7 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       

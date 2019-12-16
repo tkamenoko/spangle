@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -889,7 +889,7 @@
                 
                 
                 <h1 id="component">Component<a class="headerlink" href="#component" title="Permanent link">&para;</a></h1>
-<p><code class="codehilite"><span class="n">Component</span></code> is an object shared in <code class="codehilite"><span class="n">spangle</span></code> app. It is useful to store database connections or global configurations.</p>
+<p><code class="codehilite"><span class="err">Component</span></code> is an object shared in <code class="codehilite"><span class="err">spangle</span></code> app. It is useful to store database connections or global configurations.</p>
 <h2 id="define-your-components">Define your components<a class="headerlink" href="#define-your-components" title="Permanent link">&para;</a></h2>
 <p>This is a simple example.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
@@ -908,21 +908,21 @@
 </pre></div>
 </td></tr></table>
 
-<p>Now, you are ready to use that component in your <code class="codehilite"><span class="n">api</span></code> .</p>
+<p>Now, you are ready to use that component in your <code class="codehilite"><span class="err">api</span></code> .</p>
 <h2 id="use-components-in-view-classes">Use components in view-classes<a class="headerlink" href="#use-components-in-view-classes" title="Permanent link">&para;</a></h2>
-<p>To use components in view classes, add <a href="https://docs.python.org/3/library/typing.html">type annotations</a> to args of <code class="codehilite"><span class="n">__init__</span></code> .</p>
+<p>To use components in view classes, add <a href="https://docs.python.org/3/library/typing.html">type annotations</a> to args of <code class="codehilite"><span class="err">__init__</span></code> .</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4
 5
 6
-7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.route</span><span class="p">(</span><span class="s2">&quot;/comp&quot;</span><span class="p">)</span>
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/comp&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">UseComponent</span><span class="p">:</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">my_comp</span><span class="p">:</span> <span class="n">MyComponent</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">my_comp</span> <span class="o">=</span> <span class="n">my_comp</span>
 
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">my_comp</span><span class="o">.</span><span class="n">valule</span> <span class="o">==</span> <span class="mi">42</span>
 </pre></div>
 </td></tr></table>
@@ -937,7 +937,7 @@
 2
 3
 4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">AnotherComp</span><span class="p">:</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="c1"># `async` is optional.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">my_comp</span> <span class="o">=</span> <span class="n">comps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MyComponent</span><span class="p">)</span>
 </pre></div>
@@ -945,10 +945,10 @@
 
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>There is no way to define the order of startup hooks. Do not expect that <code class="codehilite"><span class="n">startup</span></code> hooks of other components are already completed.</p>
+<p>There is no way to define the order of startup hooks. Do not expect that <code class="codehilite"><span class="err">startup</span></code> hooks of other components are already completed.</p>
 </div>
-<h2 id="use-api-instance-as-a-component">Use <code class="codehilite"><span class="n">Api</span></code> instance as a component<a class="headerlink" href="#use-api-instance-as-a-component" title="Permanent link">&para;</a></h2>
-<p><code class="codehilite"><span class="n">comps</span></code> is an instance of <code class="codehilite"><span class="n">Dict</span><span class="p">[</span><span class="k">type</span><span class="p">,</span> <span class="k">object</span><span class="p">]</span></code> and contains <a href="/api/api-py#Api"><code class="codehilite"><span class="n">Api</span></code></a> and its instance. You can use <code class="codehilite"><span class="n">Api</span></code> instance in view classes or components.</p>
+<h2 id="use-api-instance-as-a-component">Use <code class="codehilite"><span class="err">Api</span></code> instance as a component<a class="headerlink" href="#use-api-instance-as-a-component" title="Permanent link">&para;</a></h2>
+<p><code class="codehilite"><span class="err">comps</span></code> is an instance of <code class="codehilite"><span class="err">Dict[type, object]</span></code> and contains <a href="/api/api-py#Api"><code class="codehilite"><span class="err">Api</span></code></a> and its instance. You can use <code class="codehilite"><span class="err">Api</span></code> instance in view classes or components.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">Comp</span><span class="p">:</span>
@@ -958,6 +958,7 @@
 </td></tr></table>
                 
                   
+                
                 
               
               
@@ -1025,7 +1026,7 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       

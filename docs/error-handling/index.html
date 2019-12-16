@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -847,9 +847,9 @@
                 
                 
                 <h1 id="error-handling">Error Handling<a class="headerlink" href="#error-handling" title="Permanent link">&para;</a></h1>
-<p><code class="codehilite"><span class="n">spangle</span></code> provides minimum error response by default. You can make custom error handler for any type of <code class="codehilite"><span class="k">Exception</span></code> .</p>
+<p><code class="codehilite"><span class="err">spangle</span></code> provides minimum error response by default. You can make custom error handler for any type of <code class="codehilite"><span class="err">Exception</span></code> .</p>
 <h2 id="define-handler">Define handler<a class="headerlink" href="#define-handler" title="Permanent link">&para;</a></h2>
-<p>An error handler looks like normal view class, but has <code class="codehilite"><span class="n">on_error</span></code> method.</p>
+<p>An error handler looks like normal view class, but has <code class="codehilite"><span class="err">on_error</span></code> method.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -857,18 +857,18 @@
 5
 6
 7
-8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api.handle</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">)</span>
+8</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Handle</span><span class="p">:</span>
     <span class="c1"># note: response body like `Response.text` are initialized.</span>
-    <span class="n">async</span> <span class="k">def</span> <span class="nf">on_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="ne">ValueError</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="ne">ValueError</span><span class="p">):</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">status_code</span> <span class="o">=</span> <span class="mi">400</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="s2">&quot;Invalid request body.&quot;</span>
         <span class="c1"># to catch exceptions on server, set `reraise=True` .</span>
-        <span class="n">resp</span><span class="o">.</span><span class="n">reraise</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">reraise</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 </td></tr></table>
 
-<p>You can also use <a href="/api/error_handler-py#ErrorHandler"><code class="codehilite"><span class="n">ErrorHandler</span></code></a> instance.</p>
+<p>You can also use <a href="/api/error_handler-py#ErrorHandler"><code class="codehilite"><span class="err">ErrorHandler</span></code></a> instance.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -883,7 +883,7 @@
 
 <span class="n">eh</span> <span class="o">=</span> <span class="n">ErrorHandler</span><span class="p">()</span>
 
-<span class="nd">@eh.handle</span><span class="p">(</span><span class="s2">&quot;TypeError&quot;</span><span class="p">)</span>
+<span class="nd">@eh</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="s2">&quot;TypeError&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Handle</span><span class="p">:</span>
     <span class="o">...</span>
 
@@ -894,6 +894,7 @@
 </td></tr></table>
                 
                   
+                
                 
               
               
@@ -961,7 +962,7 @@
       
     </div>
     
-      <script src="../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:".."}})</script>
       

@@ -63,4 +63,13 @@ with api.client() as client:
         data = connection.receive(str)
         assert data == "you said `snakes` ."
 
+# async version.
+async with api.async_client() as client:
+    async with client.ws_connect("/websocket/spam") as connection:
+        data = await connection.receive(str)
+        assert data == "hello, spam!"
+        await connection.send("async!")
+        data = connection.receive(str)
+        assert data == "you said `async!` ."
+
 ```

@@ -32,7 +32,7 @@
         <meta name="lang:search.tokenizer" content="[\s\-]+">
       
       <link rel="shortcut icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.5.0">
+      <meta name="generator" content="mkdocs-1.0.4, mkdocs-material-4.6.0">
     
     
       
@@ -56,7 +56,7 @@
     
       
         <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700|Roboto+Mono&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
         <style>body,input{font-family:"Roboto","Helvetica Neue",Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono","Courier New",Courier,monospace}</style>
       
     
@@ -865,9 +865,9 @@
                 
                 
                 <h1 id="application-blueprint">Application Blueprint<a class="headerlink" href="#application-blueprint" title="Permanent link">&para;</a></h1>
-<p>Want to split an application? Or put views together under the same route? Use <a href="/api/blueprint-py#Blueprint"><code class="codehilite"><span class="n">Blueprint</span></code></a> .</p>
+<p>Want to split an application? Or put views together under the same route? Use <a href="/api/blueprint-py#Blueprint"><code class="codehilite"><span class="err">Blueprint</span></code></a> .</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
-<p><code class="codehilite"><span class="n">Blueprint</span></code> has similar methods to <a href="/api/api-py#Api"><code class="codehilite"><span class="n">Api</span></code></a> , so you can use <code class="codehilite"><span class="n">Blueprint</span></code> to define views, hooks, and handlers.</p>
+<p><code class="codehilite"><span class="err">Blueprint</span></code> has similar methods to <a href="/api/api-py#Api"><code class="codehilite"><span class="err">Api</span></code></a> , so you can use <code class="codehilite"><span class="err">Blueprint</span></code> to define views, hooks, and handlers.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
  2
  3
@@ -889,16 +889,16 @@
 
 <span class="n">bp</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">()</span>
 
-<span class="nd">@bp.route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="nd">@bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Images</span><span class="p">:</span>
     <span class="k">pass</span>
 
-<span class="nd">@bp.route</span><span class="p">(</span><span class="s2">&quot;/{tag}&quot;</span><span class="p">)</span>
+<span class="nd">@bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/</span><span class="si">{tag}</span><span class="s2">&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Tag</span><span class="p">:</span>
     <span class="k">pass</span>
 
-<span class="nd">@bp.on_start</span>
-<span class="n">async</span> <span class="k">def</span> <span class="nf">start_bp</span><span class="p">(</span><span class="n">comp</span><span class="p">):</span>
+<span class="nd">@bp</span><span class="o">.</span><span class="n">on_start</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start_bp</span><span class="p">(</span><span class="n">comp</span><span class="p">):</span>
     <span class="k">pass</span>
 
 <span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">()</span>
@@ -908,10 +908,10 @@
 
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><code class="codehilite"><span class="n">Blueprint</span></code> instance is <em>not</em> an ASGI application.</p>
+<p><code class="codehilite"><span class="err">Blueprint</span></code> instance is <em>not</em> an ASGI application.</p>
 </div>
 <h2 id="nest-blueprints">Nest blueprints<a class="headerlink" href="#nest-blueprints" title="Permanent link">&para;</a></h2>
-<p>A <code class="codehilite"><span class="n">Blueprint</span></code> instance can nest another one.</p>
+<p>A <code class="codehilite"><span class="err">Blueprint</span></code> instance can nest another one.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -923,7 +923,7 @@
 9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="n">child_bp</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">()</span>
 <span class="n">parent_bp</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">()</span>
 
-<span class="nd">@child_bp.route</span><span class="p">(</span><span class="s2">&quot;/child&quot;</span><span class="p">)</span>
+<span class="nd">@child_bp</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/child&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Child</span><span class="p">:</span>
     <span class="k">pass</span>
 
@@ -933,6 +933,7 @@
 </td></tr></table>
                 
                   
+                
                 
               
               
@@ -1000,7 +1001,7 @@
       
     </div>
     
-      <script src="../../assets/javascripts/application.a8b5e56f.js"></script>
+      <script src="../../assets/javascripts/application.808e90bb.js"></script>
       
       <script>app.initialize({version:"1.0.4",url:{base:"../.."}})</script>
       

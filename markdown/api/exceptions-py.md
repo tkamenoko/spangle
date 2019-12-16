@@ -76,8 +76,8 @@ class ParseError(self, message="Unsupported format.", status=HTTPStatus.BAD_REQU
 
 #### Base classes {: #ParseError-bases }
 
-* [`SpangleError `](./#SpangleError)
 * `builtins.ValueError`
+* [`SpangleError `](./#SpangleError)
 
 
 ------
