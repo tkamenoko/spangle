@@ -5,7 +5,7 @@ from spangle import Api
 from spangle.exceptions import NotFoundError
 
 
-class TestClientTests(TestCase):
+class ClientTests(TestCase):
     def setUp(self):
         self.api = Api()
 

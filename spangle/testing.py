@@ -1,70 +1,25 @@
 """
 Test client for ASGI app without ASGI server.
 """
-
 import asyncio
-import io
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from json import JSONDecodeError
-from typing import (
-    AnyStr,
-    Awaitable,
-    List,
-    Mapping,
-    Optional,
-    Tuple,
-    Type,
-    TypeVar,
-    Union,
-)
+from typing import AnyStr, List, Mapping, Optional, Tuple, Type, TypeVar, Union
 from urllib.parse import quote_plus
 
 import addict
-from asgiref import testing
-from asgiref.timeout import timeout as async_timeout
-from httpx import Client, models
+from asgiref.testing import ApplicationCommunicator
+from asgiref.timeout import timeout as timeout_ctx
+from httpx import Client, Response
+from httpx.dispatch import ASGIDispatch
 from multidict import CIMultiDict
 from starlette.types import ASGIApp
+from urllib3.filepost import RequestField, encode_multipart_formdata
 
 T = TypeVar("T")
 Headers = Union[Mapping, List[Tuple[str, str]]]
 Params = Union[Mapping, List[Tuple[str, str]]]
-
-
-def _run(coro: Awaitable[T]) -> T:
-    # pass awaitable, then resolve it.
-    return asyncio.get_event_loop().run_until_complete(coro)
-
-# TODO: use `async-asgi-testclient` , and wrap it.
-
-class _Client(Client):
-    async def _get_response(
-        self,
-        request,
-        *,
-        stream=False,
-        auth=None,
-        allow_redirects=True,
-        verify=None,
-        cert=None,
-        timeout=None,
-        trust_env=None,
-    ):
-        async with async_timeout(timeout):
-
-            result = await super()._get_response(
-                request,
-                stream=stream,
-                auth=auth,
-                allow_redirects=allow_redirects,
-                verify=verify,
-                cert=cert,
-                timeout=timeout,
-                trust_env=trust_env,
-            )
-
-        return result
 
 
 class HttpTestResponse:
@@ -78,11 +33,11 @@ class HttpTestResponse:
     """
 
     status_code: Union[HTTPStatus, int]
-    _resp: models.Response
+    _resp: Response
     _headers: Optional[CIMultiDict] = None
     _json: Optional[addict.Dict] = None
 
-    def __init__(self, resp: models.Response):
+    def __init__(self, resp: Response):
         """Do not use manually."""
         self._resp = resp
         try:
@@ -98,12 +53,13 @@ class HttpTestResponse:
         return self._headers
 
     @property
-    def text(self) -> str:
-        """(`str`): Response body, as UTF-8 text."""
+    def text(self) -> Optional[str]:
+        """(`Optional[str]`): Response body, as UTF-8 text."""
         return self._resp.text
 
     @property
-    def content(self) -> bytes:
+    def content(self) -> Optional[bytes]:
+        """(`Optional[bytes]`): Response body, as `bytes` ."""
         return self._resp.content
 
     @property
@@ -121,18 +77,17 @@ class HttpTestResponse:
 
     @property
     def cookies(self):
-        """(`Cookies`): Dict-like response cookies."""
+        """(`RequestsCookieJar`): Dict-like response cookies."""
         return self._resp.cookies
 
 
-class WebsocketTestClient:
+class WebsocketClient:
     """
     WebSocket test client. It is expected to be called from
         `spangle.testing.HttpTestClient` .
 
     **Attributes**
 
-    * app(`ASGIApp`): An ASGI application to test.
     * host(`str`): Dummy domain.
     * path(`str`): WebSocket endpoint.
     * headers(`CIMultiDict`): Headers used to connect.
@@ -141,7 +96,7 @@ class WebsocketTestClient:
 
     """
 
-    app: ASGIApp
+    _app: ASGIApp
     host: str
     path: str
     headers: CIMultiDict
@@ -160,7 +115,7 @@ class WebsocketTestClient:
         """
         Do not use manually.
         """
-        self.app = http.app
+        self._app = http._app
         self.host = http.host
         self._client = http._client
         self.path = path
@@ -209,9 +164,12 @@ class WebsocketTestClient:
             ],
         }
 
-        self._connection = testing.ApplicationCommunicator(self.app, scope)
-        _run(self._connection.send_input({"type": "websocket.connect"}))
-        message = _run(self._connection.receive_output(self.timeout))
+        self._connection = ApplicationCommunicator(self._app, scope)
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(
+            self._connection.send_input({"type": "websocket.connect"})
+        )
+        message = loop.run_until_complete(self._connection.receive_output(self.timeout))
         if message["type"] != "websocket.accept":
             raise RuntimeError("Connection refused.")
 
@@ -225,8 +183,9 @@ class WebsocketTestClient:
 
         """
         message = {"type": "websocket.disconnect", "code": status_code}
-        _run(self._connection.send_input(message))
-        _run(self._connection.receive_nothing())
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self._connection.send_input(message))
+        loop.run_until_complete(self._connection.receive_nothing())
         del self._connection
 
     def receive(self, mode: Type[AnyStr]) -> AnyStr:
@@ -242,7 +201,9 @@ class WebsocketTestClient:
         * `AnyStr`: Data with specified type.
 
         """
-        message = _run(self._connection.receive_output(self.timeout))
+        message = asyncio.get_event_loop().run_until_complete(
+            self._connection.receive_output(self.timeout)
+        )
         if mode is str:
             type_key = "text"
         elif mode is bytes:
@@ -269,9 +230,11 @@ class WebsocketTestClient:
         elif isinstance(data, bytes):
             type_key = "bytes"
         message[type_key] = data
-        _run(self._connection.send_input(message))
+        asyncio.get_event_loop().run_until_complete(
+            self._connection.send_input(message)
+        )
 
-    def __enter__(self) -> "WebsocketTestClient":
+    def __enter__(self) -> "WebsocketClient":
         self.connect()
         return self
 
@@ -279,41 +242,267 @@ class WebsocketTestClient:
         self.close()
 
 
-class HttpTestClient:
-    """
-    Mock HTTP client without running server. Lifespan-event is supported by `with`
-        statement.
-
-    **Attributes**
-
-    * app (`ASGIApp`): `spangle.api.Api` instance.
-    * timeout (`Union[int, float, None]`): How long test client waits for. Set `None`
-        to disable.
-
-    """
-
-    app: ASGIApp
-    timeout: Union[int, float, None]
-
+class BaseClient:
     def __init__(
         self,
         app: ASGIApp,
         timeout: Union[int, float, None] = 1,
-        host="http://www.example.com",
-    ) -> None:
-        """
-        **Args**
-
-        * app (`ASGIApp`): Application instance.
-        * timeout (`Optional[int]`): Timeout seconds.
-        * host (`str`): Temporary host name.
-
-        """
-
-        self.app = app
-        self.timeout = timeout
+        host="www.example.com",
+        client=("127.0.0.1", 123),
+    ):
+        self._app = app
+        self._dispatch = ASGIDispatch(app, client=client)
         self.host = host
-        self._client = _Client(timeout=timeout, base_url=host, app=app)
+        self._client = Client(
+            dispatch=self._dispatch, base_url=f"http://{host}", timeout=timeout
+        )
+        self.timeout = timeout
+
+    async def __aenter__(self):
+        app = ApplicationCommunicator(
+            self._app,
+            {"type": "lifespan", "asgi": {"version": "3.0", "spec_version": "2.0"}},
+        )
+        await app.send_input({"type": "lifespan.startup"})
+        resp = await app.receive_output(timeout=self.timeout or 1)
+        if resp["type"] == "lifespan.startup.failed":
+            raise RuntimeError(f"startup failed: {resp.get('message','(no message)')}")
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, exc_type, exc, tb):
+        app = ApplicationCommunicator(
+            self._app,
+            {"type": "lifespan", "asgi": {"version": "3.0", "spec_version": "2.0"}},
+        )
+        await app.send_input({"type": "lifespan.shutdown"})
+        resp = await app.receive_output(timeout=self.timeout or 1)
+        if resp["type"] == "lifespan.shutdown.failed":
+            raise RuntimeError(f"shutdown failed: {resp.get('message','(no message)')}")
+        await self._client.__aexit__(exc_type, exc, tb)
+
+    async def _request(
+        self,
+        method: str,
+        path: str,
+        params: Params = None,
+        headers: Headers = None,
+        cookies: Mapping[str, str] = None,
+        json: Mapping = None,
+        files: Mapping = None,
+        form: Mapping = None,
+        content: bytes = None,
+        timeout: int = None,
+        allow_redirects=True,
+    ) -> HttpTestResponse:
+        if isinstance(headers, list):
+            headers = CIMultiDict(headers)
+        elif headers is None:
+            headers = CIMultiDict()
+        if files:
+            file_list = [
+                RequestField.from_tuples(key, value) for key, value in files.items()
+            ]
+            data, content_type = encode_multipart_formdata(file_list)
+            headers["content-type"] = content_type
+        elif form:
+            data = form
+        else:
+            data = content
+        timeout = timeout or self.timeout
+        if timeout is not None:
+            async with timeout_ctx(timeout):
+                response = await self._client.request(
+                    method.upper(),
+                    path,
+                    headers=[(k, v) for k, v in headers.items()],
+                    data=data,
+                    params=params,
+                    json=json,
+                    cookies=cookies,
+                    allow_redirects=allow_redirects,
+                    timeout=timeout,
+                )
+        else:
+            response = await self._client.request(
+                method.upper(),
+                path,
+                headers=[(k, v) for k, v in headers.items()],
+                data=data,
+                params=params,
+                json=json,
+                cookies=cookies,
+                allow_redirects=allow_redirects,
+                timeout=timeout,
+            )
+        return HttpTestResponse(response)
+
+
+class AsyncHttpTestClient(BaseClient):
+    async def request(
+        self,
+        method: str,
+        path: str,
+        params: Params = None,
+        headers: Headers = None,
+        cookies: Mapping = None,
+        json: Mapping = None,
+        files: Mapping = None,
+        form: Mapping = None,
+        content: bytes = None,
+        timeout: int = None,
+        allow_redirects=True,
+    ) -> HttpTestResponse:
+        return await self._request(
+            method,
+            path,
+            params=params,
+            headers=headers,
+            cookies=cookies,
+            json=json,
+            files=files,
+            form=form,
+            content=content,
+            timeout=timeout,
+            allow_redirects=allow_redirects,
+        )
+
+    async def get(
+        self,
+        path: str,
+        params: Params = None,
+        headers: Headers = None,
+        cookies: Mapping = None,
+        timeout: int = None,
+        allow_redirects=True,
+    ) -> HttpTestResponse:
+        return await self.request(
+            "get",
+            path,
+            params=params,
+            headers=headers,
+            cookies=cookies,
+            timeout=timeout,
+            allow_redirects=allow_redirects,
+        )
+
+    async def post(
+        self,
+        path: str,
+        params: Params = None,
+        headers: Headers = None,
+        cookies: Mapping = None,
+        json: Mapping = None,
+        files: Mapping = None,
+        form: Mapping = None,
+        content: bytes = None,
+        timeout: int = None,
+        allow_redirects=True,
+    ) -> HttpTestResponse:
+        return await self.request(
+            "post",
+            path,
+            params=params,
+            headers=headers,
+            cookies=cookies,
+            json=json,
+            files=files,
+            form=form,
+            content=content,
+            timeout=timeout,
+            allow_redirects=allow_redirects,
+        )
+
+    async def put(
+        self,
+        path: str,
+        params: Params = None,
+        headers: Headers = None,
+        cookies: Mapping = None,
+        json: Mapping = None,
+        files: Mapping = None,
+        form: Mapping = None,
+        content: bytes = None,
+        timeout: int = None,
+        allow_redirects=True,
+    ) -> HttpTestResponse:
+        return await self.request(
+            "put",
+            path,
+            params=params,
+            headers=headers,
+            cookies=cookies,
+            json=json,
+            files=files,
+            form=form,
+            content=content,
+            timeout=timeout,
+            allow_redirects=allow_redirects,
+        )
+
+    async def patch(
+        self,
+        path: str,
+        params: Params = None,
+        headers: Headers = None,
+        cookies: Mapping = None,
+        json: Mapping = None,
+        files: Mapping = None,
+        form: Mapping = None,
+        content: bytes = None,
+        timeout: int = None,
+        allow_redirects=True,
+    ) -> HttpTestResponse:
+        return await self.request(
+            "patch",
+            path,
+            params=params,
+            headers=headers,
+            cookies=cookies,
+            json=json,
+            files=files,
+            form=form,
+            content=content,
+            timeout=timeout,
+            allow_redirects=allow_redirects,
+        )
+
+    async def delete(
+        self,
+        path: str,
+        params: Params = None,
+        headers: Headers = None,
+        cookies: Mapping = None,
+        timeout: int = None,
+        allow_redirects=True,
+    ) -> HttpTestResponse:
+        return await self.request(
+            "delete",
+            path,
+            params=params,
+            headers=headers,
+            cookies=cookies,
+            timeout=timeout,
+            allow_redirects=allow_redirects,
+        )
+
+
+class HttpTestClient(BaseClient):
+    def __init__(
+        self,
+        app: ASGIApp,
+        timeout: Union[int, float, None] = 1,
+        host="www.example.com",
+        client=("127.0.0.1", 123),
+    ):
+        super().__init__(app, timeout, host, client)
+        self._loop = asyncio.get_event_loop()
+
+    def __enter__(self):
+        return self._loop.run_until_complete(self.__aenter__())
+
+    def __exit__(self, exc_type, exc, tb):
+        return self._loop.run_until_complete(self.__aexit__(exc_type, exc, tb))
 
     def request(
         self,
@@ -329,81 +518,21 @@ class HttpTestClient:
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
-        """
-        Send request to `app`.
-
-        **Args**
-
-        * method (`str`): HTTP request method.
-        * path (`str`): Requesting location.
-        * params (`Params`): Querystring as `dict` or `list` of `(name, value)`.
-        * headers (`Headers`): HTTP headers.
-        * cookies (`Mapping`): Sending HTTP cookies.
-        * json (`Mapping`): Request body as json.
-        * files (`Mapping`): Multipart form.
-        * form (`Mapping`): URL encoded form.
-        * content (`bytes`): Request body as bytes.
-        * timeout (`int`): Wait limits.
-        * allow_redirects (`bool`): If `False` , a client gets 30x response instead of
-            redirection.
-
-        **Returns**
-
-        * `spangle.testing.HttpTestResponse`
-
-        """
-        kw: dict = {
-            "method": method,
-            "url": path or self.host,
-            "data": None,
-            "files": None,
-            "json": None,
-            "params": params,
-            "headers": headers,
-            "cookies": cookies,
-            "allow_redirects": allow_redirects,
-        }
-        if timeout is None:
-            kw["timeout"] = self.timeout
-        elif timeout <= 0:
-            kw["timeout"] = None
-        else:
-            kw["timeout"] = timeout
-        if json is not None:
-            kw["json"] = json
-        elif files is not None:
-            _files: dict = {}
-            _data: dict = {}
-            for k, v in files.items():
-                if isinstance(v, tuple) and (len(v) == 3):
-                    _file = list(v)
-                    if isinstance(_file[1], str):
-                        _file[1] = io.StringIO(_file[1])
-                    elif isinstance(_file[1], bytes):
-                        _file[1] = io.BytesIO(_file[1])
-                    _files[k] = tuple(_file)
-                else:
-                    _data[k] = v
-            kw["files"] = _files
-            kw["data"] = _data
-        elif form is not None:
-            kw["data"] = form
-        elif content is not None:
-            kw["data"] = content
-
-        _res = self._client.request(**kw)
-        return HttpTestResponse(_res)
-
-    def __enter__(self) -> "HttpTestClient":
-        server = testing.ApplicationCommunicator(self.app, {"type": "lifespan"})
-        _run(server.send_input({"type": "lifespan.startup"}))
-        _run(server.receive_output(timeout=self.timeout))
-        return self
-
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
-        server = testing.ApplicationCommunicator(self.app, {"type": "lifespan"})
-        _run(server.send_input({"type": "lifespan.shutdown"}))
-        _run(server.receive_output(timeout=self.timeout))
+        return self._loop.run_until_complete(
+            self._request(
+                method,
+                path,
+                params=params,
+                headers=headers,
+                cookies=cookies,
+                json=json,
+                files=files,
+                form=form,
+                content=content,
+                timeout=timeout,
+                allow_redirects=allow_redirects,
+            )
+        )
 
     def ws_connect(
         self,
@@ -413,7 +542,7 @@ class HttpTestClient:
         headers: Headers = None,
         cookies: Mapping = None,
         timeout: int = None,
-    ) -> WebsocketTestClient:
+    ) -> WebsocketClient:
         """
         Create WebSocket Connection.
         """
@@ -424,7 +553,7 @@ class HttpTestClient:
         if subprotocols is not None:
             headers.setdefault("sec-websocket-protocol", ", ".join(subprotocols))
 
-        return WebsocketTestClient(self, path, headers, params, cookies, timeout)
+        return WebsocketClient(self, path, headers, params, cookies, timeout)
 
     def get(
         self,
@@ -435,9 +564,6 @@ class HttpTestClient:
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
-        """
-        Send `GET` request to `app` . See `spangle.testing.HttpTestClient.request` .
-        """
         return self.request(
             "get",
             path,
@@ -461,9 +587,6 @@ class HttpTestClient:
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
-        """
-        Send `POST` request to `app` . See `spangle.testing.HttpTestClient.request` .
-        """
         return self.request(
             "post",
             path,
@@ -491,9 +614,6 @@ class HttpTestClient:
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
-        """
-        Send `PUT` request to `app` . See `spangle.testing.HttpTestClient.request` .
-        """
         return self.request(
             "put",
             path,
@@ -521,9 +641,6 @@ class HttpTestClient:
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
-        """
-        Send `PATCH` request to `app` . See `spangle.testing.HttpTestClient.request` .
-        """
         return self.request(
             "patch",
             path,
@@ -544,26 +661,15 @@ class HttpTestClient:
         params: Params = None,
         headers: Headers = None,
         cookies: Mapping = None,
-        json: Mapping = None,
-        files: Mapping = None,
-        form: Mapping = None,
-        content: bytes = None,
         timeout: int = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
-        """
-        Send `DELETE` request to `app` . See `spangle.testing.HttpTestClient.request` .
-        """
         return self.request(
             "delete",
             path,
             params=params,
             headers=headers,
             cookies=cookies,
-            json=json,
-            files=files,
-            form=form,
-            content=content,
             timeout=timeout,
             allow_redirects=allow_redirects,
         )
