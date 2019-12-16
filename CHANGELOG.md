@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.4.0(Unreleased)
+## v0.4.0(2019-12-16)
 
 * Add `max_upload_bytes`
 * Add `AsyncHttpTestClient` and `AsyncWebsocketClient`
