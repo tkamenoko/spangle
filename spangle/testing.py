@@ -11,8 +11,7 @@ from urllib.parse import quote_plus
 import addict
 from asgiref.testing import ApplicationCommunicator
 from asgiref.timeout import timeout as timeout_ctx
-from httpx import Client, Response
-from httpx.dispatch import ASGIDispatch
+from httpx import ASGIDispatch, AsyncClient, Response
 from multidict import CIMultiDict
 from starlette.types import ASGIApp
 from urllib3.filepost import RequestField, encode_multipart_formdata
@@ -381,7 +380,7 @@ class _BaseClient:
         self._app = app
         self._dispatch = ASGIDispatch(app, client=client)
         self.host = host
-        self._client = Client(
+        self._client = AsyncClient(
             dispatch=self._dispatch, base_url=f"http://{host}", timeout=timeout
         )
         self.timeout = timeout
