@@ -8,4 +8,5 @@
   "python.pythonPath": ".venv/bin/python",
   "typescript.tsdk": ".vscode/pnpify/typescript/lib",
   "python.linting.mypyEnabled": true,
+  "python.jediEnabled": false,
 }
