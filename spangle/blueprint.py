@@ -33,14 +33,14 @@ class Blueprint:
 
     views: Dict[str, Tuple[Type, Converters]]
     events: Dict[str, List[Callable]]
-    request_hooks: List[Type]
+    request_hooks: Dict[str, List[Type]]
 
     def __init__(self) -> None:
         """Initialize self."""
         self.views = {}
         self._handler = ErrorHandler()
         self.events = {"startup": [], "shutdown": []}
-        self.request_hooks = []
+        self.request_hooks = {"before": [], "after": []}
 
     def route(
         self, path: str, *, converters: Optional[Converters] = None
@@ -84,8 +84,13 @@ class Blueprint:
         return f
 
     def before_request(self, cls: Type) -> Type:
-        """Decolator to add a class called before each request."""
-        self.request_hooks.append(cls)
+        """Decolator to add a class called before each request processed."""
+        self.request_hooks["before"].append(cls)
+        return cls
+
+    def after_request(self, cls: Type) -> Type:
+        """Decolator to add a class called after each request processed."""
+        self.request_hooks["after"].append(cls)
         return cls
 
     def add_blueprint(self, path: str, bp: "Blueprint") -> None:
@@ -110,7 +115,8 @@ class Blueprint:
         self.events["startup"].extend(bp.events["startup"])
         self.events["shutdown"].extend(bp.events["shutdown"])
         # hooks
-        self.request_hooks.extend(bp.request_hooks)
+        self.request_hooks["before"].extend(bp.request_hooks["before"])
+        self.request_hooks["after"].extend(bp.request_hooks["after"])
 
 
 class Router:

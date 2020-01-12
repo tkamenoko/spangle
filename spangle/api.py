@@ -45,7 +45,7 @@ class Api:
     router: Router
     mounted_app: Dict[str, Callable]
     error_handlers: Dict[Type[Exception], type]
-    request_hooks: List[type]
+    request_hooks: Dict[str, List[type]]
     lifespan_handlers: Dict[str, List[Callable]]
     favicon: Optional[str]
     debug: bool
@@ -137,7 +137,7 @@ class Api:
         self.router.default_route = default_route
 
         # init before_request.
-        self.request_hooks = []
+        self.request_hooks = {"before": [], "after": []}
 
         # init middlewares.
         self._app: ASGIApp = self._dispatch
@@ -310,8 +310,13 @@ class Api:
         return AsyncHttpTestClient(self, timeout=timeout)
 
     def before_request(self, cls: Type) -> Type:
-        """Decolator to add a class called before each request."""
-        self.request_hooks.append(cls)
+        """Decolator to add a class called before each request processed."""
+        self.request_hooks["before"].append(cls)
+        return cls
+
+    def after_request(self, cls: Type) -> Type:
+        """Decolator to add a class called after each request processed."""
+        self.request_hooks["after"].append(cls)
         return cls
 
     def add_blueprint(self, path: str, blueprint: Blueprint) -> None:
@@ -351,8 +356,9 @@ class Api:
             self.add_lifespan_handler("startup", e)
         for e in blueprint.events["shutdown"]:
             self.add_lifespan_handler("shutdown", e)
-        # add before_request hooks.
-        self.request_hooks.extend(blueprint.request_hooks)
+        # add [before|after]_request hooks.
+        self.request_hooks["before"].extend(blueprint.request_hooks["before"])
+        self.request_hooks["after"].extend(blueprint.request_hooks["after"])
 
     def route(
         self, path: str, *, converters: Optional[Dict[str, Callable[[str], Any]]] = None
