@@ -3,7 +3,7 @@
 ## v0.5.0(Unreleased)
 
 * Bump dependencies
-<!-- TODO: * Add `after_request` -->
+* Add `after_request`
 <!-- TODO: * Add flexible routing strategy -->
 
 ## v0.4.0(2019-12-16)
