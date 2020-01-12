@@ -93,7 +93,6 @@ class ApiTests(TestCase):
             self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_after_request(self):
-        # TODO!
         @self.api.after_request
         class Hook:
             def __init__(_):

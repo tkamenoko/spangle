@@ -83,4 +83,14 @@ See [`parse`](https://github.com/r1chardj0n3s/parse) for more details.
 * `"strict"` : distinct `/route` from `/route/` .
 * `"clone"` : return same view between `/route` and `/route/` .
 
-To change the strategy, create `Api` instance with an argument like `Api(routing="clone")` .
+To change default strategy, create `Api` instance with an argument like `Api(routing="clone")` .
+
+If you need to set different strategy against views, use `route(view, routing="{strategy}")` .
+
+```python
+
+@api.route("/flexible/rules", routing="clone")
+class Strategy:
+    ...
+
+```

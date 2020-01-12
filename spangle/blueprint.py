@@ -2,9 +2,9 @@
 Application blueprint and router.
 """
 
-
 import re
 from functools import lru_cache
+from http import HTTPStatus
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type
 
 from parse import compile
@@ -31,7 +31,7 @@ class Blueprint:
 
     _handler: ErrorHandler
 
-    views: Dict[str, Tuple[Type, Converters]]
+    views: Dict[str, Tuple[Type, Converters, Optional[str]]]
     events: Dict[str, List[Callable]]
     request_hooks: Dict[str, List[Type]]
 
@@ -43,7 +43,11 @@ class Blueprint:
         self.request_hooks = {"before": [], "after": []}
 
     def route(
-        self, path: str, *, converters: Optional[Converters] = None
+        self,
+        path: str,
+        *,
+        converters: Optional[Converters] = None,
+        routing: Optional[str] = None
     ) -> Callable[[Type], Type]:
         """
         Bind a path to the decorated view. The path will be fixed by routing mode.
@@ -51,13 +55,14 @@ class Blueprint:
         **Args**
 
         * path (`str`): The location of your view.
-        * converters (`Optional[Dict[str,Callable]]`): If given, dynamic url's params
-            are converted before passed to the view.
+        * converters (`Optional[Dict[str,Callable]]`): Params converters
+            for dynamic routing.
+        * routing (`Optional[str]`): Routing strategy.
 
         """
 
         def _inner(cls: Type) -> Type:
-            self.views[path] = (cls, converters or {})
+            self.views[path] = (cls, converters or {}, routing)
             return cls
 
         return _inner
@@ -104,10 +109,9 @@ class Blueprint:
 
         """
         # views
-        path = _normalize_path(path)
-        for child_path, view_conv in bp.views.items():
-            fullpath = re.sub(r"//+", "/", path + child_path)
-            self.views[fullpath] = view_conv
+        for child, view_conv in bp.views.items():
+            p = re.sub(r"//+", "/", "/".join([path, child]))
+            self.views[p] = view_conv
         # handlers
         for e, view in bp._handler.handlers.items():
             self.handle(e)(view)
@@ -135,19 +139,22 @@ class Router:
         self.routing = routing
         self.routes = {"static": {}, "dynamic": {}}
 
-    def _add(self, path: str, view: Type, converters: Converters) -> None:
+    def _add(self, path: str, view: Type, converters: Converters, routing: str) -> str:
+        # normalize path, add route, return the path.
         if not re.match(r".*{([^/:]+)(:[^/:]+)?}.*", path):
-            self.routes["static"][path] = view
-            return
+            return self._add_static(path, view, routing)
+        return self._add_dynamic(path, view, converters, routing)
 
-        splitted_path = path.split("/")[:-1]
+    def _add_dynamic(self, path: str, view: Type, converters: Converters, routing: str):
+        splitted_path = path.split("/")
         fixed = []
         for part in splitted_path:
             r = re.sub(r"{([^:]+)}", r"{\1:default}", part)
             fixed.append(r)
-        fixed_path = _normalize_path("/".join(fixed))
-        if self.routing == "strict" and not path.endswith("/"):
-            fixed_path = fixed_path[:-1]
+        fixed_path = "/".join(fixed)
+        if routing != "strict":
+            fixed_path = _normalize_path(fixed_path)
+            no_trailing_slash = fixed_path[:-1] or "/"
 
         def default_converter(_):
             return _
@@ -175,6 +182,43 @@ class Router:
 
         path_pattern = compile(fixed_path, merged)
         self.routes["dynamic"][path_pattern] = view
+        if routing == "static":
+            return fixed_path
+
+        nts_pattern = compile(no_trailing_slash, merged)
+        if routing == "clone":
+            self.routes["dynamic"].setdefault(nts_pattern, view)
+            return fixed_path
+
+        async def on_request(_, req, resp, **kw):
+            resp.redirect(view=view, params=kw, status=HTTPStatus.PERMANENT_REDIRECT)
+            return resp
+
+        redirect = type("Redirect", (object,), {"on_request": on_request})
+
+        self.routes["dynamic"].setdefault(nts_pattern, redirect)
+        return fixed_path
+
+    def _add_static(self, path: str, view: Type, routing: str) -> str:
+        if routing == "strict":
+            self.routes["static"][path] = view
+            return path
+
+        path = _normalize_path(path)
+        self.routes["static"][path] = view
+        no_trailing_slash = path[:-1] or "/"
+        if routing == "clone":
+            self.routes["static"].setdefault(no_trailing_slash, view)
+            return path
+
+        async def on_request(_, req, resp):
+            resp.redirect(view=view, status=HTTPStatus.PERMANENT_REDIRECT)
+            return resp
+
+        redirect = type("Redirect", (object,), {"on_request": on_request})
+
+        self.routes["static"].setdefault(no_trailing_slash, redirect)
+        return path
 
     @lru_cache()
     def get(self, path: str) -> Optional[Tuple[Type, Dict[str, Any]]]:

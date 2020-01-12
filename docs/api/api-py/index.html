@@ -1136,8 +1136,16 @@
 <p><a href="#Api.route" id="Api.route"><strong>route</strong></a></p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
-3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">route</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">converters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span>
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">route</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">converters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">routing</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Type</span><span class="p">],</span> <span class="n">Type</span><span class="p">]</span>
 </pre></div>
 </td></tr></table>
@@ -1146,6 +1154,9 @@
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>): The location for the view.</li>
+<li><strong>converters</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">Dict[str, Callable[[str</span><span class="o">]</span><span class="p">,</span><span class="w"> </span><span class="ow">Any</span><span class="err">]]]</span><span class="w"></span></code>): Params converters
+    for dynamic routing.</li>
+<li><strong>routing</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): Routing strategy.</li>
 </ul>
 <hr />
 <p><a href="#Api.url_for" id="Api.url_for"><strong>url_for</strong></a></p>

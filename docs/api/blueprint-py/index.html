@@ -1014,8 +1014,16 @@
 <p><a href="#Blueprint.route" id="Blueprint.route"><strong>route</strong></a></p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
-3</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">route</span><span class="p">(</span>
-    <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">converters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Converters</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+3
+4
+5
+6
+7</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">route</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">converters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Converters</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">routing</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Type</span><span class="p">],</span> <span class="n">Type</span><span class="p">]</span>
 </pre></div>
 </td></tr></table>
@@ -1024,8 +1032,9 @@
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>): The location of your view.</li>
-<li><strong>converters</strong> (<code class="codehilite"><span class="err">Optional[Dict[str,Callable]]</span></code>): If given, dynamic url&rsquo;s params
-    are converted before passed to the view.</li>
+<li><strong>converters</strong> (<code class="codehilite"><span class="err">Optional[Dict[str,Callable]]</span></code>): Params converters
+    for dynamic routing.</li>
+<li><strong>routing</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>): Routing strategy.</li>
 </ul>
 <hr />
 <h3 id="Router">Router<a class="headerlink" href="#Router" title="Permanent link">&para;</a></h3>

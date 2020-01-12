@@ -4,7 +4,7 @@
 
 * Bump dependencies
 * Add `after_request`
-<!-- TODO: * Add flexible routing strategy -->
+* Add flexible routing strategy
 
 ## v0.4.0(2019-12-16)
 

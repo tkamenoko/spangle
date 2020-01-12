@@ -355,7 +355,7 @@ class Response:
     )
 
     _jinja: Optional[jinja2.Environment]
-    _redirect_to: Optional[str]
+    _redirect_to: Optional[Tuple[str, Optional[str]]]
     _url_for: Optional[Callable]
     _starlette_resp: Type[StarletteResponse]
     _body: Any
@@ -395,6 +395,15 @@ class Response:
             self._starlette_resp = JSONResponse
             self._body = self.json
             self.headers["content-type"] = "application/json"
+        elif self._redirect_to is not None:
+            url, qs = self._redirect_to
+            if qs is None:
+                qs = scope.get("query_string", b"").decode("ascii")
+
+            if qs:
+                qs = f"?{qs}"
+
+            self._body = url + qs
 
         app = self._starlette_resp(
             self._body, status_code=self.status_code, headers=self.headers
@@ -650,6 +659,7 @@ class Response:
         params: dict = None,
         url: str = None,
         status=HTTPStatus.TEMPORARY_REDIRECT,
+        query_string: Optional[str] = None,
     ) -> "Response":
         """
         Set redirect view/location. Positional args are not allowed. Chainable
@@ -678,10 +688,11 @@ class Response:
         self._starlette_resp = RedirectResponse
         if view:
             assert self._url_for
-            self._redirect_to = self._url_for(view, params)
+            redirect_to = self._url_for(view, params)
         elif url:
-            self._redirect_to = url
-        self._body = self._redirect_to
+            redirect_to = url
+
+        self._redirect_to = redirect_to, query_string
         return self
 
     def _set_cookies_to_headers(self) -> None:
