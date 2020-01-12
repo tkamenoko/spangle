@@ -47,7 +47,7 @@ class Blueprint:
         path: str,
         *,
         converters: Optional[Converters] = None,
-        routing: Optional[str] = None
+        routing: Optional[str] = None,
     ) -> Callable[[Type], Type]:
         """
         Bind a path to the decorated view. The path will be fixed by routing mode.
@@ -194,7 +194,21 @@ class Router:
             resp.redirect(view=view, params=kw, status=HTTPStatus.PERMANENT_REDIRECT)
             return resp
 
-        redirect = type("Redirect", (object,), {"on_request": on_request})
+        allowed_methods = {"get", "head", "options"}
+        additional_methods = getattr(view, "allowed_methods", [])
+        allowed_methods.update([m.lower() for m in additional_methods])
+
+        unsafe = {"post", "put", "delete", "patch", "connect", "trace"}
+        on_unsafe_methods = {m for m in unsafe if hasattr(view, "on_" + m)}
+        allowed_methods.update(on_unsafe_methods)
+
+        allowed_methods.add("request")
+
+        redirect = type(
+            "Redirect",
+            (object,),
+            {f"on_{method}": on_request for method in allowed_methods},
+        )
 
         self.routes["dynamic"].setdefault(nts_pattern, redirect)
         return fixed_path
@@ -215,7 +229,21 @@ class Router:
             resp.redirect(view=view, status=HTTPStatus.PERMANENT_REDIRECT)
             return resp
 
-        redirect = type("Redirect", (object,), {"on_request": on_request})
+        allowed_methods = {"get", "head", "options"}
+        additional_methods = getattr(view, "allowed_methods", [])
+        allowed_methods.update([m.lower() for m in additional_methods])
+
+        unsafe = {"post", "put", "delete", "patch", "connect", "trace"}
+        on_unsafe_methods = {m for m in unsafe if hasattr(view, "on_" + m)}
+        allowed_methods.update(on_unsafe_methods)
+
+        allowed_methods.add("request")
+
+        redirect = type(
+            "Redirect",
+            (object,),
+            {f"on_{method}": on_request for method in allowed_methods},
+        )
 
         self.routes["static"].setdefault(no_trailing_slash, redirect)
         return path

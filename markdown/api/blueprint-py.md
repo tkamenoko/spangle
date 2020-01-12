@@ -103,7 +103,7 @@ def route(
     path: str,
     *,
     converters: Optional[Converters] = None,
-    routing: Optional[str] = None
+    routing: Optional[str] = None,
     ) -> Callable[[Type], Type]
 ```
 

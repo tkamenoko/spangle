@@ -1,7 +1,7 @@
 # spangle 
 
-![PyPI](https://img.shields.io/pypi/v/spangle)
-![PyPI - License](https://img.shields.io/pypi/l/spangle)
+[![PyPI](https://img.shields.io/pypi/v/spangle)](https://pypi.org/project/spangle/)
+[![PyPI - License](https://img.shields.io/pypi/l/spangle)](https://pypi.org/project/spangle/)
 
 ASGI application framework inspired by [responder](https://github.com/taoufik07/responder), [vibora](https://github.com/vibora-io/vibora), and [express-js](https://github.com/expressjs/express/). 
 
