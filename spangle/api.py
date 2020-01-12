@@ -26,7 +26,7 @@ class Api:
     * router (`spangle.blueprint.Router`): Manage URLs and views.
     * mounted_app (`Dict[str, Callable]`): ASGI apps mounted under `Api` .
     * error_handlers (`Dict[Type[Exception], type]`): Called when `Exception` occurs.
-    * request_hooks (`List[type]`): Called against every request.
+    * request_hooks (`Dict[str, List[type]]`): Called against every request.
     * lifespan_handlers (`Dict[str, List[Callable]]`): Registered lifespan hooks.
     * favicon (`Optional[str]`): Place of `favicon.ico ` in `static_dir`.
     * debug (`bool`): Server running mode.
@@ -230,12 +230,12 @@ class Api:
         self.lifespan_handlers[event_type].append(handler)
 
     def on_start(self, f: Callable) -> Callable:
-        """Decolater for startup events."""
+        """Decorator for startup events."""
         self.add_lifespan_handler("startup", f)
         return f
 
     def on_stop(self, f: Callable) -> Callable:
-        """Decolater for shutdown events."""
+        """Decorator for shutdown events."""
         self.add_lifespan_handler("shutdown", f)
         return f
 
@@ -310,12 +310,12 @@ class Api:
         return AsyncHttpTestClient(self, timeout=timeout)
 
     def before_request(self, cls: Type) -> Type:
-        """Decolator to add a class called before each request processed."""
+        """Decorator to add a class called before each request processed."""
         self.request_hooks["before"].append(cls)
         return cls
 
     def after_request(self, cls: Type) -> Type:
-        """Decolator to add a class called after each request processed."""
+        """Decorator to add a class called after each request processed."""
         self.request_hooks["after"].append(cls)
         return cls
 
@@ -364,7 +364,7 @@ class Api:
         self, path: str, *, converters: Optional[Dict[str, Callable[[str], Any]]] = None
     ) -> Callable[[Type], Type]:
         """
-        Mount the decolated view to the given path directly.
+        Mount the decorated view to the given path directly.
 
         **Args**
 
@@ -443,7 +443,7 @@ class Api:
 
     def handle(self, e: Type[Exception]) -> Callable[[Type], Type]:
         """
-        Bind `Exception` to the decolated view.
+        Bind `Exception` to the decorated view.
 
         **Args**
 

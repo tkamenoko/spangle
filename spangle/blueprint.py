@@ -23,7 +23,7 @@ class Blueprint:
 
     * views(`Dict[str, Tuple[Type, Converters]]`): Collected view classes.
     * events(`Dict[str, List[Callable]]`): Registered lifespan handlers.
-    * request_hooks(`List[Type]`): Called against every request.
+    * request_hooks(`Dict[str, List[type]]`): Called against every request.
 
     """
 
@@ -46,7 +46,7 @@ class Blueprint:
         self, path: str, *, converters: Optional[Converters] = None
     ) -> Callable[[Type], Type]:
         """
-        Bind a path to the decolated view. The path will be fixed by routing mode.
+        Bind a path to the decorated view. The path will be fixed by routing mode.
 
         **Args**
 
@@ -64,7 +64,7 @@ class Blueprint:
 
     def handle(self, e: Type[Exception]) -> Callable[[Type], Type]:
         """
-        Bind `Exception` to the decolated view.
+        Bind `Exception` to the decorated view.
 
         **Args**
 
@@ -74,22 +74,22 @@ class Blueprint:
         return self._handler.handle(e)
 
     def on_start(self, f: Callable) -> Callable:
-        """Decolater for startup events"""
+        """Decorator for startup events"""
         self.events["startup"].append(f)
         return f
 
     def on_stop(self, f: Callable) -> Callable:
-        """Decolater for shutdown events."""
+        """Decorator for shutdown events."""
         self.events["shutdown"].append(f)
         return f
 
     def before_request(self, cls: Type) -> Type:
-        """Decolator to add a class called before each request processed."""
+        """Decorator to add a class called before each request processed."""
         self.request_hooks["before"].append(cls)
         return cls
 
     def after_request(self, cls: Type) -> Type:
-        """Decolator to add a class called after each request processed."""
+        """Decorator to add a class called after each request processed."""
         self.request_hooks["after"].append(cls)
         return cls
 
