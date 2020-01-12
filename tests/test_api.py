@@ -81,13 +81,41 @@ class ApiTests(TestCase):
 
         @self.api.route("/")
         class Index:
-            pass
+            def __init__(_, api: spangle.Api):
+                _.api = api
+
+            async def on_get(_, req, resp):
+                hook: Hook = _.api._view_cache[Hook]
+                hook.mock.assert_called_once()
 
         with self.api.client() as client:
             response = client.get("/")
             self.assertEqual(response.status_code, HTTPStatus.OK)
-        hook: Hook = self.api._view_cache[Hook]
-        hook.mock.assert_called_once()
+
+    def test_after_request(self):
+        @self.api.after_request
+        class Hook:
+            def __init__(_):
+                _.mock = MagicMock()
+
+            async def on_request(_, req, resp, **kw):
+                _.mock()
+                return resp
+
+        @self.api.route("/")
+        class Index:
+            def __init__(_, api: spangle.Api):
+                _.api = api
+
+            async def on_get(_, req, resp):
+                with self.assertRaises(KeyError):
+                    _.api._view_cache[Hook]
+
+        with self.api.client() as client:
+            response = client.get("/")
+            self.assertEqual(response.status_code, HTTPStatus.OK)
+            hook: Hook = self.api._view_cache[Hook]
+            hook.mock.assert_called_once()
 
     def test_url_for(self):
         @self.api.route("/")

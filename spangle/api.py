@@ -26,7 +26,7 @@ class Api:
     * router (`spangle.blueprint.Router`): Manage URLs and views.
     * mounted_app (`Dict[str, Callable]`): ASGI apps mounted under `Api` .
     * error_handlers (`Dict[Type[Exception], type]`): Called when `Exception` occurs.
-    * request_hooks (`List[type]`): Called against every request.
+    * request_hooks (`Dict[str, List[type]]`): Called against every request.
     * lifespan_handlers (`Dict[str, List[Callable]]`): Registered lifespan hooks.
     * favicon (`Optional[str]`): Place of `favicon.ico ` in `static_dir`.
     * debug (`bool`): Server running mode.
@@ -45,7 +45,7 @@ class Api:
     router: Router
     mounted_app: Dict[str, Callable]
     error_handlers: Dict[Type[Exception], type]
-    request_hooks: List[type]
+    request_hooks: Dict[str, List[type]]
     lifespan_handlers: Dict[str, List[Callable]]
     favicon: Optional[str]
     debug: bool
@@ -137,7 +137,7 @@ class Api:
         self.router.default_route = default_route
 
         # init before_request.
-        self.request_hooks = []
+        self.request_hooks = {"before": [], "after": []}
 
         # init middlewares.
         self._app: ASGIApp = self._dispatch
@@ -230,12 +230,12 @@ class Api:
         self.lifespan_handlers[event_type].append(handler)
 
     def on_start(self, f: Callable) -> Callable:
-        """Decolater for startup events."""
+        """Decorator for startup events."""
         self.add_lifespan_handler("startup", f)
         return f
 
     def on_stop(self, f: Callable) -> Callable:
-        """Decolater for shutdown events."""
+        """Decorator for shutdown events."""
         self.add_lifespan_handler("shutdown", f)
         return f
 
@@ -310,8 +310,13 @@ class Api:
         return AsyncHttpTestClient(self, timeout=timeout)
 
     def before_request(self, cls: Type) -> Type:
-        """Decolator to add a class called before each request."""
-        self.request_hooks.append(cls)
+        """Decorator to add a class called before each request processed."""
+        self.request_hooks["before"].append(cls)
+        return cls
+
+    def after_request(self, cls: Type) -> Type:
+        """Decorator to add a class called after each request processed."""
+        self.request_hooks["after"].append(cls)
         return cls
 
     def add_blueprint(self, path: str, blueprint: Blueprint) -> None:
@@ -328,20 +333,13 @@ class Api:
         _path = "/" + path
         flatten = {}
         for child, view_conv in blueprint.views.items():
-            _child = child
-            p = re.sub(r"//+", "/", "/".join([_path, _child]))
-            view, conv = view_conv
-            if self.routing == "strict":
-                jointed = _normalize_path(p)
-                if not (path + child).endswith("/"):
-                    jointed = jointed[:-1] or "/"
-                flatten[jointed] = view, conv
-            else:
-                flatten[_normalize_path(p)] = view, conv
+            p = re.sub(r"//+", "/", "/".join([_path, child]))
+            view, conv, routing = view_conv
+            flatten[p] = (view, conv, routing or self.routing)
         for k, v in flatten.items():
-            _view, _conv = v
-            self.router._add(k, _view, _conv)
-            _k = re.sub(r"{([^/:]+)(:[^/:]+)}", r"{\1}", k)
+            _view, _conv, _routing = v
+            normalized = self.router._add(k, _view, _conv, _routing)
+            _k = re.sub(r"{([^/:]+)(:[^/:]+)}", r"{\1}", normalized)
             self._reverse_views.setdefault(_view, _k)
 
         # add ErrorHandler bound by Blueprint.
@@ -351,24 +349,32 @@ class Api:
             self.add_lifespan_handler("startup", e)
         for e in blueprint.events["shutdown"]:
             self.add_lifespan_handler("shutdown", e)
-        # add before_request hooks.
-        self.request_hooks.extend(blueprint.request_hooks)
+        # add [before|after]_request hooks.
+        self.request_hooks["before"].extend(blueprint.request_hooks["before"])
+        self.request_hooks["after"].extend(blueprint.request_hooks["after"])
 
     def route(
-        self, path: str, *, converters: Optional[Dict[str, Callable[[str], Any]]] = None
+        self,
+        path: str,
+        *,
+        converters: Optional[Dict[str, Callable[[str], Any]]] = None,
+        routing: Optional[str] = None,
     ) -> Callable[[Type], Type]:
         """
-        Mount the decolated view to the given path directly.
+        Mount the decorated view to the given path directly.
 
         **Args**
 
         * path (`str`): The location for the view.
+        * converters (`Optional[Dict[str, Callable[[str], Any]]]`): Params converters
+            for dynamic routing.
+        * routing (`Optional[str]`): Routing strategy.
 
         """
 
         def _inner(cls: Type) -> Type:
             _bp = Blueprint()
-            _bp.route(path=path, converters=converters)(cls)
+            _bp.route(path=path, converters=converters, routing=routing)(cls)
             self.add_blueprint("", _bp)
             return cls
 
@@ -396,8 +402,10 @@ class Api:
         * params (`Optional[Dict[str, Any]]`): Used to format dynamic path.
 
         """
+        
         params = params or {}
         path = self._reverse_views[view]
+
         return path.format_map(params)
 
     def add_middleware(self, middleware: Callable[..., ASGIApp], **config) -> None:
@@ -437,7 +445,7 @@ class Api:
 
     def handle(self, e: Type[Exception]) -> Callable[[Type], Type]:
         """
-        Bind `Exception` to the decolated view.
+        Bind `Exception` to the decorated view.
 
         **Args**
 

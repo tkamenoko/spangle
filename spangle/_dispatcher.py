@@ -44,9 +44,16 @@ async def _dispatch_http(
     req.max_upload_bytes = api.max_upload_bytes
     resp = http.Response(jinja_env=api._jinja_env, url_for=api.url_for)
     try:
-        return await _response_http(scope, receive, send, req, resp, api)
+        _resp = await _response_http(scope, receive, send, req, resp, api)
     except Exception as e:
-        return await _response_http_error(scope, receive, send, req, resp, api, e)
+        _resp = await _response_http_error(scope, receive, send, req, resp, api, e)
+    # after_request hooks.
+    for cls in api.request_hooks["after"]:
+        hook = _init_view(cls, api.components, api._view_cache)
+        _resp = (
+            await getattr(hook, "on_request", _default_response)(req, _resp)
+        ) or _resp
+    return _resp
 
 
 async def _response_http(
@@ -61,26 +68,13 @@ async def _response_http(
     comp = api.components
     view_cache = api._view_cache
 
-    path = scope["path"] or "/"
-    # routing strategy.
-    if not path.endswith("/"):
-        if api.routing == "redirect":
-            qs = scope.get("query_string", b"").decode("ascii")
-            if qs:
-                qs = f"?{qs}"
-            return RedirectResponse(
-                url=f"{path}/{qs}", status_code=HTTPStatus.PERMANENT_REDIRECT
-            )
-
-        if api.routing == "clone":
-            path += "/"
-
     # before_request hooks.
-    for cls in api.request_hooks:
+    for cls in api.request_hooks["before"]:
         hook = _init_view(cls, comp, view_cache)
         resp = (await getattr(hook, "on_request", _default_response)(req, resp)) or resp
 
-    # Normal response.
+    # get views.
+    path = scope["path"] or "/"
     _view = root.get(path)
     if _view is None:
         if root.default_route is None:
@@ -193,26 +187,22 @@ async def _dispatch_websocket(
 ) -> ASGIApp:
     # upgrade is treated by asgi server.
     conn = websocket.Connection(scope, receive, send)
-    # get route: ignore trailing slash!
-    raw_path = scope["path"]
-    _normalized = _normalize_path(scope["path"])
-    view_param = (
-        api.router.get(raw_path)
-        or api.router.get(_normalized)
-        or api.router.get(_normalized[:-1])
-    )
+    # get route
+    path = scope["path"]
+    view_param = api.router.get(path)
+
     # if not found, close with 1002:Protocol Error before accepting.
     if not view_param:
         await conn.close(1002)
         raise NotFoundError(
-            f"WebSocket connection against unsupported path `{raw_path}`.", status=1002
+            f"WebSocket connection against unsupported path `{path}`.", status=1002
         )
     view_class, params = view_param
     # view has on_ws(self,conn,**kw)? if not, close with 1002.
     if not hasattr(view_class, "on_ws"):
         await conn.close(1002)
         raise NotFoundError(
-            f"WebSocket connection against unsupported path `{raw_path}`.", status=1002
+            f"WebSocket connection against unsupported path `{path}`.", status=1002
         )
     view = _init_view(view_class, api.components, api._view_cache)
     return await _process_websocket(scope, receive, send, conn, view, params, api)
@@ -220,15 +210,20 @@ async def _dispatch_websocket(
 
 async def _process_websocket(scope, receive, send, conn, view, params, api):
     # return app that process connection include error handling!
-    hooks = [
+    before_hooks = [
         _init_view(cls, api.components, api._view_cache)
-        for cls in api.request_hooks
+        for cls in api.request_hooks["before"]
+        if hasattr(cls, "on_ws")
+    ]
+    after_hooks = [
+        _init_view(cls, api.components, api._view_cache)
+        for cls in api.request_hooks["after"]
         if hasattr(cls, "on_ws")
     ]
 
     async def ws(scope, receive, send):
         try:
-            for hook in hooks:
+            for hook in before_hooks:
                 await hook.on_ws(conn)
             assert not conn.closed
             await view.on_ws(conn, **params)
@@ -239,6 +234,9 @@ async def _process_websocket(scope, receive, send, conn, view, params, api):
         else:
             if not conn.closed:
                 await conn.close(1000)
+        finally:
+            for hook in after_hooks:
+                await hook.on_ws(conn)
 
     return ws
 

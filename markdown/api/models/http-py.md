@@ -246,6 +246,7 @@ def redirect(
     params: dict = None,
     url: str = None,
     status=HTTPStatus.TEMPORARY_REDIRECT,
+    query_string: Optional[str] = None,
     ) -> "Response"
 ```
 

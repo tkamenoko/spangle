@@ -8,7 +8,7 @@ class WebSocketTests(TestCase):
         self.api = Api()
 
     def test_text(self):
-        @self.api.route("/websocket")
+        @self.api.route("/websocket", routing="clone")
         class Text:
             async def on_ws(_, conn):
                 await conn.accept()
@@ -36,7 +36,7 @@ class WebSocketTests(TestCase):
                     connection.receive(str)
 
     def test_bytes(self):
-        @self.api.route("/websocket")
+        @self.api.route("/websocket", routing="clone")
         class Bytes:
             async def on_ws(_, conn):
                 await conn.accept()
@@ -64,7 +64,7 @@ class WebSocketTests(TestCase):
                     connection.receive(bytes)
 
     def test_websocket_error(self):
-        @self.api.route("/websocket")
+        @self.api.route("/websocket", routing="clone")
         class WSError:
             async def on_ws(_, conn):
                 await conn.accept()
@@ -96,7 +96,7 @@ class WebSocketTests(TestCase):
     def test_params(self):
         params = {"foo": "bar"}
 
-        @self.api.route("/websocket")
+        @self.api.route("/websocket", routing="clone")
         class Text:
             async def on_ws(_, conn):
                 await conn.accept()

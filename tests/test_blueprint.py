@@ -75,8 +75,7 @@ class BlueprintTests(TestCase):
             for path, status in paths:
                 with self.subTest(path=path):
                     response = client.get(path, allow_redirects=False)
-                    self.assertEqual(
-                        response.status_code, status)
+                    self.assertEqual(response.status_code, status)
 
     def test_route_redirect(self):
         self.api.routing = "redirect"
@@ -89,7 +88,7 @@ class BlueprintTests(TestCase):
             ("/patterns/here", HTTPStatus.PERMANENT_REDIRECT),
             ("/patterns/here/", HTTPStatus.OK),
             ("/foo", HTTPStatus.PERMANENT_REDIRECT),
-            ("/notfound", HTTPStatus.PERMANENT_REDIRECT),
+            ("/notfound", HTTPStatus.NOT_FOUND),
             ("/notfound/", HTTPStatus.NOT_FOUND),
             ("/start/", HTTPStatus.OK),
             ("/start", HTTPStatus.PERMANENT_REDIRECT),
@@ -97,7 +96,7 @@ class BlueprintTests(TestCase):
             ("/start/patterns/here", HTTPStatus.PERMANENT_REDIRECT),
             ("/start/foo", HTTPStatus.PERMANENT_REDIRECT),
             ("/start/foo/", HTTPStatus.OK),
-            ("/start/notfound", HTTPStatus.PERMANENT_REDIRECT),
+            ("/start/notfound", HTTPStatus.NOT_FOUND),
             ("/start/notfound/", HTTPStatus.NOT_FOUND),
         ]
 
@@ -106,6 +105,26 @@ class BlueprintTests(TestCase):
                 with self.subTest(path=path):
                     response = client.get(path, allow_redirects=False)
                     self.assertEqual(response.status_code, status)
+
+    def test_route_mix(self):
+        api = Api(routing="redirect")
+
+        bp = Blueprint()
+
+        @bp.route("/foo", routing="strict")
+        class Foo:
+            pass
+
+        @bp.route("/bar")
+        class Bar:
+            pass
+
+        api.add_blueprint("/", bp)
+        with api.client() as client:
+            resp = client.get("/bar", allow_redirects=False)
+            self.assertEqual(resp.status_code, HTTPStatus.PERMANENT_REDIRECT)
+            resp = client.get("/foo", allow_redirects=False)
+            self.assertEqual(resp.status_code, HTTPStatus.OK)
 
     def test_lifespan(self):
 

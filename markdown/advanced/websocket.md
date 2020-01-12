@@ -7,7 +7,7 @@
 You can define a WebSocket endpoint the same as HTTP endpoint, but the name is `on_ws` . 
 
 ```python
-@api.route("/websocket/{name}")
+@api.route("/websocket/{name}", routing="clone")
 class WebSocket:
     async def on_ws(self, conn, name: str):
         await conn.accept()
@@ -38,17 +38,24 @@ class Handler:
 
 ```
 
-## Before WebSocket connection
+## Before and After WebSocket connection
 
-Hooks before starting WebSocket connection.
+Hooks before/after WebSocket connection.
 
 ```python
 @api.before_requesst
-class Hook:
+class CalledBefore:
     async def on_ws(self, conn):
         conn.state.value = 42
 
+@api.after_requesst
+class CalledAfter:
+    async def on_ws(self, conn):
+        conn.state.done = True
+
 ```
+
+Note that `after_request` hooks are called after connection closing.
 
 ## WebSocket Testing
 
