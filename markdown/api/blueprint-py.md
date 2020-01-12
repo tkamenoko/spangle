@@ -17,7 +17,7 @@ Application component contains child paths with views.
 
 * **views** (`Dict[str, Tuple[Type, Converters]]`): Collected view classes.
 * **events** (`Dict[str, List[Callable]]`): Registered lifespan handlers.
-* **request_hooks** (`List[Type]`): Called against every request.
+* **request_hooks** (`Dict[str, List[type]]`): Called against every request.
 
 Initialize self.
 
@@ -41,13 +41,23 @@ Nest a `Blueprint` in another one.
 
 ------
 
+[**after_request**](#Blueprint.after_request){: #Blueprint.after_request }
+
+```python
+def after_request(self, cls: Type) -> Type
+```
+
+Decorator to add a class called after each request processed.
+
+------
+
 [**before_request**](#Blueprint.before_request){: #Blueprint.before_request }
 
 ```python
 def before_request(self, cls: Type) -> Type
 ```
 
-Decolator to add a class called before each request.
+Decorator to add a class called before each request processed.
 
 ------
 
@@ -57,7 +67,7 @@ Decolator to add a class called before each request.
 def handle(self, e: Type[Exception]) -> Callable[[Type], Type]
 ```
 
-Bind `Exception` to the decolated view.
+Bind `Exception` to the decorated view.
 
 **Args**
 
@@ -71,7 +81,7 @@ Bind `Exception` to the decolated view.
 def on_start(self, f: Callable) -> Callable
 ```
 
-Decolater for startup events
+Decorator for startup events
 
 ------
 
@@ -81,7 +91,7 @@ Decolater for startup events
 def on_stop(self, f: Callable) -> Callable
 ```
 
-Decolater for shutdown events.
+Decorator for shutdown events.
 
 ------
 
@@ -93,7 +103,7 @@ def route(
     ) -> Callable[[Type], Type]
 ```
 
-Bind a path to the decolated view. The path will be fixed by routing mode.
+Bind a path to the decorated view. The path will be fixed by routing mode.
 
 **Args**
 

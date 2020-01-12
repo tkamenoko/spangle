@@ -44,9 +44,16 @@ async def _dispatch_http(
     req.max_upload_bytes = api.max_upload_bytes
     resp = http.Response(jinja_env=api._jinja_env, url_for=api.url_for)
     try:
-        return await _response_http(scope, receive, send, req, resp, api)
+        _resp = await _response_http(scope, receive, send, req, resp, api)
     except Exception as e:
-        return await _response_http_error(scope, receive, send, req, resp, api, e)
+        _resp = await _response_http_error(scope, receive, send, req, resp, api, e)
+    # after_request hooks.
+    for cls in api.request_hooks["after"]:
+        hook = _init_view(cls, api.components, api._view_cache)
+        _resp = (
+            await getattr(hook, "on_request", _default_response)(req, _resp)
+        ) or _resp
+    return _resp
 
 
 async def _response_http(
@@ -76,7 +83,7 @@ async def _response_http(
             path += "/"
 
     # before_request hooks.
-    for cls in api.request_hooks:
+    for cls in api.request_hooks["before"]:
         hook = _init_view(cls, comp, view_cache)
         resp = (await getattr(hook, "on_request", _default_response)(req, resp)) or resp
 

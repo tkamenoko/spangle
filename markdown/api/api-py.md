@@ -30,7 +30,7 @@ The main application class.
 * **router** ([`Router `](../blueprint-py#Router)): Manage URLs and views.
 * **mounted_app** (`Dict[str, Callable]`): ASGI apps mounted under `Api` .
 * **error_handlers** (`Dict[Type[Exception], type]`): Called when `Exception` occurs.
-* **request_hooks** (`List[type]`): Called against every request.
+* **request_hooks** (`Dict[str, List[type]]`): Called against every request.
 * **lifespan_handlers** (`Dict[str, List[Callable]]`): Registered lifespan hooks.
 * **favicon** (`Optional[str]`): Place of `favicon.ico ` in `static_dir`.
 * **debug** (`bool`): Server running mode.
@@ -152,6 +152,16 @@ ASGI middleware. Add faster, called later.
 
 ------
 
+[**after_request**](#Api.after_request){: #Api.after_request }
+
+```python
+def after_request(self, cls: Type) -> Type
+```
+
+Decorator to add a class called after each request processed.
+
+------
+
 [**async_client**](#Api.async_client){: #Api.async_client }
 
 ```python
@@ -179,7 +189,7 @@ To test lifespan events, use `async with` statement.
 def before_request(self, cls: Type) -> Type
 ```
 
-Decolator to add a class called before each request.
+Decorator to add a class called before each request processed.
 
 ------
 
@@ -210,7 +220,7 @@ To test lifespan events, use `with` statement.
 def handle(self, e: Type[Exception]) -> Callable[[Type], Type]
 ```
 
-Bind `Exception` to the decolated view.
+Bind `Exception` to the decorated view.
 
 **Args**
 
@@ -239,7 +249,7 @@ Mount any ASGI3 app under the `path`.
 def on_start(self, f: Callable) -> Callable
 ```
 
-Decolater for startup events.
+Decorator for startup events.
 
 ------
 
@@ -249,7 +259,7 @@ Decolater for startup events.
 def on_stop(self, f: Callable) -> Callable
 ```
 
-Decolater for shutdown events.
+Decorator for shutdown events.
 
 ------
 
@@ -261,7 +271,7 @@ def route(
     ) -> Callable[[Type], Type]
 ```
 
-Mount the decolated view to the given path directly.
+Mount the decorated view to the given path directly.
 
 **Args**
 

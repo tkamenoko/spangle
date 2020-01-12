@@ -14,7 +14,7 @@ nav:
     - Response: response.md
     - Component: component.md
     - Lifespan Events: lifespan.md
-    - Before Request: before-request.md
+    - Request Hooks: request-hooks.md
     - Error Handling: error-handling.md
     - Static Files: statics.md
     - Test Client: test-client.md

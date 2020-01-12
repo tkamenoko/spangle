@@ -388,8 +388,8 @@
 
 
   <li class="md-nav__item">
-    <a href="../../before-request/" title="Before Request" class="md-nav__link">
-      Before Request
+    <a href="../../request-hooks/" title="Request Hooks" class="md-nav__link">
+      Request Hooks
     </a>
   </li>
 
@@ -955,7 +955,7 @@
 <ul>
 <li><strong>views</strong> (<code class="codehilite"><span class="err">Dict[str, Tuple[Type, Converters]]</span></code>): Collected view classes.</li>
 <li><strong>events</strong> (<code class="codehilite"><span class="n">Dict</span><span class="o">[</span><span class="n">str, List[Callable</span><span class="o">]</span><span class="err">]</span><span class="w"></span></code>): Registered lifespan handlers.</li>
-<li><strong>request_hooks</strong> (<code class="codehilite"><span class="n">List</span><span class="o">[</span><span class="n">Type</span><span class="o">]</span><span class="w"></span></code>): Called against every request.</li>
+<li><strong>request_hooks</strong> (<code class="codehilite"><span class="n">Dict</span><span class="o">[</span><span class="n">str, List[type</span><span class="o">]</span><span class="err">]</span><span class="w"></span></code>): Called against every request.</li>
 </ul>
 <p>Initialize self.</p>
 <hr />
@@ -972,19 +972,26 @@
 <li><strong>bp</strong> (<a href="./#Blueprint"><code class="codehilite"><span class="err">Blueprint</span></code></a>): Another instance to mount.</li>
 </ul>
 <hr />
+<p><a href="#Blueprint.after_request" id="Blueprint.after_request"><strong>after_request</strong></a></p>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">after_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span>
+</pre></div>
+</td></tr></table>
+
+<p>Decorator to add a class called after each request processed.</p>
+<hr />
 <p><a href="#Blueprint.before_request" id="Blueprint.before_request"><strong>before_request</strong></a></p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">before_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span>
 </pre></div>
 </td></tr></table>
 
-<p>Decolator to add a class called before each request.</p>
+<p>Decorator to add a class called before each request processed.</p>
 <hr />
 <p><a href="#Blueprint.handle" id="Blueprint.handle"><strong>handle</strong></a></p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="ne">Exception</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Type</span><span class="p">],</span> <span class="n">Type</span><span class="p">]</span>
 </pre></div>
 </td></tr></table>
 
-<p>Bind <code class="codehilite"><span class="err">Exception</span></code> to the decolated view.</p>
+<p>Bind <code class="codehilite"><span class="err">Exception</span></code> to the decorated view.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>e</strong> (<code class="codehilite"><span class="err">Exception</span></code>): Subclass of <code class="codehilite"><span class="err">Exception</span></code> you want to handle.</li>
@@ -995,14 +1002,14 @@
 </pre></div>
 </td></tr></table>
 
-<p>Decolater for startup events</p>
+<p>Decorator for startup events</p>
 <hr />
 <p><a href="#Blueprint.on_stop" id="Blueprint.on_stop"><strong>on_stop</strong></a></p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">on_stop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span>
 </pre></div>
 </td></tr></table>
 
-<p>Decolater for shutdown events.</p>
+<p>Decorator for shutdown events.</p>
 <hr />
 <p><a href="#Blueprint.route" id="Blueprint.route"><strong>route</strong></a></p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
@@ -1013,7 +1020,7 @@
 </pre></div>
 </td></tr></table>
 
-<p>Bind a path to the decolated view. The path will be fixed by routing mode.</p>
+<p>Bind a path to the decorated view. The path will be fixed by routing mode.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>): The location of your view.</li>

@@ -36,7 +36,7 @@
     
     
       
-        <title>Before Request - spangle - ASGI framework for modern web application</title>
+        <title>Request Hooks - spangle - ASGI framework for modern web application</title>
       
     
     
@@ -85,7 +85,7 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" data-md-component="overlay" for="__drawer"></label>
     
-      <a href="#before-request" tabindex="1" class="md-skip">
+      <a href="#request-hooks" tabindex="1" class="md-skip">
         Skip to content
       </a>
     
@@ -111,7 +111,7 @@
             </span>
             <span class="md-header-nav__topic">
               
-                Before Request
+                Request Hooks
               
             </span>
           
@@ -395,11 +395,11 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        Before Request
+        Request Hooks
       </label>
     
-    <a href="./" title="Before Request" class="md-nav__link md-nav__link--active">
-      Before Request
+    <a href="./" title="Request Hooks" class="md-nav__link md-nav__link--active">
+      Request Hooks
     </a>
     
       
@@ -846,16 +846,26 @@
               
                 
                 
-                <h1 id="before-request">Before Request<a class="headerlink" href="#before-request" title="Permanent link">&para;</a></h1>
-<p>If you want to do something against all requests, use <a href="/api/api-py#Api.before_request"><code class="codehilite"><span class="err">before_request</span></code></a> .</p>
+                <h1 id="request-hooks">Request Hooks<a class="headerlink" href="#request-hooks" title="Permanent link">&para;</a></h1>
+<p>If you want to do something against all requests, use <a href="/api/api-py#Api.before_request"><code class="codehilite"><span class="err">before_request</span></code></a> and <a href="/api/api-py#Api.after_request"><code class="codehilite"><span class="err">after_request</span></code></a>.</p>
 <h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
-4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">before_request</span>
-<span class="k">class</span> <span class="nc">Hook</span><span class="p">:</span>
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">before_request</span>
+<span class="k">class</span> <span class="nc">BeforeHook</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
         <span class="n">resp</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;X-preprocess&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;done&quot;</span>
+
+<span class="nd">@api</span><span class="o">.</span><span class="n">after_request</span>
+<span class="k">class</span> <span class="nc">AfterHook</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s2">&quot;X-postprocess&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;done&quot;</span>
 </pre></div>
 </td></tr></table>
                 
