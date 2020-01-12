@@ -117,7 +117,8 @@ class BlueprintTests(TestCase):
 
         @bp.route("/bar")
         class Bar:
-            pass
+            async def on_post(_, req, resp):
+                pass
 
         api.add_blueprint("/", bp)
         with api.client() as client:
@@ -125,6 +126,8 @@ class BlueprintTests(TestCase):
             self.assertEqual(resp.status_code, HTTPStatus.PERMANENT_REDIRECT)
             resp = client.get("/foo", allow_redirects=False)
             self.assertEqual(resp.status_code, HTTPStatus.OK)
+            resp = client.post("/bar", allow_redirects=False)
+            self.assertEqual(resp.status_code, HTTPStatus.PERMANENT_REDIRECT)
 
     def test_lifespan(self):
 
