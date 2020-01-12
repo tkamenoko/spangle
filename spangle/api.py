@@ -333,20 +333,13 @@ class Api:
         _path = "/" + path
         flatten = {}
         for child, view_conv in blueprint.views.items():
-            _child = child
-            p = re.sub(r"//+", "/", "/".join([_path, _child]))
-            view, conv = view_conv
-            if self.routing == "strict":
-                jointed = _normalize_path(p)
-                if not (path + child).endswith("/"):
-                    jointed = jointed[:-1] or "/"
-                flatten[jointed] = view, conv
-            else:
-                flatten[_normalize_path(p)] = view, conv
+            p = re.sub(r"//+", "/", "/".join([_path, child]))
+            view, conv, routing = view_conv
+            flatten[p] = (view, conv, routing or self.routing)
         for k, v in flatten.items():
-            _view, _conv = v
-            self.router._add(k, _view, _conv)
-            _k = re.sub(r"{([^/:]+)(:[^/:]+)}", r"{\1}", k)
+            _view, _conv, _routing = v
+            normalized = self.router._add(k, _view, _conv, _routing)
+            _k = re.sub(r"{([^/:]+)(:[^/:]+)}", r"{\1}", normalized)
             self._reverse_views.setdefault(_view, _k)
 
         # add ErrorHandler bound by Blueprint.
@@ -361,7 +354,11 @@ class Api:
         self.request_hooks["after"].extend(blueprint.request_hooks["after"])
 
     def route(
-        self, path: str, *, converters: Optional[Dict[str, Callable[[str], Any]]] = None
+        self,
+        path: str,
+        *,
+        converters: Optional[Dict[str, Callable[[str], Any]]] = None,
+        routing: Optional[str] = None,
     ) -> Callable[[Type], Type]:
         """
         Mount the decorated view to the given path directly.
@@ -374,7 +371,7 @@ class Api:
 
         def _inner(cls: Type) -> Type:
             _bp = Blueprint()
-            _bp.route(path=path, converters=converters)(cls)
+            _bp.route(path=path, converters=converters, routing=routing)(cls)
             self.add_blueprint("", _bp)
             return cls
 
@@ -402,8 +399,10 @@ class Api:
         * params (`Optional[Dict[str, Any]]`): Used to format dynamic path.
 
         """
+        
         params = params or {}
         path = self._reverse_views[view]
+
         return path.format_map(params)
 
     def add_middleware(self, middleware: Callable[..., ASGIApp], **config) -> None:

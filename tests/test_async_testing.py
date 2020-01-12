@@ -16,7 +16,7 @@ class AsyncClientTests(_Case):
             async def on_get(_, req, resp):
                 pass
 
-        @self.api.route("/websocket")
+        @self.api.route("/websocket", routing="clone")
         class Text:
             async def on_ws(_, conn):
                 await conn.accept()

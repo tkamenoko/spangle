@@ -34,6 +34,8 @@ class RequestTests(TestCase):
         with self.api.client() as client:
             for path, params in query.items():
                 with self.subTest(path=path):
+                    response = client.get(f"/{path}/", params=params)
+                    self.assertEqual(response.status_code, HTTPStatus.OK)
                     response = client.get(f"/{path}", params=params)
                     self.assertEqual(response.status_code, HTTPStatus.OK)
 
