@@ -99,7 +99,11 @@ Decorator for shutdown events.
 
 ```python
 def route(
-    self, path: str, *, converters: Optional[Converters] = None
+    self,
+    path: str,
+    *,
+    converters: Optional[Converters] = None,
+    routing: Optional[str] = None
     ) -> Callable[[Type], Type]
 ```
 
@@ -108,8 +112,9 @@ Bind a path to the decorated view. The path will be fixed by routing mode.
 **Args**
 
 * **path** (`str`): The location of your view.
-* **converters** (`Optional[Dict[str,Callable]]`): If given, dynamic url's params
-    are converted before passed to the view.
+* **converters** (`Optional[Dict[str,Callable]]`): Params converters
+    for dynamic routing.
+* **routing** (`Optional[str]`): Routing strategy.
 
 ------
 

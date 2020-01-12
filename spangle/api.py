@@ -366,6 +366,9 @@ class Api:
         **Args**
 
         * path (`str`): The location for the view.
+        * converters (`Optional[Dict[str, Callable[[str], Any]]]`): Params converters
+            for dynamic routing.
+        * routing (`Optional[str]`): Routing strategy.
 
         """
 

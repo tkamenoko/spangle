@@ -55,8 +55,9 @@ class Blueprint:
         **Args**
 
         * path (`str`): The location of your view.
-        * converters (`Optional[Dict[str,Callable]]`): If given, dynamic url's params
-            are converted before passed to the view.
+        * converters (`Optional[Dict[str,Callable]]`): Params converters
+            for dynamic routing.
+        * routing (`Optional[str]`): Routing strategy.
 
         """
 

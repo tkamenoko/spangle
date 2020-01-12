@@ -522,8 +522,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#before-websocket-connection" class="md-nav__link">
-    Before WebSocket connection
+  <a href="#before-and-after-websocket-connection" class="md-nav__link">
+    Before and After WebSocket connection
   </a>
   
 </li>
@@ -862,8 +862,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#before-websocket-connection" class="md-nav__link">
-    Before WebSocket connection
+  <a href="#before-and-after-websocket-connection" class="md-nav__link">
+    Before and After WebSocket connection
   </a>
   
 </li>
@@ -907,7 +907,7 @@
  9
 10
 11
-12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/websocket/</span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">)</span>
+12</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/websocket/</span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">routing</span><span class="o">=</span><span class="s2">&quot;clone&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">WebSocket</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_ws</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">await</span> <span class="n">conn</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
@@ -940,18 +940,29 @@
 </pre></div>
 </td></tr></table>
 
-<h2 id="before-websocket-connection">Before WebSocket connection<a class="headerlink" href="#before-websocket-connection" title="Permanent link">&para;</a></h2>
-<p>Hooks before starting WebSocket connection.</p>
+<h2 id="before-and-after-websocket-connection">Before and After WebSocket connection<a class="headerlink" href="#before-and-after-websocket-connection" title="Permanent link">&para;</a></h2>
+<p>Hooks before/after WebSocket connection.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
-4</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">before_requesst</span>
-<span class="k">class</span> <span class="nc">Hook</span><span class="p">:</span>
+4
+5
+6
+7
+8
+9</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="nd">@api</span><span class="o">.</span><span class="n">before_requesst</span>
+<span class="k">class</span> <span class="nc">CalledBefore</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_ws</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
         <span class="n">conn</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">42</span>
+
+<span class="nd">@api</span><span class="o">.</span><span class="n">after_requesst</span>
+<span class="k">class</span> <span class="nc">CalledAfter</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_ws</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+        <span class="n">conn</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">done</span> <span class="o">=</span> <span class="kc">True</span>
 </pre></div>
 </td></tr></table>
 
+<p>Note that <code class="codehilite"><span class="err">after_request</span></code> hooks are called after connection closing.</p>
 <h2 id="websocket-testing">WebSocket Testing<a class="headerlink" href="#websocket-testing" title="Permanent link">&para;</a></h2>
 <p>WebSocket test cllient is also available.</p>
 <table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span> 1
