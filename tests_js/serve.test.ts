@@ -60,21 +60,21 @@ export class ServeTests {
     @tests.Test()
     async testWebSocket() {
         const ws = new WebSocket("ws://localhost:3000/websocket", { origin: this.origin })
-
+        let sent = false
         ws.onmessage = (event) => {
             tests.expect.toBeEqual(event.data, "you said `hello` .")
+            sent = true
+        }
+        ws.onopen = (event) => {
+            ws.send("hello")
         }
 
         await new Promise((resolve, reject) => {
             setTimeout(() => {
-                if (ws.readyState === ws.OPEN) {
-                    ws.send("hello")
-                } else {
-                    tests.expect.toBeTrue(false, "Fail to connect.")
-                }
                 resolve()
             }, 1000)
-        })
+        }).then(() => { tests.expect.toBeTrue(sent) })
+
     }
 
 
