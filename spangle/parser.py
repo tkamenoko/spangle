@@ -1,11 +1,10 @@
 """Types to parse user uploads."""
 
 import asyncio
-from collections import namedtuple
 from functools import partial
 from json import loads
 from tempfile import SpooledTemporaryFile
-from typing import TYPE_CHECKING, Awaitable, Callable, Optional
+from typing import TYPE_CHECKING, Awaitable, Callable, NamedTuple, Optional
 from urllib.parse import parse_qsl
 
 from multidict import MultiDict, MultiDictProxy
@@ -23,13 +22,22 @@ _type_to_parser = {
 }
 
 
-UploadedFile = namedtuple("UploadedFile", ["filename", "file", "mimetype"])
-UploadedFile.__doc__ = (
-    """Named tuple to accept client's uploads via `multipart/form-data` ."""
-)
-UploadedFile.filename.__doc__ = """(`str`): Filename, includes `.ext` ."""
-UploadedFile.file.__doc__ = """(`SpooledTemporaryFile`): File-like object."""
-UploadedFile.mimetype.__doc__ = """(`str`): File's `"mime/type"` ."""
+class UploadedFile(NamedTuple):
+    """
+    Named tuple to accept client's uploads via `multipart/form-data` .
+
+    **Attributes**
+
+    * filename (`str`): Filename, includes `.ext` .
+    * file (`SpooledTemporaryFile`): File-like object.
+    * mimetype (`str`): File's `"mime/type"` .
+
+    """
+
+    # TODO: async read/write methods?
+    filename: str
+    file: SpooledTemporaryFile
+    mimetype: str
 
 
 async def _parse_body(req: "Request", parse_as: str = None) -> MultiDictProxy:
