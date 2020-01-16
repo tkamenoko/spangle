@@ -906,11 +906,17 @@
 <p>Types to parse user uploads.</p>
 <h2 id="classes">Classes<a class="headerlink" href="#classes" title="Permanent link">&para;</a></h2>
 <h3 id="UploadedFile">UploadedFile<a class="headerlink" href="#UploadedFile" title="Permanent link">&para;</a></h3>
-<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">UploadedFile</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">mimetype</span><span class="p">)</span>
+<table class="codehilitetable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">UploadedFile</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file</span><span class="p">:</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">SpooledTemporaryFile</span><span class="p">,</span> <span class="n">mimetype</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span>
 </pre></div>
 </td></tr></table>
 
 <p>Named tuple to accept client&rsquo;s uploads via <code class="codehilite"><span class="err">multipart/form-data</span></code> .</p>
+<p><strong>Attributes</strong></p>
+<ul>
+<li><strong>filename</strong> (<code class="codehilite"><span class="err">str</span></code>): Filename, includes <code class="codehilite"><span class="na">.ext</span></code> .</li>
+<li><strong>file</strong> (<code class="codehilite"><span class="err">SpooledTemporaryFile</span></code>): File-like object.</li>
+<li><strong>mimetype</strong> (<code class="codehilite"><span class="err">str</span></code>): File&rsquo;s <code class="codehilite"><span class="err">&quot;mime/type&quot;</span></code> .</li>
+</ul>
 <hr />
 <h4 id="UploadedFile-bases">Base classes<a class="headerlink" href="#UploadedFile-bases" title="Permanent link">&para;</a></h4>
 <ul>
