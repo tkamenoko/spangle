@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.2(Unreleased)
+
+* Fix `UploadedFile` to be typed
+
 ## v0.5.1(2020-01-12)
 
 * Fix routing to respect `allowed_methods`

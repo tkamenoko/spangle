@@ -57,7 +57,7 @@ class GetStored:
             resp.status_code = 404
 
 
-@api.route("/websocket")
+@api.route("/websocket", routing="clone")
 class WebSocket:
     async def on_ws(self, conn):
         await conn.accept()
