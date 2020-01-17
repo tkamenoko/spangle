@@ -1,5 +1,4 @@
 import { spawn } from 'child_process';
-import { writeFileSync } from "fs";
 
 
 export const runServer = ({ app = "app:api", port = 3000 } = {}) => {

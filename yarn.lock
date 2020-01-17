@@ -61,12 +61,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ws@npm:^6.0.3":
-  version: 6.0.3
-  resolution: "@types/ws@npm:6.0.3"
+"@types/ws@npm:^7.2.0":
+  version: 7.2.0
+  resolution: "@types/ws@npm:7.2.0"
   dependencies:
     "@types/node": "npm:*"
-  checksum: 649fb8c1781d41ad3731e4afdd1dcc67c5eb430da56020dcb9bd2edf738d4895a132173e69c75527d29665353ea388075e644ad0ee457aaabf6366d1c2ee5843
+  checksum: 731bb8227988b9a0b2d3624ace5d6e2a107680b0288a0902ac6c396f3a15702bdcbaf1ddd174c19179bf61bc43e18d38ea4757d30e81b6378d48754b2530fe15
   languageName: node
   linkType: hard
 
@@ -112,13 +112,6 @@ __metadata:
   version: 1.0.1
   resolution: "arrify@npm:1.0.1"
   checksum: 9e2d57110b0262411240026571a93d6ba802bef1377e5d98e4d2d5cfde08bb9576980182c08f95591ab2d66379cf14a76388816b8448b42be23ad60224e4588f
-  languageName: node
-  linkType: hard
-
-"async-limiter@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "async-limiter@npm:1.0.1"
-  checksum: 31ed8a2681eb3bf62151f91ac4ba3c9e7f474c39120ed6a50661635687b911e2d02797bc2304f1a68f7abee83bec30196ea012058a80c6179091afa1c8efc595
   languageName: node
   linkType: hard
 
@@ -638,19 +631,19 @@ __metadata:
     "@types/got": "npm:^9.6.9"
     "@types/node": "npm:^12.11.7"
     "@types/typescript": "npm:^2.0.0"
-    "@types/ws": "npm:^6.0.3"
+    "@types/ws": "npm:^7.2.0"
     "@yarnpkg/pnpify": "npm:^2.0.0-rc.9"
     got: "npm:^9.6.0"
     isomorphic-ws: "npm:^4.0.1"
-    testyts: "npm:^0.8.2"
+    testyts: "npm:^0.9.0"
     typescript: "npm:^3.7.2"
-    ws: "npm:^7.2.0"
+    ws: "npm:^7.2.1"
   languageName: unknown
   linkType: soft
 
-"testyts@npm:^0.8.2":
-  version: 0.8.2
-  resolution: "testyts@npm:0.8.2"
+"testyts@npm:^0.9.0":
+  version: 0.9.0
+  resolution: "testyts@npm:0.9.0"
   dependencies:
     "@testy/assertion": "npm:^0.1.1"
     commander: "npm:^4.0.0-1"
@@ -660,7 +653,7 @@ __metadata:
     typescript: "npm:^3.1.6"
   bin:
     testyts: build/testy.js
-  checksum: cd6ad8c4b830ed27e0d08ee6986b1a560fd8a35f499ddf7217a9d2ed4bd71080cf48eee0163badca691c789d4ac4650511675237904f1a360bf473003abeca18
+  checksum: 6f3019abf5706c926f8ba1b84873db519271a310a481b82c966fde0cb692c078c309c6d7d1d426922abf98682b8cdabe6179849bf2fb8b6657f8a6ad982f199d
   languageName: node
   linkType: hard
 
@@ -735,12 +728,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ws@npm:^7.2.0":
-  version: 7.2.0
-  resolution: "ws@npm:7.2.0"
-  dependencies:
-    async-limiter: "npm:^1.0.0"
-  checksum: 23e39f826ed4469b469377757f83c1dd72d3af0a13e3608bebbca6d1aa9e037efb77402a66451b8f582a850145e6139d7459a21b4fa4a5a6eadfcdc4099def43
+"ws@npm:^7.2.1":
+  version: 7.2.1
+  resolution: "ws@npm:7.2.1"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ^5.0.2
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 78bd611c32a4de962cff870fdd686ee9e6de6035054547c2c0c41933bd7a470ea2604dac8b96b192c5b7db7f08acdb48084a32e042b9367b505241bcb136c006
   languageName: node
   linkType: hard
 
