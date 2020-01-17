@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.5.2(Unreleased)
+## v0.5.2(2020-01-17)
 
 * Fix `UploadedFile` to be typed
 
