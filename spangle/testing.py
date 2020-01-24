@@ -412,16 +412,17 @@ class _BaseClient:
         self,
         method: str,
         path: str,
-        params: Params = None,
-        headers: Headers = None,
-        cookies: Mapping[str, str] = None,
-        json: Mapping = None,
-        files: Mapping = None,
-        form: Mapping = None,
-        content: bytes = None,
-        timeout: int = None,
+        params: Optional[Params] = None,
+        headers: Optional[Headers] = None,
+        cookies: Optional[Mapping[str, str]] = None,
+        json: Optional[Mapping] = None,
+        files: Optional[Mapping] = None,
+        form: Optional[Mapping] = None,
+        content: Optional[bytes] = None,
+        timeout: Optional[int] = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
+        # TODO: max_redirects?
         if isinstance(headers, list):
             headers = CIMultiDict(headers)
         elif headers is None:
@@ -438,11 +439,52 @@ class _BaseClient:
             data = content
         timeout = timeout or self.timeout
         if timeout is not None:
+            _headers = [(k, v) for k, v in headers.items()]
             async with timeout_ctx(timeout):
                 response = await self._client.request(
                     method.upper(),
                     path,
-                    headers=[(k, v) for k, v in headers.items()],
+                    headers=_headers,
+                    data=data,
+                    params=params,
+                    json=json,
+                    cookies=cookies,
+                    allow_redirects=False,
+                    timeout=timeout,
+                )
+                if allow_redirects and 300 <= response.status_code < 400:
+                    path = response.headers["location"]
+                    response = await self._client.request(
+                        method.upper(),
+                        path,
+                        headers=_headers,
+                        data=data,
+                        params=params,
+                        json=json,
+                        cookies=cookies,
+                        allow_redirects=allow_redirects,
+                        timeout=timeout,
+                    )
+
+        else:
+            _headers = [(k, v) for k, v in headers.items()]
+            response = await self._client.request(
+                method.upper(),
+                path,
+                headers=_headers,
+                data=data,
+                params=params,
+                json=json,
+                cookies=cookies,
+                allow_redirects=False,
+                timeout=timeout,
+            )
+            if allow_redirects and 300 <= response.status_code < 400:
+                path = response.headers["location"]
+                response = await self._client.request(
+                    method.upper(),
+                    path,
+                    headers=_headers,
                     data=data,
                     params=params,
                     json=json,
@@ -450,18 +492,6 @@ class _BaseClient:
                     allow_redirects=allow_redirects,
                     timeout=timeout,
                 )
-        else:
-            response = await self._client.request(
-                method.upper(),
-                path,
-                headers=[(k, v) for k, v in headers.items()],
-                data=data,
-                params=params,
-                json=json,
-                cookies=cookies,
-                allow_redirects=allow_redirects,
-                timeout=timeout,
-            )
         return HttpTestResponse(response)
 
 

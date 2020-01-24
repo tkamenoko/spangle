@@ -43,7 +43,6 @@ class RequestTests(TestCase):
         @self.api.route("/")
         class Index:
             async def on_get(_, req, resp):
-                # httpx.ASGIDispatch
                 self.assertEqual(req.client.host, "127.0.0.1")
                 self.assertEqual(req.client.port, 123)
                 return resp
@@ -55,15 +54,15 @@ class RequestTests(TestCase):
     def test_cookie(self):
         cookies = {"foo": "bar", "aaa": "bbb"}
 
-        @self.api.route("/")
-        class Index:
+        @self.api.route("/cookie")
+        class Cookie:
             async def on_get(_, req, resp):
                 given_cookies = req.cookies
                 self.assertEqual(given_cookies, cookies)
                 return resp
 
         with self.api.client() as client:
-            response = client.get("/", cookies=cookies)
+            response = client.get("/cookie", cookies=cookies)
             self.assertEqual(response.status_code, HTTPStatus.OK)
 
     def test_accept(self):

@@ -1,12 +1,11 @@
 from http import HTTPStatus
 from typing import TYPE_CHECKING, Any, Dict, Type
 
-from starlette.responses import RedirectResponse
 from starlette.responses import Response as StarletteResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from ._utils import _get_annotations, _normalize_path
-from .exceptions import SpangleError, MethodNotAllowedError, NotFoundError
+from ._utils import _get_annotations
+from .exceptions import MethodNotAllowedError, NotFoundError, SpangleError
 from .models import http, websocket
 
 if TYPE_CHECKING:
