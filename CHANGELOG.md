@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.5.3(Unreleased)
+## v0.5.3(2020-01-24)
 
 * Fix `TestClient` to keep cookies after redirection
 
