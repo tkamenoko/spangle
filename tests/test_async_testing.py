@@ -16,6 +16,12 @@ class AsyncClientTests(_Case):
             async def on_get(_, req, resp):
                 pass
 
+        @self.api.route("/cookie")
+        class Cookie:
+            async def on_get(_, req, resp):
+                assert req.cookies, req.headers
+                resp.json = dict(**req.cookies)
+
         @self.api.route("/websocket", routing="clone")
         class Text:
             async def on_ws(_, conn):
@@ -36,6 +42,9 @@ class AsyncClientTests(_Case):
         async with self.api.async_client() as client:
             response = await client.get("/")
             self.assertEqual(response.status_code, HTTPStatus.OK)
+            cookies = {"foo": "bar", "aa": "bb"}
+            response = await client.get("/cookie", cookies=cookies)
+            self.assertEqual(dict(**response.json), cookies)
             async with client.ws_connect("/websocket") as connection:
                 await connection.send("FOO")
                 resp = await connection.receive(str)
