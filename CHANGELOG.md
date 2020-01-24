@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.3(Unreleased)
+
+* Fix `TestClient` to keep cookies after redirection
+
 ## v0.5.2(2020-01-17)
 
 * Fix `UploadedFile` to be typed
