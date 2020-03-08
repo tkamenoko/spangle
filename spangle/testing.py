@@ -438,6 +438,8 @@ class _BaseClient:
         else:
             data = content
         timeout = timeout or self.timeout
+        if cookies is not None:
+            self._client.cookies = {}
         if timeout is not None:
             _headers = [(k, v) for k, v in headers.items()]
             async with timeout_ctx(timeout):

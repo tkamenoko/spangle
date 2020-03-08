@@ -59,3 +59,17 @@ class AsyncClientTests(_Case):
                 with self.assertRaises(RuntimeError):
                     await connection.receive(str)
         self.start.assert_called_once()
+
+    async def test_cookies(self):
+        @self.api.route("/")
+        class Index:
+            async def on_get(_, req, resp):
+                resp.json = req.cookies
+                resp.set_cookie("foo", "bar")
+
+        async with self.api.async_client() as client:
+            for c in [{"foo": "bar"}, {"foo": "baz"}]:
+                with self.subTest(cookie=c):
+                    response = await client.get("/", cookies=c)
+                    self.assertEqual(response.json, c)
+                    self.assertEqual(client._client.cookies, {"foo": "bar"})
