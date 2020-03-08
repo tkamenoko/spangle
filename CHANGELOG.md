@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.4(2020-03-09)
+
+* Fix `TestClient` to overwrite cookies if given
+
 ## v0.5.3(2020-01-24)
 
 * Fix `TestClient` to keep cookies after redirection
