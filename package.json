@@ -20,14 +20,14 @@
   "private": true,
   "devDependencies": {
     "@types/got": "^9.6.9",
-    "@types/node": "^12.11.7",
+    "@types/node": "^13.9.1",
     "@types/typescript": "^2.0.0",
-    "@types/ws": "^7.2.0",
-    "@yarnpkg/pnpify": "^2.0.0-rc.9",
-    "got": "^9.6.0",
+    "@types/ws": "^7.2.2",
+    "@yarnpkg/pnpify": "^2.0.0-rc.19",
+    "got": "^10.6.0",
     "isomorphic-ws": "^4.0.1",
     "testyts": "^0.9.0",
-    "typescript": "^3.7.2",
-    "ws": "^7.2.1"
+    "typescript": "^3.8.3",
+    "ws": "^7.2.3"
   }
 }
