@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.0(2020-03-19)
+
+* Add more cookie attributes
+
 ## v0.5.4(2020-03-09)
 
 * Fix `TestClient` to overwrite cookies if given
