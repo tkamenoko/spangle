@@ -295,12 +295,15 @@ def set_cookie(
     self,
     key: str,
     value: str = "",
-    max_age: int = None,
-    expires: int = None,
-    path: str = "/",
-    domain: str = None,
+    max_age: Optional[int] = None,
+    expires: Optional[int] = None,
+    path: Optional[str] = "/",
+    comment: Optional[str] = None,
+    domain: Optional[str] = None,
     secure: bool = False,
-    httponly: bool = False,
+    httponly: bool = True,
+    version: Optional[int] = None,
+    samesite: Optional[str] = "Lax",
     ) -> "Response"
 ```
 
@@ -312,12 +315,15 @@ Set cookie value to given key with params. Chainable
 * **value** (`str`)
 Cookie options:
 
-* **max_age** (`int`)
-* **expires** (`int`)
-* **path** (`str`)
-* **domain** (`str`)
+* **max_age** (`Optional[int]`)
+* **expires** (`Optional[int]`)
+* **path** (`Optional[str]`)
+* **comment** (`Optional[str]`)
+* **domain** (`Optional[str]`)
 * **secure** (`bool`)
 * **httponly** (`bool`)
+* **version** (`Optional[int]`)
+* **samesite** (`Optional[str]`)
 **Returns**
 
 * [`Response `](./#Response): Return self.

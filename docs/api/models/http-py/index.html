@@ -1269,16 +1269,22 @@ Cookie options:</p>
  8
  9
 10
-11</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">set_cookie</span><span class="p">(</span>
+11
+12
+13
+14</pre></div></td><td class="code"><div class="codehilite"><pre><span></span><code><span class="k">def</span> <span class="nf">set_cookie</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">max_age</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">expires</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
-    <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">max_age</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">expires</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
+    <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">secure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">httponly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">httponly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">samesite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Lax&quot;</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 </td></tr></table>
@@ -1292,14 +1298,17 @@ Cookie options:</p>
 Cookie options:</p>
 </li>
 <li>
-<p><strong>max_age</strong> (<code class="codehilite"><span class="err">int</span></code>)</p>
+<p><strong>max_age</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">int</span><span class="o">]</span><span class="w"></span></code>)</p>
 </li>
-<li><strong>expires</strong> (<code class="codehilite"><span class="err">int</span></code>)</li>
-<li><strong>path</strong> (<code class="codehilite"><span class="err">str</span></code>)</li>
-<li><strong>domain</strong> (<code class="codehilite"><span class="err">str</span></code>)</li>
+<li><strong>expires</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">int</span><span class="o">]</span><span class="w"></span></code>)</li>
+<li><strong>path</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>)</li>
+<li><strong>comment</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>)</li>
+<li><strong>domain</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>)</li>
 <li><strong>secure</strong> (<code class="codehilite"><span class="err">bool</span></code>)</li>
+<li><strong>httponly</strong> (<code class="codehilite"><span class="err">bool</span></code>)</li>
+<li><strong>version</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">int</span><span class="o">]</span><span class="w"></span></code>)</li>
 <li>
-<p><strong>httponly</strong> (<code class="codehilite"><span class="err">bool</span></code>)
+<p><strong>samesite</strong> (<code class="codehilite"><span class="n">Optional</span><span class="o">[</span><span class="n">str</span><span class="o">]</span><span class="w"></span></code>)
 <strong>Returns</strong></p>
 </li>
 <li>
