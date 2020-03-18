@@ -431,13 +431,17 @@ class Response:
         self,
         key: str,
         value: str = "",
-        max_age: int = None,
-        expires: int = None,
-        path: str = "/",
-        domain: str = None,
+        max_age: Optional[int] = None,
+        expires: Optional[int] = None,
+        path: Optional[str] = "/",
+        comment: Optional[str] = None,
+        domain: Optional[str] = None,
         secure: bool = False,
-        httponly: bool = False,
+        httponly: bool = True,
+        version: Optional[int] = None,
+        samesite: Optional[str] = "Lax",
     ) -> "Response":
+
         """
         Set cookie value to given key with params. Chainable
 
@@ -448,12 +452,15 @@ class Response:
 
         Cookie options:
 
-        * max_age (`int`)
-        * expires (`int`)
-        * path (`str`)
-        * domain (`str`)
+        * max_age (`Optional[int]`)
+        * expires (`Optional[int]`)
+        * path (`Optional[str]`)
+        * comment (`Optional[str]`)
+        * domain (`Optional[str]`)
         * secure (`bool`)
         * httponly (`bool`)
+        * version (`Optional[int]`)
+        * samesite (`Optional[str]`)
 
         **Returns**
 
@@ -467,8 +474,14 @@ class Response:
             self.cookies[key]["expires"] = expires
         if path is not None:
             self.cookies[key]["path"] = path
+        if comment is not None:
+            self.cookies[key]["comment"] = comment
         if domain is not None:
             self.cookies[key]["domain"] = domain
+        if version is not None:
+            self.cookies[key]["version"] = version
+        if samesite is not None:
+            self.cookies[key]["samesite"] = samesite
 
         self.cookies[key]["secure"] = secure
         self.cookies[key]["httponly"] = httponly
