@@ -383,7 +383,7 @@ class Response:
         self.headers = CIMultiDict()
         self.cookies = SimpleCookie()
         self.status_code = HTTPStatus.OK
-        self.streaming: AsyncGenerator = None
+        self.streaming: Optional[AsyncGenerator] = None
         self.reraise = False
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send):
