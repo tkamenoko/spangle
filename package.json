@@ -8,7 +8,7 @@
   "scripts": {
     "doc:serve": "poetry run mkdocs serve",
     "doc:build": "poetry run mkdocs build",
-    "test:unit": "poetry run green -vvv -r -U -s 1 -O -u 'spangle/**' -o '**/_*,tests/*,.venv/*' $@",
+    "test:unit": "poetry run green -vvv -r -U -s 1 -O -u 'spangle/**' -o '**/_*,tests/*,.venv/*' $*",
     "test:unit_all": "run test:unit tests ; run report:coverage",
     "report:coverage": "poetry run coverage html",
     "test:e2e": "run urls:gen && pnpify testyts ; run urls:rm",
@@ -19,15 +19,15 @@
   },
   "private": true,
   "devDependencies": {
-    "@types/got": "^9.6.9",
-    "@types/node": "^13.9.1",
+    "@types/got": "^9.6.10",
+    "@types/node": "^13.13.4",
     "@types/typescript": "^2.0.0",
-    "@types/ws": "^7.2.2",
-    "@yarnpkg/pnpify": "^2.0.0-rc.19",
-    "got": "^10.6.0",
+    "@types/ws": "^7.2.4",
+    "@yarnpkg/pnpify": "^2.0.0-rc.22",
+    "got": "^11.0.3",
     "isomorphic-ws": "^4.0.1",
     "testyts": "^0.9.0",
     "typescript": "^3.8.3",
-    "ws": "^7.2.3"
+    "ws": "^7.2.5"
   }
 }
