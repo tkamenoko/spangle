@@ -34,7 +34,7 @@ jinja2 = "^2.10.3"
 multidict = "^4.7.3"
 multipart = "^0.2"
 parse = "^1.14.0"
-starlette = "^0.13.0"
+starlette = "0.13.2" # pinned: waiting https://github.com/encode/starlette/issues/908
 urllib3 = "^1.25.7"
 
 [tool.poetry.dev-dependencies]
