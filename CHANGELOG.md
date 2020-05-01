@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.6.1(2020-05-01)
+
+* Update dependencies
+* Pin `starlette` version to `0.13.2` (see https://github.com/encode/starlette/issues/908)
+
 ## v0.6.0(2020-03-19)
 
 * Add more cookie attributes
