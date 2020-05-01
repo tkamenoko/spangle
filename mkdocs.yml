@@ -46,7 +46,11 @@ nav:
 theme:
   name: 'material'
   feature:
-    tabs: true
+    - tabs
+    - instant
+  icon:
+    logo: octicons/north-star
+    repo: octicons/mark-github
   palette:
     primary: 'teal'
     accent: 'pink'

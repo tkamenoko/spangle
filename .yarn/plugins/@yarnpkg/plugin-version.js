@@ -116,6 +116,13 @@ module.exports = {
 
   const plugin = {
     configuration: {
+      changesetBaseRefs: {
+        description: 'The base git refs that the current HEAD is compared against when detecting changes. Supports git branches, tags, and commits.',
+        type: core_1.SettingsType.STRING,
+        isArray: true,
+        isNullable: false,
+        default: [`master`, `origin/master`, `upstream/master`]
+      },
       deferredVersionFolder: {
         description: `Folder where are stored the versioning files`,
         type: core_1.SettingsType.ABSOLUTE_PATH,
@@ -293,11 +300,13 @@ module.exports = {
 
   ;
 
-  async function fetchBase(root) {
-    const candidateBases = [`master`, `origin/master`, `upstream/master`];
+  async function fetchBase(root, {
+    baseRefs
+  }) {
+    if (baseRefs.length === 0) throw new clipanion_1.UsageError(`Can't run this command with zero base refs specified.`);
     const ancestorBases = [];
 
-    for (const candidate of candidateBases) {
+    for (const candidate of baseRefs) {
       const {
         code
       } = await core_1.execUtils.execvp(`git`, [`merge-base`, candidate, `HEAD`], {
@@ -309,7 +318,7 @@ module.exports = {
       }
     }
 
-    if (ancestorBases.length === 0) throw new clipanion_1.UsageError(`No ancestor could be found between any of HEAD and ${candidateBases.join(`, `)}`);
+    if (ancestorBases.length === 0) throw new clipanion_1.UsageError(`No ancestor could be found between any of HEAD and ${baseRefs.join(`, `)}`);
     const {
       stdout: mergeBaseStdout
     } = await core_1.execUtils.execvp(`git`, [`merge-base`, `HEAD`, ...ancestorBases], {
@@ -349,7 +358,8 @@ module.exports = {
     return match;
   }
 
-  exports.fetchRoot = fetchRoot;
+  exports.fetchRoot = fetchRoot; // Note: This returns all changed files from the git diff, which can include
+  // files not belonging to a workspace
 
   async function fetchChangedFiles(root, {
     base
@@ -444,14 +454,20 @@ module.exports = {
     const configuration = project.configuration;
     if (configuration.projectCwd === null) throw new clipanion_1.UsageError(`This command can only be run from within a Yarn project`);
     const root = await fetchRoot(configuration.projectCwd);
-    const base = root !== null ? await fetchBase(root) : null;
+    const base = root !== null ? await fetchBase(root, {
+      baseRefs: configuration.get('changesetBaseRefs')
+    }) : null;
     const changedFiles = root !== null ? await fetchChangedFiles(root, {
       base: base.hash
     }) : [];
     const deferredVersionFolder = configuration.get(`deferredVersionFolder`);
     const versionFiles = changedFiles.filter(p => fslib_1.ppath.contains(deferredVersionFolder, p) !== null);
     if (versionFiles.length > 1) throw new clipanion_1.UsageError(`Your current branch contains multiple versioning files; this isn't supported:\n- ${versionFiles.join(`\n- `)}`);
-    const changedWorkspaces = new Set(changedFiles.map(file => project.getWorkspaceByFilePath(file)));
+    const changedWorkspaces = new Set(core_1.miscUtils.mapAndFilter(changedFiles, file => {
+      const workspace = project.tryWorkspaceByFilePath(file);
+      if (workspace === null) return core_1.miscUtils.mapAndFilter.skip;
+      return workspace;
+    }));
     if (versionFiles.length === 0 && changedWorkspaces.size === 0 && !allowEmpty) return null;
     const versionPath = versionFiles.length === 1 ? versionFiles[0] : fslib_1.ppath.join(deferredVersionFolder, `${core_1.hashUtils.makeHash(Math.random().toString()).slice(0, 8)}.yml`);
     const versionContent = fslib_1.xfs.existsSync(versionPath) ? await fslib_1.xfs.readFilePromise(versionPath, `utf8`) : `{}`;
@@ -773,10 +789,7 @@ module.exports = {
         workspace
       } = await core_1.Project.find(configuration, this.context.cwd);
       if (!workspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
-      await project.resolveEverything({
-        lockfileOnly: true,
-        report: new core_1.ThrowReport()
-      });
+      await project.restoreInstallState();
       const versionFile = await versionUtils.openVersionFile(project);
       if (versionFile === null || versionFile.releaseRoots.size === 0) return;
       if (versionFile.root === null) throw new clipanion_1.UsageError(`This command can only be run on Git repositories`);
@@ -1017,10 +1030,7 @@ module.exports = {
         workspace
       } = await core_1.Project.find(configuration, this.context.cwd);
       if (!workspace) throw new cli_1.WorkspaceRequiredError(project.cwd, this.context.cwd);
-      await project.resolveEverything({
-        lockfileOnly: true,
-        report: new core_1.ThrowReport()
-      });
+      await project.restoreInstallState();
       const report = await core_1.StreamReport.start({
         configuration,
         stdout: this.context.stdout
@@ -6204,8 +6214,8 @@ module.exports = {
   /***/ (function(module, exports, __webpack_require__) {
 
   "use strict";
-
-
+  
+  
   module.exports = {
   	"aliceblue": [240, 248, 255],
   	"antiquewhite": [250, 235, 215],
@@ -6528,7 +6538,7 @@ module.exports = {
   })
 
   exports.isCI = !!(
-    env.CI || // Travis CI, CircleCI, Cirrus CI, GitLab CI, Appveyor, CodeShip, dsari
+    env.CI || // Travis CI, CircleCI, Cirrus CI, Gitlab CI, Appveyor, CodeShip, dsari
     env.CONTINUOUS_INTEGRATION || // Travis CI, Cirrus CI
     env.BUILD_NUMBER || // Jenkins, TeamCity
     env.RUN_ID || // TaskCluster, dsari
@@ -34548,7 +34558,7 @@ module.exports = {
 
   const Application_1 = __webpack_require__(98);
 
-  exports.renderForm = async function (UserComponent, props) {
+  async function renderForm(UserComponent, props) {
     let returnedValue;
 
     const useSubmit = value => {
@@ -34580,7 +34590,10 @@ module.exports = {
     }))));
     await waitUntilExit();
     return returnedValue;
-  };
+  }
+
+  exports.renderForm = renderForm;
+  ;
 
   /***/ }),
   /* 98 */
