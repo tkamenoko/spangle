@@ -11,6 +11,7 @@ from parse import compile
 
 from spangle._utils import _normalize_path
 from spangle.error_handler import ErrorHandler
+from spangle.models import Request, Response
 
 Converters = Dict[str, Callable[[str], Any]]
 
@@ -190,8 +191,9 @@ class Router:
             self.routes["dynamic"].setdefault(nts_pattern, view)
             return fixed_path
 
-        async def on_request(_, req, resp, **kw):
-            resp.redirect(view=view, params=kw, status=HTTPStatus.PERMANENT_REDIRECT)
+        async def on_request(_, req: Request, resp: Response, **kw):
+            given_path = req.url.path
+            resp.redirect(url=f"{given_path}/", status=HTTPStatus.PERMANENT_REDIRECT)
             return resp
 
         allowed_methods = {"get", "head", "options"}
@@ -225,8 +227,9 @@ class Router:
             self.routes["static"].setdefault(no_trailing_slash, view)
             return path
 
-        async def on_request(_, req, resp):
-            resp.redirect(view=view, status=HTTPStatus.PERMANENT_REDIRECT)
+        async def on_request(_, req: Request, resp: Response):
+            given_path = req.url.path
+            resp.redirect(url=f"{given_path}/", status=HTTPStatus.PERMANENT_REDIRECT)
             return resp
 
         allowed_methods = {"get", "head", "options"}
