@@ -183,3 +183,8 @@ class ApiTests(TestCase):
             allowed = response.headers["allow"]
             self.assertIn("POST", allowed)
             self.assertIn("GET", allowed)
+
+    # def test_multiple_routing(self):
+    #     @self.api.route("/")
+    #     class Index:
+    #         pass

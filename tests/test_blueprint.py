@@ -105,6 +105,9 @@ class BlueprintTests(TestCase):
                 with self.subTest(path=path):
                     response = client.get(path, allow_redirects=False)
                     self.assertEqual(response.status_code, status)
+                    if status == HTTPStatus.PERMANENT_REDIRECT:
+                        location = response.headers["location"]
+                        self.assertEqual(location, path + "/")
 
     def test_route_mix(self):
         api = Api(routing="redirect")
