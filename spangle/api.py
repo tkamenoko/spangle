@@ -402,7 +402,7 @@ class Api:
         * params (`Optional[Dict[str, Any]]`): Used to format dynamic path.
 
         """
-        
+
         params = params or {}
         path = self._reverse_views[view]
 
