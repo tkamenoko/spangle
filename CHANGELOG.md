@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.4(2020-05-13)
+
+* Fix redirection when `routing=="redirect"`
+
 ## v0.6.3(2020-05-13)
 
 * Allow to return `None` in `error_handler`
