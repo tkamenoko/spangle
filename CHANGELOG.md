@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.2(2020-05-13)
+
+* Fix `after_response` and `error_handler`
+
 ## v0.6.1(2020-05-01)
 
 * Update dependencies
