@@ -42,16 +42,27 @@ async def _dispatch_http(
     req = http.Request(scope, receive, send)
     req.max_upload_bytes = api.max_upload_bytes
     resp = http.Response(jinja_env=api._jinja_env, url_for=api.url_for)
+    error = None
     try:
         _resp = await _response_http(scope, receive, send, req, resp, api)
     except Exception as e:
+        error = e
         _resp = await _response_http_error(scope, receive, send, req, resp, api, e)
+
     # after_request hooks.
     for cls in api.request_hooks["after"]:
         hook = _init_view(cls, api.components, api._view_cache)
         _resp = (
             await getattr(hook, "on_request", _default_response)(req, _resp)
         ) or _resp
+    if error and getattr(_resp, "reraise"):
+
+        async def reraise(_scope, _receive, _send):
+            await _resp(_scope, _receive, _send)
+            raise error from None
+
+        return reraise
+
     return _resp
 
 
@@ -144,14 +155,7 @@ async def _execute_http(
 async def _execute_http_error(
     req: http.Request, resp: http.Response, e: Exception, view
 ) -> ASGIApp:
-    result = await view.on_error(req, resp, e)
-
-    async def _error_app(scope, receive, send):
-        await result(scope, receive, send)
-        if resp.reraise:
-            raise e from None
-
-    return _error_app
+    return await view.on_error(req, resp, e)
 
 
 class _BuiltinErrorResponse:

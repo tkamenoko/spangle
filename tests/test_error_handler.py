@@ -47,6 +47,16 @@ class ErrorHandlerTests(TestCase):
                 raise e
                 return resp
 
+        @self.api.before_request
+        class Before:
+            async def on_request(_, req, resp):
+                resp.headers.update({"x-before": "CALLED"})
+
+        @self.api.after_request
+        class After:
+            async def on_request(_, req, resp):
+                resp.headers.update({"x-after": "CALLED"})
+
         # test handled errors.
         with self.api.client() as client:
             for k, v in errors.items():
