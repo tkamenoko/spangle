@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.3(2020-05-13)
+
+* Allow to return `None` in `error_handler`
+
 ## v0.6.2(2020-05-13)
 
 * Fix `after_response` and `error_handler`

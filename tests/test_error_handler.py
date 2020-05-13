@@ -30,7 +30,6 @@ class ErrorHandlerTests(TestCase):
             async def on_error(_, req, resp, e):
                 resp.status_code = 418
                 resp.text = "Type"
-                return resp
 
         self.api.add_error_handler(eh)
 
