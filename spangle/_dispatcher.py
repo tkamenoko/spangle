@@ -155,7 +155,7 @@ async def _execute_http(
 async def _execute_http_error(
     req: http.Request, resp: http.Response, e: Exception, view
 ) -> ASGIApp:
-    return await view.on_error(req, resp, e)
+    return (await view.on_error(req, resp, e)) or resp
 
 
 class _BuiltinErrorResponse:
