@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.0(2020-05-14)
+
+* Add new routing rules `slash` and `no_slash` instead of `redirect`
+
 ## v0.6.4(2020-05-13)
 
 * Fix redirection when `routing=="redirect"`

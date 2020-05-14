@@ -62,7 +62,7 @@ class Api:
         favicon: Optional[str] = None,
         auto_escape=True,
         templates_dir="templates",
-        routing="redirect",
+        routing="no_slash",
         default_route: Optional[str] = None,
         middlewares: Optional[List[Tuple[Callable, dict]]] = None,
         components: List[type] = None,
@@ -85,8 +85,10 @@ class Api:
             templates. If you want to disable rendering templates, set `None`.
         * routing (`str`): Set routing mode:
 
-            * `"redirect"` (default): always redirect from `/route` to `/route/` with
-                `308 PERMANENT_REDIRECT` (even if `/route` was not found!).
+            * `"no_slash"` (default): always redirect from `/route/` to `/route` with
+                `308 PERMANENT_REDIRECT` .
+            * `"slash"` : always redirect from `/route` to `/route/` with
+                `308 PERMANENT_REDIRECT` .
             * `"strict"` : distinct `/route` from `/route/` .
             * `"clone"` : return same view between `/route` and `/route/` .
 
