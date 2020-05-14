@@ -256,9 +256,9 @@ class ResponseTest(TestCase):
                 return resp
 
         with self.api.client() as client:
-            response = client.get("/start/")
+            response = client.get("/start")
             self.assertEqual(response.status_code, 418)
-            response = client.get("/start/", allow_redirects=False)
+            response = client.get("/start", allow_redirects=False)
             self.assertEqual(response.status_code, HTTPStatus.TEMPORARY_REDIRECT)
 
     def test_json(self):

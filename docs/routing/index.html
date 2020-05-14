@@ -882,7 +882,8 @@
 <h2 id="routing-strategies">Routing Strategies<a class="headerlink" href="#routing-strategies" title="Permanent link">&para;</a></h2>
 <p><code>spangle</code> has 3 strategies about trailing slash.</p>
 <ul>
-<li><code>"redirect"</code> (default): always redirect from <code>/route</code> to <code>/route/</code> with <code>308 PERMANENT_REDIRECT</code> (even if <code>/route/</code> is not found!).</li>
+<li><code>"no_slash"</code> (default): always redirect from <code>/route/</code> to <code>/route</code> with <code>308 PERMANENT_REDIRECT</code> .</li>
+<li><code>"slash"</code> : always redirect from <code>/route</code> to <code>/route/</code> with <code>308 PERMANENT_REDIRECT</code> .</li>
 <li><code>"strict"</code> : distinct <code>/route</code> from <code>/route/</code> .</li>
 <li><code>"clone"</code> : return same view between <code>/route</code> and <code>/route/</code> .</li>
 </ul>

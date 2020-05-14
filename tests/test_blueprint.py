@@ -25,6 +25,10 @@ class BlueprintTests(TestCase):
         class Foo:
             pass
 
+        @self.bp.route("/bar/{p}")
+        class Bar:
+            pass
+
         self.Foo = Foo
 
     def test_route_clone(self):
@@ -35,14 +39,27 @@ class BlueprintTests(TestCase):
         paths = [
             ("/", HTTPStatus.OK),
             ("/allowed", HTTPStatus.OK),
+            ("/allowed/", HTTPStatus.OK),
             ("/patterns/here", HTTPStatus.OK),
+            ("/patterns/here/", HTTPStatus.OK),
             ("/foo", HTTPStatus.OK),
+            ("/foo/", HTTPStatus.OK),
+            ("/bar/params", HTTPStatus.OK),
+            ("/bar/params/", HTTPStatus.OK),
             ("/notfound", HTTPStatus.NOT_FOUND),
+            ("/notfound/", HTTPStatus.NOT_FOUND),
+            ("/start", HTTPStatus.OK),
             ("/start/", HTTPStatus.OK),
             ("/start/allowed", HTTPStatus.OK),
+            ("/start/allowed/", HTTPStatus.OK),
             ("/start/patterns/here", HTTPStatus.OK),
+            ("/start/patterns/here/", HTTPStatus.OK),
             ("/start/foo", HTTPStatus.OK),
+            ("/start/foo/", HTTPStatus.OK),
+            ("/start/bar/params", HTTPStatus.OK),
+            ("/start/bar/params/", HTTPStatus.OK),
             ("/start/notfound", HTTPStatus.NOT_FOUND),
+            ("/start/notfound/", HTTPStatus.NOT_FOUND),
         ]
 
         with self.api.client() as client:
@@ -59,16 +76,27 @@ class BlueprintTests(TestCase):
         paths = [
             ("/", HTTPStatus.OK),
             ("/allowed", HTTPStatus.OK),
+            ("/allowed/", HTTPStatus.NOT_FOUND),
             ("/patterns/here", HTTPStatus.NOT_FOUND),
             ("/patterns/here/", HTTPStatus.OK),
             ("/foo", HTTPStatus.OK),
+            ("/foo/", HTTPStatus.NOT_FOUND),
+            ("/bar/params", HTTPStatus.OK),
+            ("/bar/params/", HTTPStatus.NOT_FOUND),
             ("/notfound", HTTPStatus.NOT_FOUND),
+            ("/notfound/", HTTPStatus.NOT_FOUND),
             ("/start/", HTTPStatus.OK),
             ("/start", HTTPStatus.NOT_FOUND),
             ("/start/allowed", HTTPStatus.OK),
+            ("/start/allowed/", HTTPStatus.NOT_FOUND),
+            ("/start/patterns/here/", HTTPStatus.OK),
             ("/start/patterns/here", HTTPStatus.NOT_FOUND),
             ("/start/foo", HTTPStatus.OK),
+            ("/start/foo/", HTTPStatus.NOT_FOUND),
+            ("/start/bar/params", HTTPStatus.OK),
+            ("/start/bar/params/", HTTPStatus.NOT_FOUND),
             ("/start/notfound", HTTPStatus.NOT_FOUND),
+            ("/start/notfound/", HTTPStatus.NOT_FOUND),
         ]
 
         with self.api.client() as client:
@@ -77,17 +105,21 @@ class BlueprintTests(TestCase):
                     response = client.get(path, allow_redirects=False)
                     self.assertEqual(response.status_code, status)
 
-    def test_route_redirect(self):
-        self.api.routing = "redirect"
+    def test_route_slash(self):
+        self.api.routing = "slash"
         self.api.add_blueprint("/", self.bp)
         self.api.add_blueprint("start", self.bp)
 
         paths = [
             ("/", HTTPStatus.OK),
             ("/allowed", HTTPStatus.PERMANENT_REDIRECT),
+            ("/allowed/", HTTPStatus.OK),
             ("/patterns/here", HTTPStatus.PERMANENT_REDIRECT),
             ("/patterns/here/", HTTPStatus.OK),
             ("/foo", HTTPStatus.PERMANENT_REDIRECT),
+            ("/foo/", HTTPStatus.OK),
+            ("/bar/params", HTTPStatus.PERMANENT_REDIRECT),
+            ("/bar/params/", HTTPStatus.OK),
             ("/notfound", HTTPStatus.NOT_FOUND),
             ("/notfound/", HTTPStatus.NOT_FOUND),
             ("/start/", HTTPStatus.OK),
@@ -96,6 +128,8 @@ class BlueprintTests(TestCase):
             ("/start/patterns/here", HTTPStatus.PERMANENT_REDIRECT),
             ("/start/foo", HTTPStatus.PERMANENT_REDIRECT),
             ("/start/foo/", HTTPStatus.OK),
+            ("/start/bar/params", HTTPStatus.PERMANENT_REDIRECT),
+            ("/start/bar/params/", HTTPStatus.OK),
             ("/start/notfound", HTTPStatus.NOT_FOUND),
             ("/start/notfound/", HTTPStatus.NOT_FOUND),
         ]
@@ -109,8 +143,48 @@ class BlueprintTests(TestCase):
                         location = response.headers["location"]
                         self.assertEqual(location, path + "/")
 
+    def test_route_no_slash(self):
+        self.api.routing = "no_slash"
+        self.api.add_blueprint("/", self.bp)
+        self.api.add_blueprint("start", self.bp)
+
+        paths = [
+            ("/", HTTPStatus.OK),
+            ("/allowed", HTTPStatus.OK),
+            ("/allowed/", HTTPStatus.PERMANENT_REDIRECT),
+            ("/patterns/here", HTTPStatus.OK),
+            ("/patterns/here/", HTTPStatus.PERMANENT_REDIRECT),
+            ("/foo", HTTPStatus.OK),
+            ("/foo/", HTTPStatus.PERMANENT_REDIRECT),
+            ("/bar/params", HTTPStatus.OK),
+            ("/bar/params/", HTTPStatus.PERMANENT_REDIRECT),
+            ("/notfound", HTTPStatus.NOT_FOUND),
+            ("/notfound/", HTTPStatus.NOT_FOUND),
+            ("/start/", HTTPStatus.PERMANENT_REDIRECT),
+            ("/start", HTTPStatus.OK),
+            ("/start/allowed", HTTPStatus.OK),
+            ("/start/allowed/", HTTPStatus.PERMANENT_REDIRECT),
+            ("/start/patterns/here", HTTPStatus.OK),
+            ("/start/patterns/here/", HTTPStatus.PERMANENT_REDIRECT),
+            ("/start/foo", HTTPStatus.OK),
+            ("/start/foo/", HTTPStatus.PERMANENT_REDIRECT),
+            ("/start/bar/params", HTTPStatus.OK),
+            ("/start/bar/params/", HTTPStatus.PERMANENT_REDIRECT),
+            ("/start/notfound", HTTPStatus.NOT_FOUND),
+            ("/start/notfound/", HTTPStatus.NOT_FOUND),
+        ]
+
+        with self.api.client() as client:
+            for path, status in paths:
+                with self.subTest(path=path):
+                    response = client.get(path, allow_redirects=False)
+                    self.assertEqual(response.status_code, status)
+                    if status == HTTPStatus.PERMANENT_REDIRECT:
+                        location = response.headers["location"]
+                        self.assertEqual(location, path[:-1])
+
     def test_route_mix(self):
-        api = Api(routing="redirect")
+        api = Api(routing="slash")
 
         bp = Blueprint()
 
@@ -123,12 +197,20 @@ class BlueprintTests(TestCase):
             async def on_post(_, req, resp):
                 pass
 
+        @bp.route("/baz", routing="no_slash")
+        class Baz:
+            pass
+
         api.add_blueprint("/", bp)
         with api.client() as client:
             resp = client.get("/bar", allow_redirects=False)
             self.assertEqual(resp.status_code, HTTPStatus.PERMANENT_REDIRECT)
+            self.assertEqual(resp.headers["location"], "/bar/")
             resp = client.get("/foo", allow_redirects=False)
             self.assertEqual(resp.status_code, HTTPStatus.OK)
+            resp = client.get("/baz/", allow_redirects=False)
+            self.assertEqual(resp.status_code, HTTPStatus.PERMANENT_REDIRECT)
+            self.assertEqual(resp.headers["location"], "/baz")
             resp = client.post("/bar", allow_redirects=False)
             self.assertEqual(resp.status_code, HTTPStatus.PERMANENT_REDIRECT)
 

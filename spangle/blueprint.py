@@ -147,6 +147,7 @@ class Router:
         return self._add_dynamic(path, view, converters, routing)
 
     def _add_dynamic(self, path: str, view: Type, converters: Converters, routing: str):
+        # TODO: no_slash
         splitted_path = path.split("/")
         fixed = []
         for part in splitted_path:
@@ -156,6 +157,15 @@ class Router:
         if routing != "strict":
             fixed_path = _normalize_path(fixed_path)
             no_trailing_slash = fixed_path[:-1] or "/"
+        else:
+            no_trailing_slash = fixed_path
+
+        if path.endswith("/"):
+            original_path = fixed_path
+            modified_path = no_trailing_slash
+        else:
+            original_path = no_trailing_slash
+            modified_path = fixed_path
 
         def default_converter(_):
             return _
@@ -181,20 +191,20 @@ class Router:
         merged = builtins
         merged.update(converters)
 
-        path_pattern = compile(fixed_path, merged)
-        self.routes["dynamic"][path_pattern] = view
-        if routing == "static":
-            return fixed_path
+        if routing == "strict":
+            original_pattern = compile(original_path, merged)
+            self.routes["dynamic"][original_pattern] = view
+            return original_path
 
-        nts_pattern = compile(no_trailing_slash, merged)
         if routing == "clone":
-            self.routes["dynamic"].setdefault(nts_pattern, view)
-            return fixed_path
+            original_pattern = compile(original_path, merged)
+            modified_pattern = compile(modified_path, merged)
+            self.routes["dynamic"][original_pattern] = view
+            self.routes["dynamic"].setdefault(modified_pattern, view)
+            return original_path
 
-        async def on_request(_, req: Request, resp: Response, **kw):
-            given_path = req.url.path
-            resp.redirect(url=f"{given_path}/", status=HTTPStatus.PERMANENT_REDIRECT)
-            return resp
+        slash_pattern = compile(fixed_path, merged)
+        no_slash_pattern = compile(no_trailing_slash, merged)
 
         allowed_methods = {"get", "head", "options"}
         additional_methods = getattr(view, "allowed_methods", [])
@@ -205,32 +215,57 @@ class Router:
         allowed_methods.update(on_unsafe_methods)
 
         allowed_methods.add("request")
+        if routing == "slash":
 
-        redirect = type(
-            "Redirect",
-            (object,),
-            {f"on_{method}": on_request for method in allowed_methods},
-        )
+            async def on_request(_, req: Request, resp: Response, **kw):
+                given_path = req.url.path
+                resp.redirect(
+                    url=f"{given_path}/", status=HTTPStatus.PERMANENT_REDIRECT
+                )
+                return resp
 
-        self.routes["dynamic"].setdefault(nts_pattern, redirect)
-        return fixed_path
+            redirect = type(
+                "Redirect",
+                (object,),
+                {f"on_{method}": on_request for method in allowed_methods},
+            )
+            self.routes["dynamic"].setdefault(slash_pattern, view)
+            self.routes["dynamic"].setdefault(no_slash_pattern, redirect)
+            return fixed_path
+        else:
+
+            async def on_request(_, req: Request, resp: Response, **kw):
+                given_path = req.url.path
+                resp.redirect(
+                    url=given_path[:-1] or "/", status=HTTPStatus.PERMANENT_REDIRECT
+                )
+                return resp
+
+            redirect = type(
+                "Redirect",
+                (object,),
+                {f"on_{method}": on_request for method in allowed_methods},
+            )
+            self.routes["dynamic"].setdefault(no_slash_pattern, view)
+            self.routes["dynamic"].setdefault(slash_pattern, redirect)
+            return no_trailing_slash
 
     def _add_static(self, path: str, view: Type, routing: str) -> str:
+        slash_path = _normalize_path(path)
+        no_trailing_slash = slash_path[:-1] or "/"
+        if path.endswith("/"):
+            original_path = slash_path
+            modified_path = no_trailing_slash
+        else:
+            original_path = no_trailing_slash
+            modified_path = slash_path
         if routing == "strict":
-            self.routes["static"][path] = view
-            return path
-
-        path = _normalize_path(path)
-        self.routes["static"][path] = view
-        no_trailing_slash = path[:-1] or "/"
+            self.routes["static"][original_path] = view
+            return original_path
         if routing == "clone":
-            self.routes["static"].setdefault(no_trailing_slash, view)
-            return path
-
-        async def on_request(_, req: Request, resp: Response):
-            given_path = req.url.path
-            resp.redirect(url=f"{given_path}/", status=HTTPStatus.PERMANENT_REDIRECT)
-            return resp
+            self.routes["static"][original_path] = view
+            self.routes["static"].setdefault(modified_path, view)
+            return original_path
 
         allowed_methods = {"get", "head", "options"}
         additional_methods = getattr(view, "allowed_methods", [])
@@ -242,14 +277,41 @@ class Router:
 
         allowed_methods.add("request")
 
-        redirect = type(
-            "Redirect",
-            (object,),
-            {f"on_{method}": on_request for method in allowed_methods},
-        )
+        if routing == "slash":
 
-        self.routes["static"].setdefault(no_trailing_slash, redirect)
-        return path
+            async def on_request(_, req: Request, resp: Response):
+                given_path = req.url.path
+                resp.redirect(
+                    url=f"{given_path}/", status=HTTPStatus.PERMANENT_REDIRECT
+                )
+                return resp
+
+            redirect = type(
+                "Redirect",
+                (object,),
+                {f"on_{method}": on_request for method in allowed_methods},
+            )
+            self.routes["static"][slash_path] = view
+            self.routes["static"].setdefault(no_trailing_slash, redirect)
+            return slash_path
+
+        else:
+
+            async def on_request(_, req: Request, resp: Response):
+                given_path = req.url.path
+                resp.redirect(
+                    url=given_path[:-1] or "/", status=HTTPStatus.PERMANENT_REDIRECT
+                )
+                return resp
+
+            redirect = type(
+                "Redirect",
+                (object,),
+                {f"on_{method}": on_request for method in allowed_methods},
+            )
+            self.routes["static"][no_trailing_slash] = view
+            self.routes["static"].setdefault(slash_path, redirect)
+            return no_trailing_slash
 
     @lru_cache()
     def get(self, path: str) -> Optional[Tuple[Type, Dict[str, Any]]]:
