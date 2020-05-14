@@ -838,7 +838,7 @@
     <span class="n">favicon</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">auto_escape</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="n">templates_dir</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span>
-    <span class="n">routing</span><span class="o">=</span><span class="s2">&quot;redirect&quot;</span><span class="p">,</span>
+    <span class="n">routing</span><span class="o">=</span><span class="s2">&quot;no_slash&quot;</span><span class="p">,</span>
     <span class="n">default_route</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">middlewares</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">components</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -877,8 +877,10 @@
 <li>
 <p><strong>routing</strong> (<code>str</code>): Set routing mode:</p>
 <ul>
-<li><code>"redirect"</code> (default): always redirect from <code>/route</code> to <code>/route/</code> with
-    <code>308 PERMANENT_REDIRECT</code> (even if <code>/route</code> was not found!).</li>
+<li><code>"no_slash"</code> (default): always redirect from <code>/route/</code> to <code>/route</code> with
+    <code>308 PERMANENT_REDIRECT</code> .</li>
+<li><code>"slash"</code> : always redirect from <code>/route</code> to <code>/route/</code> with
+    <code>308 PERMANENT_REDIRECT</code> .</li>
 <li><code>"strict"</code> : distinct <code>/route</code> from <code>/route/</code> .</li>
 <li><code>"clone"</code> : return same view between <code>/route</code> and <code>/route/</code> .</li>
 </ul>
