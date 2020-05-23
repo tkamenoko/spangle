@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.1(2020-05-24)
+
+* Update dependencies
+
 ## v0.7.0(2020-05-14)
 
 * Add new routing rules `slash` and `no_slash` instead of `redirect`
