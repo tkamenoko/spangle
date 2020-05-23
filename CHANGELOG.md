@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.7.1(Unreleased)
+## v0.7.1(2020-05-24)
 
 * Update dependencies
 
