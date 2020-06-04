@@ -109,9 +109,7 @@ async def _parse_multipart(req: "Request") -> MultiDictProxy:
     _opt = [opt.split("=") for opt in _options]
     options = {o[0]: o[1] for o in _opt}
     kw = {}
-    kw["charset"] = (
-        options.get("charset", "") or (await req.apparent_encoding)["encoding"]
-    )
+    kw["charset"] = options.get("charset", "utf-8")
 
     boundary = options.get("boundary", "")
 
