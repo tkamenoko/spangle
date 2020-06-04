@@ -58,9 +58,9 @@ class Template:
 
 ```
 
-## Chainable methods
+## Method chain
 
-There are setter methods inspired by [`express`](https://github.com/expressjs/express/) . These methods return `Response` itself, so you can chain them.
+Setter methods return `Response` itself, so you can chain these methods.
 
 ```python
 @api.route("/chain")

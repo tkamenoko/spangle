@@ -3,7 +3,7 @@
 [![PyPI](https://img.shields.io/pypi/v/spangle)](https://pypi.org/project/spangle/)
 [![PyPI - License](https://img.shields.io/pypi/l/spangle)](https://pypi.org/project/spangle/)
 
-ASGI application framework inspired by [responder](https://github.com/taoufik07/responder), [vibora](https://github.com/vibora-io/vibora), and [express-js](https://github.com/expressjs/express/). 
+A small and flexible ASGI application framework for modern web.
 
 
 Note: `spangle` is on pre-alpha stage, so any updates may contain breaking changes.
@@ -39,7 +39,7 @@ hypercorn hello:api
 
 ## Features
 
-* Component (from `vibora`!)
+* Components with dependencies
 * Flexible url params
 * `Jinja2` built-in support
 * Uniformed API
