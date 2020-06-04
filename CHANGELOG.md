@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.2(2020-06-04)
+
+* Fix default multipart charset to `utf-8`
+
 ## v0.7.1(2020-05-24)
 
 * Update dependencies

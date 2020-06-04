@@ -11,7 +11,7 @@
       
       
       <link rel="shortcut icon" href="../../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1, mkdocs-material-5.1.4">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.2.1">
     
     
       
@@ -19,9 +19,9 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.c4007cdc.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.71dfd922.min.css">
       
-        <link rel="stylesheet" href="../../../assets/stylesheets/palette.8435c73a.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.616af814.min.css">
       
       
         
@@ -48,7 +48,8 @@
   
     
     
-    <body dir="ltr" data-md-color-primary="teal" data-md-color-accent="pink">
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="teal" data-md-color-accent="pink">
   
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -1050,8 +1051,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Append new header. To overwrite, use <a href="./#Response.set_header"><code>Response.set_header</code></a> .
-    Chainable</p>
+<p>Append new header. To overwrite, use <a href="./#Response.set_header"><code>Response.set_header</code></a> .</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>key</strong> (<code>str</code>): Header&rsquo;s key.</li>
@@ -1068,7 +1068,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Remove cookie value from client. Chainable</p>
+<p>Remove cookie value from client.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li>
@@ -1093,7 +1093,7 @@ Cookie options:</p>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Load <code>jinja2</code> template, render, set headers &amp; text. Chainable</p>
+<p>Load <code>jinja2</code> template, render, set headers &amp; text.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>template_name</strong> (<code>str</code>): The template <code>"path/name"</code> .</li>
@@ -1123,7 +1123,7 @@ Cookie options:</p>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set redirect view/location. Positional args are not allowed. Chainable</p>
+<p>Set redirect view/location. Positional args are not allowed.</p>
 <p>If both <code>view</code> and <code>url</code> are set, <code>url</code> is ignored.</p>
 <p><strong>Args</strong></p>
 <ul>
@@ -1143,7 +1143,7 @@ Cookie options:</p>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set bytes to response body with content type. Chainable</p>
+<p>Set bytes to response body with content type.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>content</strong> (<code>bytes</code>): Response body as bytes.</li>
@@ -1171,7 +1171,7 @@ Cookie options:</p>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set cookie value to given key with params. Chainable</p>
+<p>Set cookie value to given key with params.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>key</strong> (<code>str</code>)</li>
@@ -1202,7 +1202,7 @@ Cookie options:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set HTTP header value to given key. It overwrites value if exists. Chainable</p>
+<p>Set HTTP header value to given key. It overwrites value if exists.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>key</strong> (<code>str</code>): Header&rsquo;s key.</li>
@@ -1217,7 +1217,7 @@ Cookie options:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set HTTP status code. Chainable</p>
+<p>Set HTTP status code.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>status</strong> (<code>int</code>): HTTP status code.</li>
@@ -1231,7 +1231,7 @@ Cookie options:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;text/plain&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set given text to response body with content type. Chainable</p>
+<p>Set given text to response body with content type.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>text</strong> (<code>str</code>): Response body as UTF-8 string.</li>
@@ -1307,15 +1307,15 @@ Cookie options:</p>
       
     </div>
     
-      <script src="../../../assets/javascripts/vendor.83fe6e3c.min.js"></script>
-      <script src="../../../assets/javascripts/bundle.7e1cb91c.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      <script src="../../../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.5f27aba8.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
       
       <script>
         app = initialize({
           base: "../../..",
           features: [],
           search: Object.assign({
-            worker: "../../../assets/javascripts/worker/search.37585f48.min.js"
+            worker: "../../../assets/javascripts/worker/search.27c6a5e6.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>
