@@ -413,7 +413,7 @@ class Response:
 
     def set_status(self, status: int) -> "Response":
         """
-        Set HTTP status code. Chainable
+        Set HTTP status code.
 
         **Args**
 
@@ -443,7 +443,7 @@ class Response:
     ) -> "Response":
 
         """
-        Set cookie value to given key with params. Chainable
+        Set cookie value to given key with params.
 
         **Args**
 
@@ -491,7 +491,7 @@ class Response:
         self, key: str, path: str = "/", domain: str = None
     ) -> "Response":
         """
-        Remove cookie value from client. Chainable
+        Remove cookie value from client.
 
         **Args**
 
@@ -551,7 +551,6 @@ class Response:
     def add_header(self, key: str, value: str) -> "Response":
         """
         Append new header. To overwrite, use `spangle.models.http.Response.set_header` .
-            Chainable
 
         **Args**
 
@@ -568,7 +567,7 @@ class Response:
 
     def set_header(self, key: str, value: str) -> "Response":
         """
-        Set HTTP header value to given key. It overwrites value if exists. Chainable
+        Set HTTP header value to given key. It overwrites value if exists.
 
         **Args**
 
@@ -585,7 +584,7 @@ class Response:
 
     def set_text(self, text: str, content_type="text/plain") -> "Response":
         """
-        Set given text to response body with content type. Chainable
+        Set given text to response body with content type.
 
         **Args**
 
@@ -610,7 +609,7 @@ class Response:
         self, content: bytes, content_type="application/octet-stream"
     ) -> "Response":
         """
-        Set bytes to response body with content type. Chainable
+        Set bytes to response body with content type.
 
         **Args**
 
@@ -632,7 +631,7 @@ class Response:
         self, template_name: str, content_type="text/html", **params
     ) -> "Response":
         """
-        Load `jinja2` template, render, set headers & text. Chainable
+        Load `jinja2` template, render, set headers & text.
 
         **Args**
 
@@ -675,7 +674,7 @@ class Response:
         query_string: Optional[str] = None,
     ) -> "Response":
         """
-        Set redirect view/location. Positional args are not allowed. Chainable
+        Set redirect view/location. Positional args are not allowed.
 
         If both `view` and `url` are set, `url` is ignored.
 

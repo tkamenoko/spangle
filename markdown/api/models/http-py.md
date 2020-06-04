@@ -172,7 +172,6 @@ def add_header(self, key: str, value: str) -> "Response"
 ```
 
 Append new header. To overwrite, use [`Response.set_header `](./#Response.set_header) .
-    Chainable
 
 **Args**
 
@@ -193,7 +192,7 @@ def delete_cookie(
     ) -> "Response"
 ```
 
-Remove cookie value from client. Chainable
+Remove cookie value from client.
 
 **Args**
 
@@ -216,7 +215,7 @@ async def load_template(
     ) -> "Response"
 ```
 
-Load `jinja2` template, render, set headers & text. Chainable
+Load `jinja2` template, render, set headers & text.
 
 **Args**
 
@@ -250,7 +249,7 @@ def redirect(
     ) -> "Response"
 ```
 
-Set redirect view/location. Positional args are not allowed. Chainable
+Set redirect view/location. Positional args are not allowed.
 
 If both `view` and `url` are set, `url` is ignored.
 
@@ -275,7 +274,7 @@ def set_content(
     ) -> "Response"
 ```
 
-Set bytes to response body with content type. Chainable
+Set bytes to response body with content type.
 
 **Args**
 
@@ -307,7 +306,7 @@ def set_cookie(
     ) -> "Response"
 ```
 
-Set cookie value to given key with params. Chainable
+Set cookie value to given key with params.
 
 **Args**
 
@@ -336,7 +335,7 @@ Cookie options:
 def set_header(self, key: str, value: str) -> "Response"
 ```
 
-Set HTTP header value to given key. It overwrites value if exists. Chainable
+Set HTTP header value to given key. It overwrites value if exists.
 
 **Args**
 
@@ -355,7 +354,7 @@ Set HTTP header value to given key. It overwrites value if exists. Chainable
 def set_status(self, status: int) -> "Response"
 ```
 
-Set HTTP status code. Chainable
+Set HTTP status code.
 
 **Args**
 
@@ -373,7 +372,7 @@ Set HTTP status code. Chainable
 def set_text(self, text: str, content_type="text/plain") -> "Response"
 ```
 
-Set given text to response body with content type. Chainable
+Set given text to response body with content type.
 
 **Args**
 

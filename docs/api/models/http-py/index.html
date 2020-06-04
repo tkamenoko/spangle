@@ -1051,8 +1051,7 @@
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Append new header. To overwrite, use <a href="./#Response.set_header"><code>Response.set_header</code></a> .
-    Chainable</p>
+<p>Append new header. To overwrite, use <a href="./#Response.set_header"><code>Response.set_header</code></a> .</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>key</strong> (<code>str</code>): Header&rsquo;s key.</li>
@@ -1069,7 +1068,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Remove cookie value from client. Chainable</p>
+<p>Remove cookie value from client.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li>
@@ -1094,7 +1093,7 @@ Cookie options:</p>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Load <code>jinja2</code> template, render, set headers &amp; text. Chainable</p>
+<p>Load <code>jinja2</code> template, render, set headers &amp; text.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>template_name</strong> (<code>str</code>): The template <code>"path/name"</code> .</li>
@@ -1124,7 +1123,7 @@ Cookie options:</p>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set redirect view/location. Positional args are not allowed. Chainable</p>
+<p>Set redirect view/location. Positional args are not allowed.</p>
 <p>If both <code>view</code> and <code>url</code> are set, <code>url</code> is ignored.</p>
 <p><strong>Args</strong></p>
 <ul>
@@ -1144,7 +1143,7 @@ Cookie options:</p>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set bytes to response body with content type. Chainable</p>
+<p>Set bytes to response body with content type.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>content</strong> (<code>bytes</code>): Response body as bytes.</li>
@@ -1172,7 +1171,7 @@ Cookie options:</p>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set cookie value to given key with params. Chainable</p>
+<p>Set cookie value to given key with params.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>key</strong> (<code>str</code>)</li>
@@ -1203,7 +1202,7 @@ Cookie options:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set HTTP header value to given key. It overwrites value if exists. Chainable</p>
+<p>Set HTTP header value to given key. It overwrites value if exists.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>key</strong> (<code>str</code>): Header&rsquo;s key.</li>
@@ -1218,7 +1217,7 @@ Cookie options:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set HTTP status code. Chainable</p>
+<p>Set HTTP status code.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>status</strong> (<code>int</code>): HTTP status code.</li>
@@ -1232,7 +1231,7 @@ Cookie options:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;text/plain&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
 </code></pre></div>
 
-<p>Set given text to response body with content type. Chainable</p>
+<p>Set given text to response body with content type.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>text</strong> (<code>str</code>): Response body as UTF-8 string.</li>

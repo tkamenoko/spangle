@@ -301,8 +301,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#chainable-methods" class="md-nav__link">
-    Chainable methods
+  <a href="#method-chain" class="md-nav__link">
+    Method chain
   </a>
   
 </li>
@@ -807,8 +807,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#chainable-methods" class="md-nav__link">
-    Chainable methods
+  <a href="#method-chain" class="md-nav__link">
+    Method chain
   </a>
   
 </li>
@@ -889,8 +889,8 @@
         <span class="k">await</span> <span class="n">resp</span><span class="o">.</span><span class="n">load_template</span><span class="p">(</span><span class="s2">&quot;example.html&quot;</span><span class="p">,</span> <span class="n">var</span><span class="o">=</span><span class="s2">&quot;foobar&quot;</span><span class="p">)</span>
 </code></pre></div>
 
-<h2 id="chainable-methods">Chainable methods<a class="headerlink" href="#chainable-methods" title="Permanent link">&para;</a></h2>
-<p>There are setter methods inspired by <a href="https://github.com/expressjs/express/"><code>express</code></a> . These methods return <code>Response</code> itself, so you can chain them.</p>
+<h2 id="method-chain">Method chain<a class="headerlink" href="#method-chain" title="Permanent link">&para;</a></h2>
+<p>Setter methods return <code>Response</code> itself, so you can chain these methods.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/chain&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">Chain</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
