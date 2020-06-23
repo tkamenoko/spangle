@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.7.3(Unreleased)
+
+* add a new route converter `rest_string`
+
 ## v0.7.2(2020-06-04)
 
 * Fix default multipart charset to `utf-8`

@@ -42,32 +42,42 @@ View methods accept URL arguments as `str` by default. You can change this behav
 ```python
 # routing.py
 
-# `int` and `float` are built-in converters.
+# `default`, `int` and `float` are built-in converters.
+# `str` is an alias of `default`.
 @api.route("/use/{dynamic:int}")
 class IntArg:
     async def on_request(self, req, resp, dynamic):
         assert isinstance(dynamic, int)
 
+# `default` match does not contain slash(`/`).
+# `rest_string` converter matches any characters including slash.
+@api.route("/{for_spa:rest_string}")
+@api.route("/")
+class SpaView:
+    async def on_get(self, req, resp, **kw):
+        ...
+
+
+# You can define custom converters as `Dict[str,Callable]` .
 def month(v:str) -> int:
     m = int(v)
     if not (1<=m<=12):
         raise ValueError
 
-# You can define custom converters as `Dict[str,Callable]` .
 @api.route("/articles-in-{m:month}", converters={"month":month})
 class CustomConverter:
     async def on_request(self, req, resp, m):
         assert 1<=m<=12
 
+
+# You can use regular expression to set pattern to `converter.pattern` .
 def regex(x):
     return x
 
 regex.pattern = r"[A-Za-z]+(/[A-Za-z]+)+"
 
-# URL args has no slash by default.
-# You can use regular expression to set pattern to `converter.pattern` .
-@api.route("/accept/toolong/{path:regex}", converters={"regex":regex})
-class LongASCII:
+@api.route("/accept/custom-pattern/{path:regex}", converters={"regex":regex})
+class SlashRequired:
     async def on_request(self, req, resp, path):
         assert "/" in path
 

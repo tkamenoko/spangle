@@ -849,32 +849,42 @@
 <p>View methods accept URL arguments as <code>str</code> by default. You can change this behavior to set converters.</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># routing.py</span>
 
-<span class="c1"># `int` and `float` are built-in converters.</span>
+<span class="c1"># `default`, `int` and `float` are built-in converters.</span>
+<span class="c1"># `str` is an alias of `default`.</span>
 <span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/use/{dynamic:int}&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">IntArg</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">dynamic</span><span class="p">):</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dynamic</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span>
 
+<span class="c1"># `default` match does not contain slash(`/`).</span>
+<span class="c1"># `rest_string` converter matches any characters including slash.</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/{for_spa:rest_string}&quot;</span><span class="p">)</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">SpaView</span><span class="p">:</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="o">...</span>
+
+
+<span class="c1"># You can define custom converters as `Dict[str,Callable]` .</span>
 <span class="k">def</span> <span class="nf">month</span><span class="p">(</span><span class="n">v</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">1</span><span class="o">&lt;=</span><span class="n">m</span><span class="o">&lt;=</span><span class="mi">12</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span>
 
-<span class="c1"># You can define custom converters as `Dict[str,Callable]` .</span>
 <span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/articles-in-{m:month}&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;month&quot;</span><span class="p">:</span><span class="n">month</span><span class="p">})</span>
 <span class="k">class</span> <span class="nc">CustomConverter</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">m</span><span class="p">):</span>
         <span class="k">assert</span> <span class="mi">1</span><span class="o">&lt;=</span><span class="n">m</span><span class="o">&lt;=</span><span class="mi">12</span>
 
+
+<span class="c1"># You can use regular expression to set pattern to `converter.pattern` .</span>
 <span class="k">def</span> <span class="nf">regex</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">x</span>
 
 <span class="n">regex</span><span class="o">.</span><span class="n">pattern</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;[A-Za-z]+(/[A-Za-z]+)+&quot;</span>
 
-<span class="c1"># URL args has no slash by default.</span>
-<span class="c1"># You can use regular expression to set pattern to `converter.pattern` .</span>
-<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/accept/toolong/{path:regex}&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;regex&quot;</span><span class="p">:</span><span class="n">regex</span><span class="p">})</span>
-<span class="k">class</span> <span class="nc">LongASCII</span><span class="p">:</span>
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/accept/custom-pattern/{path:regex}&quot;</span><span class="p">,</span> <span class="n">converters</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;regex&quot;</span><span class="p">:</span><span class="n">regex</span><span class="p">})</span>
+<span class="k">class</span> <span class="nc">SlashRequired</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
         <span class="k">assert</span> <span class="s2">&quot;/&quot;</span> <span class="ow">in</span> <span class="n">path</span>
 </code></pre></div>
