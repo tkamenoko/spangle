@@ -185,6 +185,8 @@ class Router:
         }
         for key in builtins:
             builtins[key] = wrapper(builtins[key])
+        builtins["rest_string"] = default_converter
+
         for key in converters:
             converters[key] = wrapper(converters[key])
 
