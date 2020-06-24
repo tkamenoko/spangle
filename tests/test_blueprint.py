@@ -281,6 +281,26 @@ class RouterTests(TestCase):
     def setUp(self):
         self.api = Api()
 
+    def test_builtin(self):
+        @self.api.route(
+            "/{default}/{string:str}/{num1:int}/{num2:float}/{anything:rest_string}/tail"
+        )
+        class BuiltinPatterns:
+            async def on_get(_, req, resp, **kw):
+                resp.json.update(kw)
+
+        expected = {
+            "default": "default-path",
+            "string": "noslash",
+            "num1": 12345,
+            "num2": 12.3,
+            "anything": "anytype/ofString/evenIf/including/slash",
+        }
+        path = "/{default}/{string}/{num1}/{num2}/{anything}/tail".format_map(expected)
+        with self.api.client() as client:
+            response = client.get(path)
+            self.assertEqual({**response.json}, expected)
+
     def test_converter(self):
         valid = [
             {"num": 0, "name": "foo"},
