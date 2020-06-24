@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.7.3(Unreleased)
+## v0.7.3(2020-06-24)
 
 * add a new route converter `rest_string`
 
