@@ -1,10 +1,9 @@
-# spangle 
+# spangle
 
 [![PyPI](https://img.shields.io/pypi/v/spangle)](https://pypi.org/project/spangle/)
 [![PyPI - License](https://img.shields.io/pypi/l/spangle)](https://pypi.org/project/spangle/)
 
 A small and flexible ASGI application framework for modern web.
-
 
 Note: `spangle` is on pre-alpha stage, so any updates may contain breaking changes.
 
@@ -39,49 +38,45 @@ hypercorn hello:api
 
 ## Features
 
-* Components with dependencies
-* Flexible url params
-* `Jinja2` built-in support
-* Uniformed API
-* Single page application friendly
+- Components with dependencies
+- Flexible url params
+- `Jinja2` built-in support
+- Uniformed API
+- Single page application friendly
 
 ...and more features. See [documents](http://tkamenoko.github.io/spangle).
-
 
 ## Contribute
 
 Contributions are welcome!
 
-* New features
-* Bug fix
-* Documents
-
+- New features
+- Bug fix
+- Documents
 
 ### Prerequisites
 
-* Python>=3.7
-* git
-* poetry
-* yarn
+- Python>=3.7
+- git
+- poetry
 
 ### Build
 
 ```shell
 # clone this repository.
-git clone http://github.com/tkamenoko/spangle.git 
+git clone http://github.com/tkamenoko/spangle.git
 # install dependencies.
 poetry install
-yarn install
 ```
 
 ### Test
 
 ```shell
-yarn test
+poetry run green -vvv -r -U -s 1 -O -u 'spangle/**' -o '**/_*,tests/*,.venv/*'
 ```
 
 ### Update API docs
 
 ```shell
-yarn doc:build
+poetry run mkdocs build
 ```

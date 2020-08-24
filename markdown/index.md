@@ -6,8 +6,7 @@
 `spangle` is a small and flexible ASGI application framework for modern web.
 
 !!! Note
-    `spangle` is on pre-alpha stage, so any updates may contain breaking changes.
-
+`spangle` is on pre-alpha stage, so any updates may contain breaking changes.
 
 ## Getting Started
 
@@ -21,6 +20,7 @@ pip install hypercorn # or your favorite asgi server
 ```
 
 Get development version:
+
 ```shell
 pip install -e git+https://github.com/tkamenoko/spangle@develop
 ```
@@ -47,11 +47,11 @@ hypercorn hello:api
 
 ## Features
 
-* Components with dependencies
-* Flexible URL params
-* `Jinja2` built-in support
-* Uniformed API
-* Single page application friendly
+- Components with dependencies
+- Flexible URL params
+- `Jinja2` built-in support
+- Uniformed API
+- Single page application friendly
 
 ...and more features. Take [tutorials](/introduction) and see [features](/advanced/index) !
 
@@ -59,36 +59,33 @@ hypercorn hello:api
 
 Contributions are welcome!
 
-* New features
-* Bug fix
-* Documents
-
+- New features
+- Bug fix
+- Documents
 
 ### Prerequisites
 
-* Python>=3.7
-* git
-* poetry
-* yarn
+- Python>=3.7
+- git
+- poetry
 
 ### Build
 
 ```shell
 # clone this repository.
-git clone http://github.com/tkamenoko/spangle.git 
+git clone http://github.com/tkamenoko/spangle.git
 # install dependencies.
 poetry install
-yarn install
 ```
 
-### Test 
+### Test
 
 ```shell
-yarn test
+poetry run green -vvv -r -U -s 1 -O -u 'spangle/**' -o '**/_*,tests/*,.venv/*'
 ```
 
 ### Update API docs
 
 ```shell
-yarn doc:build
+poetry run mkdocs build
 ```
