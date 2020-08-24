@@ -81,11 +81,11 @@ poetry install
 ### Test
 
 ```shell
-poetry run green -vvv -r -U -s 1 -O -u 'spangle/**' -o '**/_*,tests/*,.venv/*'
+poetry run poe test
 ```
 
 ### Update API docs
 
 ```shell
-poetry run mkdocs build
+poetry run poe doc-build
 ```

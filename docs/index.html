@@ -975,11 +975,11 @@ poetry install
 </code></pre></div>
 
 <h3 id="test">Test<a class="headerlink" href="#test" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>poetry run green -vvv -r -U -s <span class="m">1</span> -O -u <span class="s1">&#39;spangle/**&#39;</span> -o <span class="s1">&#39;**/_*,tests/*,.venv/*&#39;</span>
+<div class="highlight"><pre><span></span><code>poetry run poe <span class="nb">test</span>
 </code></pre></div>
 
 <h3 id="update-api-docs">Update API docs<a class="headerlink" href="#update-api-docs" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>poetry run mkdocs build
+<div class="highlight"><pre><span></span><code>poetry run poe doc-build
 </code></pre></div>
                 
               
