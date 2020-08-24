@@ -49,6 +49,7 @@ inari = "^0.1.1"
 hypercorn = "^0.10.2"
 uvloop = "^0.14.0"
 black = "^19.10b0"
+poethepoet = "^0.7.0"
 
 [tool.poetry.scripts]
 spangle = "spangle.cli.run:main"
@@ -57,3 +58,7 @@ spangle = "spangle.cli.run:main"
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
+[tool.poe.tasks]
+test = { shell = "green -vvv -r -U -s 1 -O -u 'spangle/**' -o '**/_*,tests/*,.venv/*'"}
+doc-build = "mkdocs build"
+doc-serve = "mkdocs serve"
