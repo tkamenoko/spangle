@@ -11,7 +11,7 @@ from urllib.parse import quote_plus
 import addict
 from asgiref.testing import ApplicationCommunicator
 from asgiref.timeout import timeout as timeout_ctx
-from httpx import ASGIDispatch, AsyncClient, Response
+from httpx import ASGITransport, AsyncClient, Response
 from multidict import CIMultiDict
 from starlette.types import ASGIApp
 from urllib3.filepost import RequestField, encode_multipart_formdata
@@ -57,7 +57,7 @@ class HttpTestResponse:
     def headers(self) -> CIMultiDict:
         """(`CIMultiDict`): Response header, as `dict` ."""
         if self._headers is None:
-            self._headers = CIMultiDict(self._resp.headers.items())
+            self._headers = CIMultiDict(self._resp.headers.multi_items())
         return self._headers
 
     @property
@@ -378,10 +378,10 @@ class _BaseClient:
         client=("127.0.0.1", 123),
     ):
         self._app = app
-        self._dispatch = ASGIDispatch(app, client=client)
+        self._transport = ASGITransport(app, client=client)
         self.host = host
         self._client = AsyncClient(
-            dispatch=self._dispatch, base_url=f"http://{host}", timeout=timeout
+            transport=self._transport, base_url=f"http://{host}", timeout=timeout
         )
         self.timeout = timeout
 
