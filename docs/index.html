@@ -916,8 +916,8 @@
 <p><code>spangle</code> is a small and flexible ASGI application framework for modern web.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><code>spangle</code> is on pre-alpha stage, so any updates may contain breaking changes.</p>
 </div>
+<p><code>spangle</code> is on pre-alpha stage, so any updates may contain breaking changes.</p>
 <h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
 <h3 id="install">Install<a class="headerlink" href="#install" title="Permanent link">&para;</a></h3>
 <p>Python&gt;=3.7 is required.</p>
@@ -925,9 +925,10 @@
 pip install hypercorn <span class="c1"># or your favorite asgi server</span>
 </code></pre></div>
 
-<p>Get development version:
+<p>Get development version:</p>
 <div class="highlight"><pre><span></span><code>pip install -e git+https://github.com/tkamenoko/spangle@develop
-</code></pre></div></p>
+</code></pre></div>
+
 <h3 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="c1"># hello.py</span>
 <span class="kn">import</span> <span class="nn">spangle</span>
@@ -965,22 +966,20 @@ pip install hypercorn <span class="c1"># or your favorite asgi server</span>
 <li>Python&gt;=3.7</li>
 <li>git</li>
 <li>poetry</li>
-<li>yarn</li>
 </ul>
 <h3 id="build">Build<a class="headerlink" href="#build" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="c1"># clone this repository.</span>
-git clone http://github.com/tkamenoko/spangle.git 
+git clone http://github.com/tkamenoko/spangle.git
 <span class="c1"># install dependencies.</span>
 poetry install
-yarn install
 </code></pre></div>
 
 <h3 id="test">Test<a class="headerlink" href="#test" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>yarn <span class="nb">test</span>
+<div class="highlight"><pre><span></span><code>poetry run green -vvv -r -U -s <span class="m">1</span> -O -u <span class="s1">&#39;spangle/**&#39;</span> -o <span class="s1">&#39;**/_*,tests/*,.venv/*&#39;</span>
 </code></pre></div>
 
 <h3 id="update-api-docs">Update API docs<a class="headerlink" href="#update-api-docs" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code>yarn doc:build
+<div class="highlight"><pre><span></span><code>poetry run mkdocs build
 </code></pre></div>
                 
               
