@@ -17,7 +17,6 @@ classifiers = [
     "Environment :: Web Environment",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: JavaScript",
@@ -25,7 +24,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 addict = "^2.2.1"
 aiofiles = "^0.5.0"
 asgiref = "^3.2.3"

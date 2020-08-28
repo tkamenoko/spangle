@@ -12,7 +12,7 @@
 
 ### Install
 
-Python>=3.7 is required.
+Python>=3.8 is required.
 
 ```shell
 pip install spangle
@@ -65,7 +65,7 @@ Contributions are welcome!
 
 ### Prerequisites
 
-- Python>=3.7
+- Python>=3.8
 - git
 - poetry
 
