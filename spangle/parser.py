@@ -89,7 +89,9 @@ def _parse_sync(
             result.add(
                 part.name,
                 UploadedFile(
-                    filename=part.filename, mimetype=part.content_type, file=part.file,
+                    filename=part.filename,
+                    mimetype=part.content_type,
+                    file=part.file,
                 ),
             )
         else:

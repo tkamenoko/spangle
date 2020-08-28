@@ -104,4 +104,3 @@ async def _(api: Api = api, timeout=timeout):
     async with api.async_client() as client:
         with raises(asyncio.TimeoutError):
             await client.get("/timeout", timeout=0.001)
-

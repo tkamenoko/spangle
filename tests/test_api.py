@@ -207,7 +207,10 @@ def static_fake(api: Api = api):
 
 @test("`{path}` returns status code `{code}`")  # type: ignore
 async def _(
-    api: Api = api, path=each(*static_paths), code=each(*static_codes), _=static_fake,
+    api: Api = api,
+    path=each(*static_paths),
+    code=each(*static_codes),
+    _=static_fake,
 ):
     async with api.async_client() as client:
         response = await client.get(path)

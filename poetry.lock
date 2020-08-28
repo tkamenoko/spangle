@@ -35,35 +35,24 @@ tests = ["pytest", "pytest-asyncio"]
 
 [[package]]
 category = "dev"
-description = "Classes Without Boilerplate"
-name = "attrs"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-version = "20.1.0"
-
-[package.extras]
-dev = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "sphinx", "sphinx-rtd-theme", "pre-commit"]
-docs = ["sphinx", "sphinx-rtd-theme", "zope.interface"]
-tests = ["coverage (>=5.0.2)", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
-
-[[package]]
-category = "dev"
 description = "The uncompromising code formatter."
 name = "black"
 optional = false
 python-versions = ">=3.6"
-version = "19.10b0"
+version = "20.8b1"
 
 [package.dependencies]
 appdirs = "*"
-attrs = ">=18.1.0"
-click = ">=6.5"
+click = ">=7.1.2"
+mypy-extensions = ">=0.4.3"
 pathspec = ">=0.6,<1"
-regex = "*"
-toml = ">=0.9.4"
+regex = ">=2020.1.8"
+toml = ">=0.10.1"
 typed-ast = ">=1.4.0"
+typing-extensions = ">=3.7.4"
 
 [package.extras]
+colorama = ["colorama (>=0.4.3)"]
 d = ["aiohttp (>=3.3.2)", "aiohttp-cors"]
 
 [[package]]
@@ -205,17 +194,20 @@ description = "The next generation HTTP client."
 name = "httpx"
 optional = false
 python-versions = ">=3.6"
-version = "0.14.1"
+version = "0.14.2"
 
 [package.dependencies]
 certifi = "*"
 chardet = ">=3.0.0,<4.0.0"
 httpcore = ">=0.10.0,<0.11.0"
-idna = ">=2.0.0,<3.0.0"
-rfc3986 = ">=1.3,<2"
 sniffio = "*"
 
+[package.dependencies.rfc3986]
+extras = ["idna2008"]
+version = ">=1.3,<2"
+
 [package.extras]
+brotli = ["brotlipy (>=0.7.0,<0.8.0)"]
 http2 = ["h2 (>=3.0.0,<4.0.0)"]
 
 [[package]]
@@ -399,7 +391,7 @@ description = "A Material Design theme for MkDocs"
 name = "mkdocs-material"
 optional = false
 python-versions = "*"
-version = "5.5.8"
+version = "5.5.9"
 
 [package.dependencies]
 Pygments = ">=2.4"
@@ -593,6 +585,11 @@ optional = false
 python-versions = "*"
 version = "1.4.0"
 
+[package.dependencies]
+[package.dependencies.idna]
+optional = true
+version = "*"
+
 [package.extras]
 idna2008 = ["idna"]
 
@@ -758,7 +755,7 @@ docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
 testing = ["jaraco.itertools", "func-timeout"]
 
 [metadata]
-content-hash = "2cb65e22d4b91f1f43b8f6dcfcdde1f3bbc8028dcec18f71ab63e5e6232ac293"
+content-hash = "dbefdad2bc84864e3ee795991afbf63fef2e9e694475aa73ea8d4182971c4d92"
 lock-version = "1.0"
 python-versions = "^3.7"
 
@@ -779,13 +776,9 @@ asgiref = [
     {file = "asgiref-3.2.10-py3-none-any.whl", hash = "sha256:9fc6fb5d39b8af147ba40765234fa822b39818b12cc80b35ad9b0cef3a476aed"},
     {file = "asgiref-3.2.10.tar.gz", hash = "sha256:7e51911ee147dd685c3c8b805c0ad0cb58d360987b56953878f8c06d2d1c6f1a"},
 ]
-attrs = [
-    {file = "attrs-20.1.0-py2.py3-none-any.whl", hash = "sha256:2867b7b9f8326499ab5b0e2d12801fa5c98842d2cbd22b35112ae04bf85b4dff"},
-    {file = "attrs-20.1.0.tar.gz", hash = "sha256:0ef97238856430dcf9228e07f316aefc17e8939fc8507e18c6501b761ef1a42a"},
-]
 black = [
-    {file = "black-19.10b0-py36-none-any.whl", hash = "sha256:1b30e59be925fafc1ee4565e5e08abef6b03fe455102883820fe5ee2e4734e0b"},
-    {file = "black-19.10b0.tar.gz", hash = "sha256:c2edb73a08e9e0e6f65a0e6af18b059b8b1cdd5bef997d7a0b181df93dc81539"},
+    {file = "black-20.8b1-py3-none-any.whl", hash = "sha256:70b62ef1527c950db59062cda342ea224d772abdf6adc58b86a45421bab20a6b"},
+    {file = "black-20.8b1.tar.gz", hash = "sha256:1c02557aa099101b9d21496f8a914e9ed2222ef70336404eeeac8edba836fbea"},
 ]
 certifi = [
     {file = "certifi-2020.6.20-py2.py3-none-any.whl", hash = "sha256:8fc0819f1f30ba15bdb34cceffb9ef04d99f420f68eb75d901e9560b8749fc41"},
@@ -869,8 +862,8 @@ httpcore = [
     {file = "httpcore-0.10.2.tar.gz", hash = "sha256:93a4caf743e7ed29dbf7900515f0917babaa26bfaae6fb6c922ca1228519d400"},
 ]
 httpx = [
-    {file = "httpx-0.14.1-py3-none-any.whl", hash = "sha256:2be72b6932f185319031a553a474c298df3982a6ad8b23e6477a832cd2e54067"},
-    {file = "httpx-0.14.1.tar.gz", hash = "sha256:0c557173821c1e453396325b3fef768d2bca9078f7300d431735177654e0f9b1"},
+    {file = "httpx-0.14.2-py3-none-any.whl", hash = "sha256:1e46926afdfdb68f926c90870682db71bc4121f53dc6b56f39a067ca9026e1d2"},
+    {file = "httpx-0.14.2.tar.gz", hash = "sha256:51c63dbc2d68eb70b5812aed8161b236fd04ecbd9727ae265a0f422398aea6f9"},
 ]
 hypercorn = [
     {file = "Hypercorn-0.10.2-py3-none-any.whl", hash = "sha256:809d77f3bf9fa0794a598d8dfa0f8d889e7e1c2f927581cd33068803169dc474"},
@@ -950,8 +943,8 @@ mkdocs = [
     {file = "mkdocs-1.1.2.tar.gz", hash = "sha256:f0b61e5402b99d7789efa032c7a74c90a20220a9c81749da06dbfbcbd52ffb39"},
 ]
 mkdocs-material = [
-    {file = "mkdocs-material-5.5.8.tar.gz", hash = "sha256:70aeb8ba818656ac67868addd8c0a869a3b06a68b8821ac3996d9a0418e3a94c"},
-    {file = "mkdocs_material-5.5.8-py2.py3-none-any.whl", hash = "sha256:4184ffda4351dd198b83357acab9468cd64384c544452b01d9a310ac4e771f8c"},
+    {file = "mkdocs-material-5.5.9.tar.gz", hash = "sha256:37d60947993b939318945c170c7b3a153646976badf57648fd70befc3b54c830"},
+    {file = "mkdocs_material-5.5.9-py2.py3-none-any.whl", hash = "sha256:c8cb3c8c44bf10ed7ac1eb568d93a4346efe03fee2994b6a80e96559421cec49"},
 ]
 mkdocs-material-extensions = [
     {file = "mkdocs-material-extensions-1.0.tar.gz", hash = "sha256:17d7491e189af75700310b7ec33c6c48a22060b8b445001deca040cb60471cde"},

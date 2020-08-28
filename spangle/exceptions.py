@@ -60,8 +60,8 @@ class MethodNotAllowedError(SpangleError):
 
 class TooLargeRequestError(SpangleError):
     """413: Payload Too Large."""
+
     def __init__(
         self, message="Payload too large.", status=HTTPStatus.REQUEST_ENTITY_TOO_LARGE
     ):
         super().__init__(message=message, status=status)
-

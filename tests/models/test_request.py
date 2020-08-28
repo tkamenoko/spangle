@@ -248,4 +248,3 @@ async def _(api: Api = api, view=large_request_view):
     async with api.async_client() as client:
         response = await client.post(path, files=data)
         assert response.status_code == HTTPStatus.REQUEST_ENTITY_TOO_LARGE
-
