@@ -1,67 +1,81 @@
 from http import HTTPStatus
 
-from spangle import Api
-from spangle.error_handler import ErrorHandler
+from ward import fixture, test
+from ward.expect import raises
+
+from spangle import Api, ErrorHandler
 from spangle.exceptions import NotFoundError, SpangleError
 
-from ._compat import _Case as TestCase
+
+@fixture
+def api():
+    return Api()
 
 
-class ErrorHandlerTests(TestCase):
-    def setUp(self):
-        self.api = Api()
+@fixture
+def handler():
+    return ErrorHandler()
 
-    def test_handle(self):
-        class ChildError(SpangleError):
-            def __init__(self):
-                super().__init__(message="Child")
 
-        eh = ErrorHandler()
+@fixture
+def not_found(handler: ErrorHandler = handler):
+    @handler.handle(NotFoundError)
+    class NotFound:
+        async def on_error(self, req, resp, e):
+            resp.status_code = HTTPStatus.NOT_FOUND
+            resp.text = "NotFound"
 
-        @eh.handle(NotFoundError)
-        class NotFound:
-            async def on_error(_, req, resp, e):
-                resp.status_code = HTTPStatus.NOT_FOUND
-                resp.text = "NotFound"
-                return resp
 
-        @eh.handle(TypeError)
-        class Type:
-            async def on_error(_, req, resp, e):
-                resp.status_code = 418
-                resp.text = "Type"
+@fixture
+def child_error():
+    class ChildError(SpangleError):
+        def __init__(self):
+            super().__init__(message="Child")
 
-        self.api.add_error_handler(eh)
+    return ChildError
 
-        errors = {
-            "Type": (TypeError, 418),
-            "Child": (ChildError, HTTPStatus.INTERNAL_SERVER_ERROR),
-            "NotFound": (NotFoundError, HTTPStatus.NOT_FOUND),
-        }
 
-        @self.api.route("/{r}")
-        class Raise:
-            async def on_get(_, req, resp, r):
-                e = errors[r][0]
-                raise e
-                return resp
+@fixture
+def type_error(handler: ErrorHandler = handler):
+    @handler.handle(TypeError)
+    class Type:
+        async def on_error(self, req, resp, e):
+            resp.status_code = 418
+            resp.text = "Type"
 
-        @self.api.before_request
-        class Before:
-            async def on_request(_, req, resp):
-                resp.headers.update({"x-before": "CALLED"})
+    return Type
 
-        @self.api.after_request
-        class After:
-            async def on_request(_, req, resp):
-                resp.headers.update({"x-after": "CALLED"})
 
-        # test handled errors.
-        with self.api.client() as client:
-            for k, v in errors.items():
-                with self.subTest(t=k):
-                    response = client.get(f"/{k}")
-                    self.assertEqual(response.status_code, v[1])
-                    self.assertEqual(response.text, k)
-            with self.assertRaises(KeyError):
-                response = client.get("/notdefined")
+@fixture
+def errors(not_found=not_found, type_error=type_error, child_error=child_error):
+    return {
+        "Type": (TypeError, 418),
+        "Child": (child_error, HTTPStatus.INTERNAL_SERVER_ERROR),
+        "NotFound": (NotFoundError, HTTPStatus.NOT_FOUND),
+    }
+
+
+@fixture
+def raise_error(api: Api = api, errors=errors):
+    @api.route("/{r}")
+    class Raise:
+        async def on_get(self, req, resp, r):
+            e = errors[r][0]
+            raise e
+
+    return Raise
+
+
+@test("Error handler returns response when an error is raised")
+async def _(
+    api: Api = api, handler: ErrorHandler = handler, errors=errors, view=raise_error
+):
+    api.add_error_handler(handler)
+    async with api.async_client() as client:
+        for k, v in errors.items():
+            response = await client.get(f"/{k}")
+            assert response.text == k
+            assert response.status_code == v[1]
+
+        with raises(KeyError):
+            response = await client.get("/NotHandled")

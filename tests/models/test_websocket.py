@@ -1,112 +1,150 @@
+from ward import fixture, raises, test
+
 from spangle import Api
 
-from .._compat import _Case as TestCase
+
+@fixture
+def api():
+    return Api()
 
 
-class WebSocketTests(TestCase):
-    def setUp(self):
-        self.api = Api()
+@fixture
+def text_ws(api: Api = api):
+    @api.route("/text")
+    class TextWs:
+        async def on_ws(self, conn):
+            await conn.accept()
+            while True:
+                name = await conn.receive(str)
+                if name == "end":
+                    break
+                await conn.send(f"hello, {name}!")
+            await conn.send("bye")
+            await conn.close(1000)
 
-    def test_text(self):
-        @self.api.route("/websocket", routing="clone")
-        class Text:
-            async def on_ws(_, conn):
-                await conn.accept()
-                while True:
-                    name = await conn.receive(str)
-                    if name == "end":
-                        break
-                    await conn.send(f"hello, {name}!")
-                await conn.send("bye")
-                await conn.close(1000)
+    return TextWs
 
-        with self.api.client() as client:
-            with client.ws_connect("/websocket") as connection:
-                connection.send("FOO")
-                resp = connection.receive(str)
-                self.assertEqual(resp, "hello, FOO!")
-                connection.send("BAR")
-                resp = connection.receive(str)
-                self.assertEqual(resp, "hello, BAR!")
-                connection.send("end")
-                resp = connection.receive(str)
-                self.assertEqual(resp, "bye")
-                connection.send("FOO")
-                with self.assertRaises(RuntimeError):
-                    connection.receive(str)
 
-    def test_bytes(self):
-        @self.api.route("/websocket", routing="clone")
-        class Bytes:
-            async def on_ws(_, conn):
-                await conn.accept()
-                while True:
-                    name = await conn.receive(bytes)
-                    if name == b"end":
-                        break
-                    await conn.send(f"hello, {name.decode('utf-8')}!".encode("utf-8"))
-                await conn.send(b"bye")
-                await conn.close(1000)
+@test("WebSocket can send and receive text data")
+async def _(api: Api = api, ws=text_ws):
+    path = api.url_for(ws)
+    async with api.async_client() as client:
+        async with client.ws_connect(path) as conn:
+            await conn.send("FOO")
+            resp = await conn.receive(str)
+            assert resp == "hello, FOO!"
+            await conn.send("BAR")
+            resp = await conn.receive(str)
+            assert resp == "hello, BAR!"
+            await conn.send("end")
+            resp = await conn.receive(str)
+            assert resp == "bye"
+            await conn.send("FOO")
+            with raises(RuntimeError):
+                await conn.receive(str)
 
-        with self.api.client() as client:
-            with client.ws_connect("/websocket") as connection:
-                connection.send(b"FOO")
-                resp = connection.receive(bytes)
-                self.assertEqual(resp, b"hello, FOO!")
-                connection.send(b"BAR")
-                resp = connection.receive(bytes)
-                self.assertEqual(resp, b"hello, BAR!")
-                connection.send(b"end")
-                resp = connection.receive(bytes)
-                self.assertEqual(resp, b"bye")
-                connection.send(b"FOO")
-                with self.assertRaises(RuntimeError):
-                    connection.receive(bytes)
 
-    def test_websocket_error(self):
-        @self.api.route("/websocket", routing="clone")
-        class WSError:
-            async def on_ws(_, conn):
-                await conn.accept()
-                while True:
-                    name = await conn.receive(str)
-                    if name == "end":
-                        break
-                    await conn.send(f"hello, {name}!")
-                await conn.send("error!")
-                raise ValueError
+@fixture
+def bytes_ws(api: Api = api):
+    @api.route("/bytes")
+    class BytesWs:
+        async def on_ws(self, conn):
+            await conn.accept()
+            while True:
+                name = await conn.receive(bytes)
+                if name == b"end":
+                    break
+                await conn.send(f"hello, {name.decode('utf-8')}!".encode("utf-8"))
+            await conn.send(b"bye")
+            await conn.close(1000)
 
-        @self.api.handle(ValueError)
-        class HandleWS:
-            async def on_ws_error(_, conn, e):
-                await conn.send("GOT ERROR")
-                await conn.close(4040)
+    return BytesWs
 
-        with self.api.client() as client:
-            with client.ws_connect("/websocket") as connection:
-                connection.send("FOO")
-                resp = connection.receive(str)
-                self.assertEqual(resp, "hello, FOO!")
-                connection.send("end")
-                resp = connection.receive(str)
-                self.assertEqual(resp, "error!")
-                resp = connection.receive(str)
-                self.assertEqual(resp, "GOT ERROR")
 
-    def test_params(self):
-        params = {"foo": "bar"}
+@test("WebSocket can send and receive bytes data")  # type: ignore
+async def _(api: Api = api, ws=bytes_ws):
+    path = api.url_for(ws)
+    async with api.async_client() as client:
+        async with client.ws_connect(path) as conn:
+            await conn.send(b"FOO")
+            resp = await conn.receive(bytes)
+            assert resp == b"hello, FOO!"
+            await conn.send(b"BAR")
+            resp = await conn.receive(bytes)
+            assert resp == b"hello, BAR!"
+            await conn.send(b"end")
+            resp = await conn.receive(bytes)
+            assert resp == b"bye"
+            await conn.send(b"FOO")
+            with raises(RuntimeError):
+                await conn.receive(bytes)
 
-        @self.api.route("/websocket", routing="clone")
-        class Text:
-            async def on_ws(_, conn):
-                await conn.accept()
-                p = dict(**conn.params)
-                self.assertEqual(p, params)
-                await conn.send("bye")
-                await conn.close(1000)
 
-        with self.api.client() as client:
-            with client.ws_connect("/websocket", params=params) as connection:
-                resp = connection.receive(str)
-                self.assertEqual(resp, "bye")
-                connection.send("FOO")
+@fixture
+def error_ws(api: Api = api):
+    @api.route("/error")
+    class ErrorWs:
+        async def on_ws(self, conn):
+            await conn.accept()
+            while True:
+                name = await conn.receive(str)
+                if name == "end":
+                    break
+                await conn.send(f"hello, {name}!")
+            await conn.send("error!")
+            raise ValueError
+
+    return ErrorWs
+
+
+@fixture
+def handler(api: Api = api):
+    @api.handle(ValueError)
+    class Handler:
+        async def on_ws_error(self, conn, e):
+            await conn.send("GOT ERROR")
+            await conn.close(4040)
+
+    return Handler
+
+
+@test("Error handler catches websocket errors")  # type: ignore
+async def _(api: Api = api, ws=error_ws, handler=handler):
+    path = api.url_for(ws)
+    async with api.async_client() as client:
+        async with client.ws_connect(path) as conn:
+            await conn.send("FOO")
+            resp = await conn.receive(str)
+            assert resp == "hello, FOO!"
+            await conn.send("end")
+            resp = await conn.receive(str)
+            assert resp == "error!"
+            resp = await conn.receive(str)
+            assert resp == "GOT ERROR"
+
+
+params = {"foo": "bar"}
+
+
+@fixture
+def qs_ws(api: Api = api):
+    @api.route("/qs")
+    class QsWs:
+        async def on_ws(self, conn):
+            await conn.accept()
+            p = dict(**conn.params)
+            assert p == params
+            await conn.send("bye")
+            await conn.close(1000)
+
+    return QsWs
+
+
+@test("WebSocket can accept querystring")  # type: ignore
+async def _(api: Api = api, ws=qs_ws):
+    path = api.url_for(ws)
+    async with api.async_client() as client:
+        async with client.ws_connect(path, params=params) as connection:
+            resp = await connection.receive(str)
+            assert resp == "bye"
+            await connection.send("FOO")
