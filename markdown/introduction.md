@@ -1,10 +1,10 @@
 # Introduction
 
-This document explains basic usage of `spangle` . 
+This document explains basic usage of `spangle` .
 
 ## Installation
 
-Python>=3.7 is required.
+Python>=3.8 is required.
 
 ```shell
 pip install spangle

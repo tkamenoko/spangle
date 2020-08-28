@@ -134,9 +134,9 @@ class Request:
     async def content(self) -> bytes:
         """
         (`bytes`): The request body, as bytes. Must be awaited.
-        
+
         **Raises**
-        
+
         * `spangle.exceptions.TooLargeRequestError` : when request body is too large.
 
         """
