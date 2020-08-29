@@ -1,185 +1,268 @@
 from http import HTTPStatus
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
-import spangle
+from ward import each, fixture, test
+from ward.expect import raises
+
+from spangle import Api
 from spangle.exceptions import NotFoundError
 
-from ._compat import _Case as TestCase
+
+@fixture
+def api():
+    return Api(static_dir="tests/static", favicon="favicon.ico")
 
 
-class ApiTests(TestCase):
-    def setUp(self):
-        self.api = spangle.Api(static_dir="tests/static", favicon="favicon.ico")
+class StoreSync:
+    def __init__(self):
+        self._startup = MagicMock()
+        self._shutdown = MagicMock()
 
-    def test_lifespan(self):
-        # add lifecycle components and functions.
-        # note: do not use components as datastores in production!
-        class StoreSync:
-            def __init__(_):
-                _.startup = MagicMock()
-                _.shutdown = MagicMock()
+    def startup(self, comp):
+        self._startup(comp)
 
-            def startup(_, comp):
-                pass
+    def shutdown(self, comp):
+        self._shutdown(comp)
 
-            def shutdown(_, comp):
-                pass
 
-        class StoreAsync:
-            def __init__(_):
-                _._startup = MagicMock()
-                _._shutdown = MagicMock()
+class StoreAsync:
+    def __init__(self):
+        self._startup = MagicMock()
+        self._shutdown = MagicMock()
 
-            async def startup(_, comp):
-                _._startup(comp)
+    async def startup(self, comp):
+        self._startup(comp)
 
-            async def shutdown(_, comp):
-                _._shutdown(comp)
+    async def shutdown(self, comp):
+        self._shutdown(comp)
 
-        self.api.add_component(StoreSync)
-        self.api.add_component(StoreAsync)
 
-        start = self.api.on_start(MagicMock())
-        stop = self.api.on_stop(MagicMock())
+@fixture
+def store_sync(api: Api = api):
+    api.add_component(StoreSync)
+    return StoreSync
 
-        _start = MagicMock()
 
-        @self.api.on_start
-        async def start_async(comp):
-            _start(comp)
+@fixture
+def store_async(api: Api = api):
+    api.add_component(StoreAsync)
+    return StoreAsync
 
-        _stop = MagicMock()
 
-        @self.api.on_stop
-        async def stop_async(comp):
-            _stop(comp)
+@fixture
+def start_sync(api: Api = api):
+    start = MagicMock()
+    start.__name__ = "start_sync"
+    api.on_start(start)
+    return start
 
-        with self.api.client():
-            pass
-        # methods called as expected?
-        store_sync: StoreSync = self.api.components.get(StoreSync)
-        store_sync.startup.assert_called_once_with(self.api.components)
-        store_sync.shutdown.assert_called_once_with(self.api.components)
-        store_async: StoreAsync = self.api.components.get(StoreAsync)
-        store_async._startup.assert_called_once_with(self.api.components)
-        store_async._shutdown.assert_called_once_with(self.api.components)
-        # functions called as expected?
-        start.assert_called_once_with(self.api.components)
-        stop.assert_called_once_with(self.api.components)
-        _start.assert_called_once_with(self.api.components)
-        _stop.assert_called_once_with(self.api.components)
 
-    def test_before_request(self):
-        @self.api.before_request
-        class Hook:
-            def __init__(_):
-                _.mock = MagicMock()
+@fixture
+def stop_sync(api: Api = api):
+    stop = MagicMock()
+    stop.__name__ = "stop_sync"
+    api.on_stop(stop)
+    return stop
 
-            async def on_request(_, req, resp, **kw):
-                _.mock()
-                return resp
 
-        @self.api.route("/")
-        class Index:
-            def __init__(_, api: spangle.Api):
-                _.api = api
+@fixture
+def start_async(api: Api = api):
+    start = AsyncMock()
+    start.__name__ = "start_async"
 
-            async def on_get(_, req, resp):
-                hook: Hook = _.api._view_cache[Hook]
-                hook.mock.assert_called_once()
+    api.on_start(start)
+    return start
 
-        with self.api.client() as client:
-            response = client.get("/")
-            self.assertEqual(response.status_code, HTTPStatus.OK)
 
-    def test_after_request(self):
-        @self.api.after_request
-        class Hook:
-            def __init__(_):
-                _.mock = MagicMock()
+@fixture
+def stop_async(api: Api = api):
+    stop = AsyncMock()
+    stop.__name__ = "stop_async"
 
-            async def on_request(_, req, resp, **kw):
-                _.mock()
-                return resp
+    api.on_stop(stop)
+    return stop
 
-        @self.api.route("/")
-        class Index:
-            def __init__(_, api: spangle.Api):
-                _.api = api
 
-            async def on_get(_, req, resp):
-                with self.assertRaises(KeyError):
-                    _.api._view_cache[Hook]
+@test("`{store.__name__}` lifespan methods are called once")
+async def _(api: Api = api, store=each(store_sync, store_async)):
+    async with api.async_client():
+        store_instance = api.components.get(store)
+        assert isinstance(store_instance, store)
+        store_instance._startup.assert_called_once_with(api.components)
+        store_instance._shutdown.assert_not_called()
 
-        with self.api.client() as client:
-            response = client.get("/")
-            self.assertEqual(response.status_code, HTTPStatus.OK)
-            hook: Hook = self.api._view_cache[Hook]
-            hook.mock.assert_called_once()
+    store_instance._shutdown.assert_called_once_with(api.components)
 
-    def test_url_for(self):
-        @self.api.route("/")
-        class Index:
-            pass
 
-        @self.api.route("/foo")
-        class Foo:
-            pass
+@test("Lifespan function `{before.__name__}` and `{after.__name__}` are called once")  # type: ignore
+async def _(
+    api: Api = api,
+    before=each(start_sync, start_async),
+    after=each(stop_sync, stop_async),
+):
+    async with api.async_client():
+        before.assert_called_once_with(api.components)
+        after.assert_not_called()
+    after.assert_called_once_with(api.components)
 
-        @self.api.route("/foo/bar")
-        class FooBar:
-            pass
 
-        @self.api.route("/foo/{var}")
-        class FooVar:
-            pass
+class BeforeRequest:
+    def __init__(self):
+        self.mock = MagicMock()
 
-        index = self.api.url_for(Index)
-        self.assertEqual(self.api.router.get(index), (Index, {}))
-        foo = self.api.url_for(Foo)
-        self.assertEqual(self.api.router.get(foo), (Foo, {}))
-        foobar = self.api.url_for(FooBar)
-        self.assertEqual(self.api.router.get(foobar), (FooBar, {}))
-        foovar = self.api.url_for(FooVar, {"var": "baz"})
-        self.assertEqual(self.api.router.get(foovar), (FooVar, {"var": "baz"}))
+    async def on_request(self, req, resp, **kw):
+        self.mock()
+        return resp
 
-    def test_static(self):
-        @self.api.route("/staticfake")
-        class StaticFake:
-            pass
 
-        with self.api.client() as client:
-            response = client.get("/static/static.txt")
-            self.assertEqual(response.status_code, HTTPStatus.OK)
-            self.assertIn("foobar", response.text)
-            response = client.get("/favicon.ico")
-            self.assertEqual(response.status_code, HTTPStatus.OK)
-            response = client.get("/staticfake")
-            self.assertEqual(response.status_code, HTTPStatus.OK)
-            response = client.get("/static/../test_api.py")
-            self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
+@fixture
+def before_request(api: Api = api):
+    api.before_request(BeforeRequest)
+    return BeforeRequest
 
-    def test_handle(self):
-        @self.api.handle(NotFoundError)
-        class NotFound:
-            async def on_error(_, req, resp, e):
-                resp.status_code = 418
-                return resp
 
-        with self.api.client() as client:
-            response = client.get("/not/defined")
-            self.assertEqual(response.status_code, 418)
+class AfterRequest:
+    def __init__(self):
+        self.mock = MagicMock()
 
-    def test_allowed_methods(self):
-        @self.api.route("/")
-        class Index:
-            allowed_methods = ["post"]
+    async def on_request(self, req, resp, **kw):
+        self.mock()
+        return resp
 
-        with self.api.client() as client:
-            response = client.post("/")
-            self.assertEqual(response.status_code, HTTPStatus.OK)
-            response = client.put("/")
-            self.assertEqual(response.status_code, HTTPStatus.METHOD_NOT_ALLOWED)
-            allowed = response.headers["allow"]
-            self.assertIn("POST", allowed)
-            self.assertIn("GET", allowed)
+
+@fixture
+def after_request(api: Api = api):
+    api.after_request(AfterRequest)
+    return AfterRequest
+
+
+@fixture
+def index(api: Api = api, before=before_request, after=after_request):
+    @api.route("/")
+    class Index:
+        def __init__(_, api: Api):
+            _.api = api
+
+        async def on_get(_, req, resp):
+            before_instance: BeforeRequest = _.api._view_cache[before]
+            before_instance.mock.assert_called_once()
+
+    return Index
+
+
+@test("Methods are called before and after request")  # type: ignore
+async def _(api: Api = api, after=after_request, index=index):
+    async with api.async_client() as client:
+        response = await client.get("/")
+        assert response.status_code == HTTPStatus.OK
+        after_instance = api._view_cache[after]
+        after_instance.mock.assert_called_once()
+
+
+@test("Correct paths are returned.")  # type: ignore
+async def _(api: Api = api):
+    @api.route("/")
+    class Index:
+        pass
+
+    @api.route("/foo")
+    class Foo:
+        pass
+
+    @api.route("/foo/bar")
+    class FooBar:
+        pass
+
+    @api.route("/foo/{var}")
+    class FooVar:
+        pass
+
+    index = api.url_for(Index)
+    api.router.get(index) == (Index, {})
+    foo = api.url_for(Foo)
+    api.router.get(foo) == (Foo, {})
+    foobar = api.url_for(FooBar)
+    api.router.get(foobar) == (FooBar, {})
+    foovar = api.url_for(FooVar, {"var": "baz"})
+    api.router.get(foovar) == (FooVar, {"var": "baz"})
+
+
+static_paths = [
+    "/static/static.txt",
+    "/favicon.ico",
+    "/staticfake",
+    "/static/../test_api.py",
+]
+static_codes = [HTTPStatus.OK, HTTPStatus.OK, HTTPStatus.OK, HTTPStatus.NOT_FOUND]
+
+
+@fixture
+def static_fake(api: Api = api):
+    @api.route("/staticfake")
+    class StaticFake:
+        pass
+
+    return StaticFake
+
+
+@test("`{path}` returns status code `{code}`")  # type: ignore
+async def _(
+    api: Api = api,
+    path=each(*static_paths),
+    code=each(*static_codes),
+    _=static_fake,
+):
+    async with api.async_client() as client:
+        response = await client.get(path)
+        assert response.status_code == code
+
+
+@fixture
+def not_found(api: Api = api):
+    @api.handle(NotFoundError)
+    class NotFound:
+        async def on_error(_, req, resp, e):
+            resp.status_code = 418
+            return resp
+
+    return NotFound
+
+
+@test("Api returns a specified status code on error")  # type: ignore
+async def _(api: Api = api, _=not_found):
+    async with api.async_client() as client:
+        response = await client.get("/not/defined")
+        assert response.status_code == 418
+
+
+@test("Safe or specified methods are allowed to request")  # type: ignore
+async def _(api: Api = api):
+    @api.route("/")
+    class Index:
+        allowed_methods = ["post"]
+
+    async with api.async_client() as client:
+        response = await client.post("/")
+        assert response.status_code == HTTPStatus.OK
+        response = await client.put("/")
+        assert response.status_code == HTTPStatus.METHOD_NOT_ALLOWED
+        allowed = response.headers["allow"]
+        assert "POST" in allowed
+        assert "GET" in allowed
+
+
+@fixture
+def reraise_handler(api: Api = api):
+    @api.handle(NotFoundError)
+    class NotFound:
+        async def on_error(self, req, resp, e):
+            resp.reraise = True
+
+    return NotFound
+
+
+@test("Error handler reraise exceptions after response")  # type: ignore
+async def _(api: Api = api, reraise=reraise_handler):
+    async with api.async_client() as client:
+        with raises(NotFoundError):
+            await client.get("/not/defined")
