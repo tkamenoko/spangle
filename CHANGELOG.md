@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.7.4(Unreleased)
+## v0.7.4(2020-08-29)
 
 - Remove unused codes
 - Update dependencies
