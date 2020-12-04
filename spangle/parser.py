@@ -1,10 +1,12 @@
 """Types to parse user uploads."""
+from __future__ import annotations
 
 import asyncio
+from collections.abc import Awaitable, Callable
 from functools import partial
 from json import loads
 from tempfile import SpooledTemporaryFile
-from typing import TYPE_CHECKING, Awaitable, Callable, NamedTuple, Optional
+from typing import TYPE_CHECKING, NamedTuple, Optional
 from urllib.parse import parse_qsl
 
 from multidict import MultiDict, MultiDictProxy
@@ -40,7 +42,7 @@ class UploadedFile(NamedTuple):
     mimetype: str
 
 
-async def _parse_body(req: "Request", parse_as: str = None) -> MultiDictProxy:
+async def _parse_body(req: Request, parse_as: str = None) -> MultiDictProxy:
     parser = _get_parser(parse_as)
 
     if not parser:
@@ -60,7 +62,7 @@ async def _parse_body(req: "Request", parse_as: str = None) -> MultiDictProxy:
 
 def _get_parser(
     type_: Optional[str],
-) -> Optional[Callable[["Request"], Awaitable[MultiDictProxy]]]:
+) -> Optional[Callable[[Request], Awaitable[MultiDictProxy]]]:
     if type_ == "json":
         return _parse_json
     elif type_ == "form":
@@ -73,7 +75,7 @@ def _get_parser(
         return None
 
 
-async def _parse_json(req: "Request") -> MultiDictProxy:
+async def _parse_json(req: Request) -> MultiDictProxy:
     content = await req.content
     result = MultiDict(loads(content))
     return MultiDictProxy(result)
@@ -99,7 +101,7 @@ def _parse_sync(
     return result
 
 
-async def _parse_multipart(req: "Request") -> MultiDictProxy:
+async def _parse_multipart(req: Request) -> MultiDictProxy:
     content_length = int(req.headers.get("content-length", "-1"))
     content_type = req.headers.get("content-type", "")
 
@@ -130,7 +132,7 @@ async def _parse_multipart(req: "Request") -> MultiDictProxy:
     return MultiDictProxy(parsed)
 
 
-async def _parse_form(req: "Request") -> MultiDictProxy:
+async def _parse_form(req: Request) -> MultiDictProxy:
     data = await req.text
     result = MultiDict(parse_qsl(data))
     return MultiDictProxy(result)

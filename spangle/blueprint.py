@@ -3,9 +3,12 @@ Application blueprint and router.
 """
 
 import re
+
+# bug: using `collections.abc` causes `TypeError: unhashable type: 'list'`
+# from collections.abc import Callable
 from functools import lru_cache
 from http import HTTPStatus
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type
+from typing import Any, Callable, Optional
 
 from parse import compile
 
@@ -13,7 +16,7 @@ from spangle._utils import _normalize_path
 from spangle.error_handler import ErrorHandler
 from spangle.models import Request, Response
 
-Converters = Dict[str, Callable[[str], Any]]
+Converters = dict[str, Callable[[str], Any]]
 
 
 class Blueprint:
@@ -22,9 +25,9 @@ class Blueprint:
 
     **Attributes**
 
-    * views(`Dict[str, Tuple[Type, Converters]]`): Collected view classes.
-    * events(`Dict[str, List[Callable]]`): Registered lifespan handlers.
-    * request_hooks(`Dict[str, List[type]]`): Called against every request.
+    * views(`dict[str, tuple[type, Converters]]`): Collected view classes.
+    * events(`dict[str, list[Callable]]`): Registered lifespan handlers.
+    * request_hooks(`dict[str, list[type]]`): Called against every request.
 
     """
 
@@ -32,9 +35,9 @@ class Blueprint:
 
     _handler: ErrorHandler
 
-    views: Dict[str, Tuple[Type, Converters, Optional[str]]]
-    events: Dict[str, List[Callable]]
-    request_hooks: Dict[str, List[Type]]
+    views: dict[str, tuple[type, Converters, Optional[str]]]
+    events: dict[str, list[Callable]]
+    request_hooks: dict[str, list[type]]
 
     def __init__(self) -> None:
         """Initialize self."""
@@ -49,26 +52,26 @@ class Blueprint:
         *,
         converters: Optional[Converters] = None,
         routing: Optional[str] = None,
-    ) -> Callable[[Type], Type]:
+    ) -> Callable[[type], type]:
         """
         Bind a path to the decorated view. The path will be fixed by routing mode.
 
         **Args**
 
         * path (`str`): The location of your view.
-        * converters (`Optional[Dict[str,Callable]]`): Params converters
+        * converters (`Optional[dict[str,Callable]]`): Params converters
             for dynamic routing.
         * routing (`Optional[str]`): Routing strategy.
 
         """
 
-        def _inner(cls: Type) -> Type:
+        def _inner(cls: type) -> type:
             self.views[path] = (cls, converters or {}, routing)
             return cls
 
         return _inner
 
-    def handle(self, e: Type[Exception]) -> Callable[[Type], Type]:
+    def handle(self, e: type[Exception]) -> Callable[[type], type]:
         """
         Bind `Exception` to the decorated view.
 
@@ -89,12 +92,12 @@ class Blueprint:
         self.events["shutdown"].append(f)
         return f
 
-    def before_request(self, cls: Type) -> Type:
+    def before_request(self, cls: type) -> type:
         """Decorator to add a class called before each request processed."""
         self.request_hooks["before"].append(cls)
         return cls
 
-    def after_request(self, cls: Type) -> Type:
+    def after_request(self, cls: type) -> type:
         """Decorator to add a class called after each request processed."""
         self.request_hooks["after"].append(cls)
         return cls
@@ -140,13 +143,13 @@ class Router:
         self.routing = routing
         self.routes = {"static": {}, "dynamic": {}}
 
-    def _add(self, path: str, view: Type, converters: Converters, routing: str) -> str:
+    def _add(self, path: str, view: type, converters: Converters, routing: str) -> str:
         # normalize path, add route, return the path.
         if not re.match(r".*{([^/:]+)(:[^/:]+)?}.*", path):
             return self._add_static(path, view, routing)
         return self._add_dynamic(path, view, converters, routing)
 
-    def _add_dynamic(self, path: str, view: Type, converters: Converters, routing: str):
+    def _add_dynamic(self, path: str, view: type, converters: Converters, routing: str):
         # TODO: no_slash
         splitted_path = path.split("/")
         fixed = []
@@ -252,7 +255,7 @@ class Router:
             self.routes["dynamic"].setdefault(slash_pattern, redirect)
             return no_trailing_slash
 
-    def _add_static(self, path: str, view: Type, routing: str) -> str:
+    def _add_static(self, path: str, view: type, routing: str) -> str:
         slash_path = _normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
         if path.endswith("/"):
@@ -316,7 +319,7 @@ class Router:
             return no_trailing_slash
 
     @lru_cache()
-    def get(self, path: str) -> Optional[Tuple[Type, Dict[str, Any]]]:
+    def get(self, path: str) -> Optional[tuple[type, dict[str, Any]]]:
         """
         Find a view matching to `path`, or return `None` .
 
@@ -326,7 +329,7 @@ class Router:
 
         **Returns**
 
-        * `Optional[Tuple[Type, Dict[str, Any]]]`: View instance and params parsed from
+        * `Optional[tuple[type, dict[str, Any]]]`: View instance and params parsed from
             `path` .
 
         """

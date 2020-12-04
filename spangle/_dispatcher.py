@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from typing import TYPE_CHECKING, Any, Dict, Type
+from typing import TYPE_CHECKING, Any
 
 from starlette.responses import Response as StarletteResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 
 
 def _init_view(
-    cls: Type[Any], components: Dict[Type, Any], view_cache: Dict[Type, Any]
+    cls: type[Any], components: dict[type, Any], view_cache: dict[type, Any]
 ) -> Any:
     try:
         return view_cache[cls]
@@ -138,7 +138,7 @@ async def _response_http_error(
 
 
 async def _execute_http(
-    req: http.Request, resp: http.Response, view, params: Dict[str, Any]
+    req: http.Request, resp: http.Response, view, params: dict[str, Any]
 ) -> StarletteResponse:
     if req.method not in view.allowed_methods:
         raise MethodNotAllowedError(
@@ -170,8 +170,8 @@ async def _execute_http_builtin_error(
     req: http.Request,
     resp: http.Response,
     e: SpangleError,
-    comp: Dict[Type, Any],
-    view_cache: Dict[Type, Any],
+    comp: dict[type, Any],
+    view_cache: dict[type, Any],
 ) -> ASGIApp:
 
     view = _init_view(_BuiltinErrorResponse, comp, view_cache)
