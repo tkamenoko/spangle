@@ -16,7 +16,7 @@ from spangle._dispatcher import _dispatch_http, _dispatch_websocket
 from spangle._utils import _normalize_path
 from spangle.blueprint import Blueprint, Router
 from spangle.error_handler import ErrorHandler
-from spangle.testing import AsyncHttpTestClient, HttpTestClient
+from spangle.testing import AsyncHttpTestClient
 
 
 class Api:
@@ -195,6 +195,8 @@ class Api:
                     }
                 elif scope["type"] == "websocket":
                     model = {"conn": models.websocket.Connection(scope, receive, send)}
+                else:
+                    raise TypeError(f"`{scope['type']}` is not supported.")
 
                 scope["extensions"] = scope.get("extensions", {})
                 scope["extensions"].update(
@@ -277,25 +279,7 @@ class Api:
             if c is not self
         ]
 
-    def client(self, timeout: Union[int, float, None] = 1) -> HttpTestClient:
-        """
-        Dummy client for testing.
-
-        To test lifespan events, use `with` statement.
-
-        **Args**
-
-        * timeout (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
-            to disable, set `None` . Default: `1` .
-
-        **Returns**
-
-        * `spangle.testing.HttpTestClient`
-
-        """
-        return HttpTestClient(self, timeout=timeout)
-
-    def async_client(self, timeout: Union[int, float, None] = 1) -> AsyncHttpTestClient:
+    def client(self, timeout: Union[int, float, None] = 1) -> AsyncHttpTestClient:
         """
         Asynchronous test client.
 

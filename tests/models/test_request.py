@@ -36,7 +36,7 @@ def param_view(api: Api = api):
 @test("Url params and qs values `{query}` are passed to the view")
 async def _(api: Api = api, view=param_view, query=each(*queries.items())):
     path = api.url_for(view, {"path": query[0]})
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path, params=query[1])
         assert response.status_code == HTTPStatus.OK
 
@@ -56,7 +56,7 @@ def client_info(api: Api = api):
 @test("Request has client info")  # type: ignore
 async def _(api: Api = api, view=client_info):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path)
         assert response.status_code == HTTPStatus.OK
 
@@ -81,7 +81,7 @@ def cookie_view(api: Api = api, cookies=cookies):
 @test("Request has cookies")  # type: ignore
 async def _(api: Api = api, view=cookie_view, cookies=cookies):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path, cookies=cookies)
         assert response.status_code == HTTPStatus.OK
 
@@ -112,7 +112,7 @@ def accept_view(api: Api = api):
 @test("Request can parse and test Accept header")  # type: ignore
 async def _(api: Api = api, view=accept_view):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path, headers=accept_headers)
         assert response.status_code == HTTPStatus.OK
 
@@ -143,7 +143,7 @@ def wildcard_view(api: Api = api):
 @test("Wildcard accepts any mimetypes")  # type: ignore
 async def _(api: Api = api, view=wildcard_view):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path, headers=wildcard_headers)
         assert response.status_code == HTTPStatus.OK
 
@@ -167,7 +167,7 @@ def json_view(api: Api = api):
 @test("Request can parse JSON request")  # type: ignore
 async def _(api: Api = api, view=json_view):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.post(path, json=json_data)
         assert response.status_code == HTTPStatus.OK
 
@@ -199,7 +199,7 @@ def multipart_view(api: Api = api):
 @test("Request can parse multipart request")  # type: ignore
 async def _(api: Api = api, view=multipart_view):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.post(path, files=multipart_data)
         assert response.status_code == HTTPStatus.OK
 
@@ -221,7 +221,7 @@ def form_view(api: Api = api):
 @test("Request can parse url-encoded form")  # type: ignore
 async def _(api: Api = api, view=form_view):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.post(path, form=form_data)
         assert response.status_code == HTTPStatus.OK
 
@@ -245,6 +245,6 @@ async def _(api: Api = api, view=large_request_view):
         "file": ("file.bin", b"abcde" * 1000 ** 2, "application/octet-stream"),
     }
     api.max_upload_bytes = 1 * 1000 ** 2
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.post(path, files=data)
         assert response.status_code == HTTPStatus.REQUEST_ENTITY_TOO_LARGE

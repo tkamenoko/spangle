@@ -71,7 +71,7 @@ async def _(
     api: Api = api, handler: ErrorHandler = handler, errors=errors, view=raise_error
 ):
     api.add_error_handler(handler)
-    async with api.async_client() as client:
+    async with api.client() as client:
         for k, v in errors.items():
             response = await client.get(f"/{k}")
             assert response.text == k

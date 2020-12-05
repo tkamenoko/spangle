@@ -681,7 +681,7 @@ class Response:
         """
 
         if bool(view) is bool(url):
-            raise TypeError("Set one location; view-class or url.")
+            raise TypeError("Set only one location; view-class or url.")
         if not (300 <= status < 400):
             raise ValueError("Set correct status.")
 
@@ -692,6 +692,8 @@ class Response:
             redirect_to = self._url_for(view, params)
         elif url:
             redirect_to = url
+        else:
+            raise TypeError("Set only one location; view-class or url.")
 
         self._redirect_to = redirect_to, query_string
         return self
