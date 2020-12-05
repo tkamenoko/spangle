@@ -70,7 +70,7 @@ async def _(api: Api = api, bp: Blueprint = routes, path_code=each(*clone_paths)
     api.routing = "clone"
     api.add_blueprint("/", bp)
     api.add_blueprint("start", bp)
-    async with api.async_client() as client:
+    async with api.client() as client:
         path, code = path_code
         response = await client.get(path, allow_redirects=False)
         assert response.status_code == code
@@ -108,7 +108,7 @@ async def _(api: Api = api, bp: Blueprint = routes, path_code=each(*strict_paths
     api.routing = "strict"
     api.add_blueprint("/", bp)
     api.add_blueprint("start", bp)
-    async with api.async_client() as client:
+    async with api.client() as client:
         path, code = path_code
         response = await client.get(path, allow_redirects=False)
         assert response.status_code == code
@@ -144,7 +144,7 @@ async def _(api: Api = api, bp: Blueprint = routes, path_code=each(*slash_paths)
     api.routing = "slash"
     api.add_blueprint("/", bp)
     api.add_blueprint("start", bp)
-    async with api.async_client() as client:
+    async with api.client() as client:
         path, code = path_code
         response = await client.get(path, allow_redirects=False)
         assert response.status_code == code
@@ -185,7 +185,7 @@ async def _(api: Api = api, bp: Blueprint = routes, path_code=each(*no_slash_pat
     api.routing = "no_slash"
     api.add_blueprint("/", bp)
     api.add_blueprint("start", bp)
-    async with api.async_client() as client:
+    async with api.client() as client:
         path, code = path_code
         response = await client.get(path, allow_redirects=False)
         assert response.status_code == code
@@ -217,7 +217,7 @@ def mix_routes(api: Api = api, bp: Blueprint = blueprint):
 
 @test("A blueprint can set routing mode against each view")  # type: ignore
 async def _(api: Api = mix_routes):
-    async with api.async_client() as client:
+    async with api.client() as client:
         resp = await client.get("/bar", allow_redirects=False)
         assert resp.status_code == HTTPStatus.PERMANENT_REDIRECT
         assert resp.headers["location"] == "/bar/"
@@ -245,7 +245,7 @@ async def _(
     api: Api = api, bp: Blueprint = blueprint, startup=startup, shutdown=shutdown
 ):
     api.add_blueprint("", bp)
-    async with api.async_client():
+    async with api.client():
         startup.assert_called_once()
         shutdown.assert_not_called()
     shutdown.assert_called_once()
@@ -265,7 +265,7 @@ def handle(bp: Blueprint = blueprint):
 @test("A blueprint handles exception")  # type: ignore
 async def _(api: Api = api, bp: Blueprint = handle):
     api.add_blueprint("", bp)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get("/not/defined")
         assert response.status_code == 418
 
@@ -286,7 +286,7 @@ def before_request(bp: Blueprint = blueprint):
 @test("A blueprint has request hooks")  # type: ignore
 async def _(api: Api = api, bp: Blueprint = routes, hook=before_request):
     api.add_blueprint("", bp)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get("/")
         assert response.status_code == HTTPStatus.OK
         hook_view = api._view_cache[hook]
@@ -303,7 +303,7 @@ async def _(api: Api = api, bp: Blueprint = blueprint):
 
     bp.add_blueprint("/and", child_bp)
     api.add_blueprint("/parent", bp)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get("/parent/and/child")
         assert response.status_code == HTTPStatus.OK
 
@@ -336,7 +336,7 @@ async def _(
     api: Api = api, bp: Blueprint = blueprint, view=patterns, params=path_params
 ):
     path = api.url_for(view, params)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path)
         assert response.json == params
 
@@ -376,7 +376,7 @@ async def _(
 ):
     api.add_blueprint("", bp)
     path = api.url_for(view, params)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path)
         assert response.status_code == HTTPStatus.OK
         assert response.json["number"] == params["number"]
@@ -398,6 +398,6 @@ async def _(
 ):
     api.add_blueprint("", bp)
     path = api.url_for(view, params)
-    async with api.async_client() as client:
+    async with api.client() as client:
         with raises(NotFoundError):
             await client.get(path)

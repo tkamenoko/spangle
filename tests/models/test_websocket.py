@@ -28,7 +28,7 @@ def text_ws(api: Api = api):
 @test("WebSocket can send and receive text data")
 async def _(api: Api = api, ws=text_ws):
     path = api.url_for(ws)
-    async with api.async_client() as client:
+    async with api.client() as client:
         async with client.ws_connect(path) as conn:
             await conn.send("FOO")
             resp = await conn.receive(str)
@@ -64,7 +64,7 @@ def bytes_ws(api: Api = api):
 @test("WebSocket can send and receive bytes data")  # type: ignore
 async def _(api: Api = api, ws=bytes_ws):
     path = api.url_for(ws)
-    async with api.async_client() as client:
+    async with api.client() as client:
         async with client.ws_connect(path) as conn:
             await conn.send(b"FOO")
             resp = await conn.receive(bytes)
@@ -111,7 +111,7 @@ def handler(api: Api = api):
 @test("Error handler catches websocket errors")  # type: ignore
 async def _(api: Api = api, ws=error_ws, handler=handler):
     path = api.url_for(ws)
-    async with api.async_client() as client:
+    async with api.client() as client:
         async with client.ws_connect(path) as conn:
             await conn.send("FOO")
             resp = await conn.receive(str)
@@ -143,7 +143,7 @@ def qs_ws(api: Api = api):
 @test("WebSocket can accept querystring")  # type: ignore
 async def _(api: Api = api, ws=qs_ws):
     path = api.url_for(ws)
-    async with api.async_client() as client:
+    async with api.client() as client:
         async with client.ws_connect(path, params=params) as connection:
             resp = await connection.receive(str)
             assert resp == "bye"
