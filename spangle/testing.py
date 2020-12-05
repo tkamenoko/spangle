@@ -1,6 +1,7 @@
 """
 Test client for ASGI app without ASGI server.
 """
+from __future__ import annotations
 
 from collections.abc import Mapping
 from http import HTTPStatus
@@ -25,7 +26,6 @@ Params = Union[Mapping, list[tuple[str, str]]]
 __all__ = [
     "AsyncWebsocketClient",
     "AsyncHttpTestClient",
-    "HttpTestClient",
 ]
 
 
@@ -94,16 +94,16 @@ class _BaseWebSocket:
     path: str
     headers: CIMultiDict
     params: Params
-    timeout: Optional[int]
+    timeout: Optional[float]
 
     def __init__(
         self,
-        http: "_BaseClient",
+        http: _BaseClient,
         path: str = "",
-        headers: CIMultiDict = None,
-        params: Params = None,
-        cookies: Mapping = None,
-        timeout: int = None,
+        headers: Optional[CIMultiDict] = None,
+        params: Optional[Params] = None,
+        cookies: Optional[Mapping] = None,
+        timeout: Optional[float] = None,
     ):
         self._app = http._app
         self.host = http.host
@@ -120,7 +120,7 @@ class _BaseWebSocket:
     async def _connect(self, path: str = None):
         self.path = path or self.path
         params = self.params or []
-        if hasattr(params, "items"):
+        if isinstance(params, Mapping):
             qsl = [f"{quote_plus(k)}={quote_plus(v)}" for k, v in params.items()]
         else:
             qsl = [f"{quote_plus(k)}={quote_plus(v)}" for k, v in params]
@@ -164,6 +164,8 @@ class _BaseWebSocket:
             type_key = "text"
         elif mode is bytes:
             type_key = "bytes"
+        else:
+            raise TypeError(f"`str` or `bytes` are allowed, not `{mode}` .")
         result = message.get(type_key, None)
         if result is None:
             if message["type"] == "websocket.close":
@@ -177,6 +179,10 @@ class _BaseWebSocket:
             type_key = "text"
         elif isinstance(data, bytes):
             type_key = "bytes"
+        else:
+            raise TypeError(
+                f"use `str` or `bytes`. data type `{type(data)}` is not acceptable."
+            )
         message[type_key] = data
         await self._connection.send_input(message)
 
@@ -323,7 +329,7 @@ class _BaseClient:
         files: Optional[Mapping] = None,
         form: Optional[Mapping] = None,
         content: Optional[bytes] = None,
-        timeout: Optional[int] = None,
+        timeout: Optional[float] = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
         # TODO: max_redirects?
