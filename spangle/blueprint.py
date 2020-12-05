@@ -13,7 +13,7 @@ from typing import Any, Callable, Optional
 from parse import compile
 
 from spangle._utils import _normalize_path
-from spangle.error_handler import ErrorHandler
+from spangle.error_handler import ErrorHandler, ErrorHandlerProtocol
 from spangle.models import Request, Response
 
 Converters = dict[str, Callable[[str], Any]]
@@ -71,7 +71,9 @@ class Blueprint:
 
         return _inner
 
-    def handle(self, e: type[Exception]) -> Callable[[type], type]:
+    def handle(
+        self, e: type[Exception]
+    ) -> Callable[[type[ErrorHandlerProtocol]], type[ErrorHandlerProtocol]]:
         """
         Bind `Exception` to the decorated view.
 
@@ -150,7 +152,6 @@ class Router:
         return self._add_dynamic(path, view, converters, routing)
 
     def _add_dynamic(self, path: str, view: type, converters: Converters, routing: str):
-        # TODO: no_slash
         splitted_path = path.split("/")
         fixed = []
         for part in splitted_path:

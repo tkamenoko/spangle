@@ -44,7 +44,9 @@ class ErrorHandler:
         """Initialize self."""
         self.handlers = {}
 
-    def handle(self, e: type[Exception]) -> Callable[[type], type]:
+    def handle(
+        self, e: type[Exception]
+    ) -> Callable[[type[ErrorHandlerProtocol]], type[ErrorHandlerProtocol]]:
         """
         Bind `Exception` to the decolated view.
 
