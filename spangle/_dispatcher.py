@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 from http import HTTPStatus
+from spangle.blueprint import AnyRequestHandlerProtocol
 from typing import TYPE_CHECKING, Any
 
 from starlette.responses import Response as StarletteResponse
@@ -13,7 +16,9 @@ if TYPE_CHECKING:
 
 
 def _init_view(
-    cls: type[Any], components: dict[type, Any], view_cache: dict[type, Any]
+    cls: type[AnyRequestHandlerProtocol],
+    components: dict[type[AnyRequestHandlerProtocol], AnyRequestHandlerProtocol],
+    view_cache: dict[type[AnyRequestHandlerProtocol], AnyRequestHandlerProtocol],
 ) -> Any:
     try:
         return view_cache[cls]
@@ -37,7 +42,7 @@ def _init_view(
 
 
 async def _dispatch_http(
-    scope: Scope, receive: Receive, send: Send, api: "Api"
+    scope: Scope, receive: Receive, send: Send, api: Api
 ) -> ASGIApp:
     req = http.Request(scope, receive, send)
     req.max_upload_bytes = api.max_upload_bytes
@@ -72,7 +77,7 @@ async def _response_http(
     send: Send,
     req: http.Request,
     resp: http.Response,
-    api: "Api",
+    api: Api,
 ) -> ASGIApp:
     root = api.router
     comp = api.components
@@ -102,7 +107,7 @@ async def _response_http_error(
     send: Send,
     req: http.Request,
     resp: http.Response,
-    api: "Api",
+    api: Api,
     error: Exception,
 ) -> ASGIApp:
     handlers = api.error_handlers
@@ -186,7 +191,7 @@ async def _default_response(
 
 
 async def _dispatch_websocket(
-    scope: Scope, receive: Receive, send: Send, api: "Api"
+    scope: Scope, receive: Receive, send: Send, api: Api
 ) -> ASGIApp:
     # upgrade is treated by asgi server.
     conn = websocket.Connection(scope, receive, send)

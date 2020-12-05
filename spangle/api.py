@@ -4,7 +4,7 @@
 
 import asyncio
 import re
-from typing import Any, Callable, Optional, Union
+from typing import Any, Callable, Optional
 
 import jinja2
 from starlette.middleware.errors import ServerErrorMiddleware
@@ -14,8 +14,13 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 from spangle import models
 from spangle._dispatcher import _dispatch_http, _dispatch_websocket
 from spangle._utils import _normalize_path
-from spangle.blueprint import Blueprint, Router
-from spangle.error_handler import ErrorHandler
+from spangle.blueprint import (
+    AnyRequestHandlerProtocol,
+    Blueprint,
+    RequestHandlerProtocol,
+    Router,
+)
+from spangle.error_handler import ErrorHandler, ErrorHandlerProtocol
 from spangle.testing import AsyncHttpTestClient
 
 
@@ -279,7 +284,7 @@ class Api:
             if c is not self
         ]
 
-    def client(self, timeout: Union[int, float, None] = 1) -> AsyncHttpTestClient:
+    def client(self, timeout: Optional[float] = 1) -> AsyncHttpTestClient:
         """
         Asynchronous test client.
 
@@ -287,7 +292,7 @@ class Api:
 
         **Args**
 
-        * timeout (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
+        * timeout (`Optional[float]`): Seconds waiting for startup/shutdown/requests.
             to disable, set `None` . Default: `1` .
 
         **Returns**
@@ -297,15 +302,19 @@ class Api:
         """
         return AsyncHttpTestClient(self, timeout=timeout)
 
-    def before_request(self, cls: type) -> type:
+    def before_request(
+        self, handler: type[RequestHandlerProtocol]
+    ) -> type[RequestHandlerProtocol]:
         """Decorator to add a class called before each request processed."""
-        self.request_hooks["before"].append(cls)
-        return cls
+        self.request_hooks["before"].append(handler)
+        return handler
 
-    def after_request(self, cls: type) -> type:
+    def after_request(
+        self, handler: type[RequestHandlerProtocol]
+    ) -> type[RequestHandlerProtocol]:
         """Decorator to add a class called after each request processed."""
-        self.request_hooks["after"].append(cls)
-        return cls
+        self.request_hooks["after"].append(handler)
+        return handler
 
     def add_blueprint(self, path: str, blueprint: Blueprint) -> None:
         """
@@ -347,7 +356,7 @@ class Api:
         *,
         converters: Optional[dict[str, Callable[[str], Any]]] = None,
         routing: Optional[str] = None,
-    ) -> Callable[[type], type]:
+    ) -> Callable[[type[AnyRequestHandlerProtocol]], type[AnyRequestHandlerProtocol]]:
         """
         Mount the decorated view to the given path directly.
 
@@ -380,13 +389,17 @@ class Api:
         """
         self.mounted_app.update({_normalize_path(path): app})
 
-    def url_for(self, view, params: Optional[dict[str, Any]] = None) -> str:
+    def url_for(
+        self,
+        view: type[AnyRequestHandlerProtocol],
+        params: Optional[dict[str, Any]] = None,
+    ) -> str:
         """
         Map view-class to path formatted with given params.
 
         **Args**
 
-        * view (`type`): The view-class for the url.
+        * view (`type[AnyRequestHandlerProtocol]`): The view-class for the url.
         * params (`Optional[dict[str, Any]]`): Used to format dynamic path.
 
         """
@@ -431,7 +444,9 @@ class Api:
         """
         self.error_handlers.update(eh.handlers)
 
-    def handle(self, e: type[Exception]) -> Callable[[type], type]:
+    def handle(
+        self, e: type[Exception]
+    ) -> Callable[[type[ErrorHandlerProtocol]], type[ErrorHandlerProtocol]]:
         """
         Bind `Exception` to the decorated view.
 

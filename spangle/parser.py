@@ -49,8 +49,8 @@ async def _parse_body(req: Request, parse_as: str = None) -> MultiDictProxy:
         c_type = req.mimetype.replace(" ", "").split(";")
         if not c_type:
             raise ParseError("'Content-Type' header not found.")
+        mimetype = c_type.pop(0)
         try:
-            mimetype = c_type.pop(0)
             parser = _get_parser(_type_to_parser[mimetype])
         except KeyError:
             raise ParseError(f"'{mimetype}' is not supported.")
