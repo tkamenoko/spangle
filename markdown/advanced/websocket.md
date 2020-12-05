@@ -4,7 +4,7 @@
 
 ## WebSocket view class
 
-You can define a WebSocket endpoint the same as HTTP endpoint, but the name is `on_ws` . 
+You can define a WebSocket endpoint the same as HTTP endpoint, but the name is `on_ws` .
 
 ```python
 @api.route("/websocket/{name}", routing="clone")
@@ -23,7 +23,7 @@ class WebSocket:
 ```
 
 !!! Note
-    HTTP Upgrade Request is processed in an ASGI server, so you don't need to send `101 Switching Protocols` manually.
+HTTP Upgrade Request is processed in an ASGI server, so you don't need to send `101 Switching Protocols` manually.
 
 ## Error handling for WebSocket
 
@@ -62,16 +62,7 @@ Note that `after_request` hooks are called after connection closing.
 WebSocket test cllient is also available.
 
 ```python
-with api.client() as client:
-    with client.ws_connect("/websocket/spam") as connection:
-        data = connection.receive(str)
-        assert data == "hello, spam!"
-        connection.send("snakes")
-        data = connection.receive(str)
-        assert data == "you said `snakes` ."
-
-# async version.
-async with api.async_client() as client:
+async with api.client() as client:
     async with client.ws_connect("/websocket/spam") as connection:
         data = await connection.receive(str)
         assert data == "hello, spam!"

@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.8.0(Unreleased)
+
+- Change target python version>=3.9
+- Remove synchronous test client
+
 ## v0.7.4(2020-08-29)
 
 - Remove unused codes
