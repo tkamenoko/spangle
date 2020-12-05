@@ -195,6 +195,8 @@ class Api:
                     }
                 elif scope["type"] == "websocket":
                     model = {"conn": models.websocket.Connection(scope, receive, send)}
+                else:
+                    raise TypeError(f"`{scope['type']}` is not supported.")
 
                 scope["extensions"] = scope.get("extensions", {})
                 scope["extensions"].update(
