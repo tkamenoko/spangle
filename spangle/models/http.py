@@ -3,32 +3,24 @@ HTTP Request & Response.
 """
 
 
+from collections.abc import AsyncGenerator, Awaitable, Callable
 from http import HTTPStatus
 from http.cookies import SimpleCookie
-from typing import (
-    Any,
-    AsyncGenerator,
-    Awaitable,
-    Callable,
-    Optional,
-    Type,
-    Union,
-)
+from typing import Any, Optional, Union
 from urllib.parse import parse_qsl, unquote_plus
 
 import addict
 import chardet
 import jinja2
 from multidict import CIMultiDict, CIMultiDictProxy, MultiDict, MultiDictProxy
+from spangle.exceptions import NotFoundError, TooLargeRequestError
+from spangle.parser import _parse_body
 from starlette.requests import URL, Address
 from starlette.requests import Request as StarletteRequest
 from starlette.responses import JSONResponse, RedirectResponse
 from starlette.responses import Response as StarletteResponse
 from starlette.responses import StreamingResponse
 from starlette.types import Receive, Scope, Send
-
-from spangle.exceptions import NotFoundError, TooLargeRequestError
-from spangle.parser import _parse_body
 
 
 class _Accept:
@@ -354,7 +346,7 @@ class Response:
     _jinja: Optional[jinja2.Environment]
     _redirect_to: Optional[tuple[str, Optional[str]]]
     _url_for: Optional[Callable]
-    _starlette_resp: Type[StarletteResponse]
+    _starlette_resp: type[StarletteResponse]
     _body: Any
     _text: Optional[str]
     _content: Optional[bytes]

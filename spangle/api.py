@@ -1,8 +1,10 @@
 """Main Api class."""
+# bug: using `collections.abc` causes `TypeError: unhashable type: 'list'`
+# from collections.abc import Callable
 
 import asyncio
 import re
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Callable, Optional, Union
 
 import jinja2
 from starlette.middleware.errors import ServerErrorMiddleware
@@ -14,7 +16,7 @@ from spangle._dispatcher import _dispatch_http, _dispatch_websocket
 from spangle._utils import _normalize_path
 from spangle.blueprint import Blueprint, Router
 from spangle.error_handler import ErrorHandler
-from spangle.testing import HttpTestClient, AsyncHttpTestClient
+from spangle.testing import AsyncHttpTestClient, HttpTestClient
 
 
 class Api:
@@ -24,33 +26,33 @@ class Api:
     **Attributes**
 
     * router (`spangle.blueprint.Router`): Manage URLs and views.
-    * mounted_app (`Dict[str, Callable]`): ASGI apps mounted under `Api` .
-    * error_handlers (`Dict[Type[Exception], type]`): Called when `Exception` occurs.
-    * request_hooks (`Dict[str, List[type]]`): Called against every request.
-    * lifespan_handlers (`Dict[str, List[Callable]]`): Registered lifespan hooks.
+    * mounted_app (`dict[str, Callable]`): ASGI apps mounted under `Api` .
+    * error_handlers (`dict[type[Exception], type]`): Called when `Exception` occurs.
+    * request_hooks (`dict[str, list[type]]`): Called against every request.
+    * lifespan_handlers (`dict[str, list[Callable]]`): Registered lifespan hooks.
     * favicon (`Optional[str]`): Place of `favicon.ico ` in `static_dir`.
     * debug (`bool`): Server running mode.
     * routing (`str`): Routing strategy about trailing slash.
-    * components (`Dict[Type, Any]`): Classes shared by any views or hooks.
+    * components (`dict[type, Any]`): Classes shared by any views or hooks.
     * templates_dir (`str`): Path to `Jinja2` templates.
     * max_upload_bytes (`int`): Allowed user uploads size.
 
     """
 
     _app: ASGIApp
-    _view_cache: Dict[Type, Any]
-    _reverse_views: Dict[type, str]
+    _view_cache: dict[type, Any]
+    _reverse_views: dict[type, str]
     _jinja_env: jinja2.Environment
 
     router: Router
-    mounted_app: Dict[str, Callable]
-    error_handlers: Dict[Type[Exception], type]
-    request_hooks: Dict[str, List[type]]
-    lifespan_handlers: Dict[str, List[Callable]]
+    mounted_app: dict[str, Callable]
+    error_handlers: dict[type[Exception], type]
+    request_hooks: dict[str, list[type]]
+    lifespan_handlers: dict[str, list[Callable]]
     favicon: Optional[str]
     debug: bool
     routing: str
-    components: Dict[Type, Any]
+    components: dict[type, Any]
     templates_dir: str
     max_upload_bytes: int
 
@@ -64,8 +66,8 @@ class Api:
         templates_dir="templates",
         routing="no_slash",
         default_route: Optional[str] = None,
-        middlewares: Optional[List[Tuple[Callable, dict]]] = None,
-        components: List[type] = None,
+        middlewares: Optional[list[tuple[Callable, dict]]] = None,
+        components: list[type] = None,
         max_upload_bytes: int = 10 * (2 ** 10) ** 2,
     ) -> None:
         """
@@ -94,9 +96,9 @@ class Api:
 
         * default_route (`Optional[str]`): Use the view bound with given path instead
             of returning 404.
-        * middlewares (`Optional[List[Tuple[Callable, dict]]]`): Your custom list of
+        * middlewares (`Optional[list[tuple[Callable, dict]]]`): Your custom list of
             asgi middlewares. Add later, called faster.
-        * components (`Optional[List[Type]]`): List of class used in your views.
+        * components (`Optional[list[type]]`): list of class used in your views.
         * max_upload_bytes (`int`): Limit of user upload size. Defaults to 10MB.
 
         """
@@ -311,12 +313,12 @@ class Api:
         """
         return AsyncHttpTestClient(self, timeout=timeout)
 
-    def before_request(self, cls: Type) -> Type:
+    def before_request(self, cls: type) -> type:
         """Decorator to add a class called before each request processed."""
         self.request_hooks["before"].append(cls)
         return cls
 
-    def after_request(self, cls: Type) -> Type:
+    def after_request(self, cls: type) -> type:
         """Decorator to add a class called after each request processed."""
         self.request_hooks["after"].append(cls)
         return cls
@@ -359,22 +361,22 @@ class Api:
         self,
         path: str,
         *,
-        converters: Optional[Dict[str, Callable[[str], Any]]] = None,
+        converters: Optional[dict[str, Callable[[str], Any]]] = None,
         routing: Optional[str] = None,
-    ) -> Callable[[Type], Type]:
+    ) -> Callable[[type], type]:
         """
         Mount the decorated view to the given path directly.
 
         **Args**
 
         * path (`str`): The location for the view.
-        * converters (`Optional[Dict[str, Callable[[str], Any]]]`): Params converters
+        * converters (`Optional[dict[str, Callable[[str], Any]]]`): Params converters
             for dynamic routing.
         * routing (`Optional[str]`): Routing strategy.
 
         """
 
-        def _inner(cls: Type) -> Type:
+        def _inner(cls: type) -> type:
             _bp = Blueprint()
             _bp.route(path=path, converters=converters, routing=routing)(cls)
             self.add_blueprint("", _bp)
@@ -394,14 +396,14 @@ class Api:
         """
         self.mounted_app.update({_normalize_path(path): app})
 
-    def url_for(self, view, params: Optional[Dict[str, Any]] = None) -> str:
+    def url_for(self, view, params: Optional[dict[str, Any]] = None) -> str:
         """
         Map view-class to path formatted with given params.
 
         **Args**
 
-        * view (`Type`): The view-class for the url.
-        * params (`Optional[Dict[str, Any]]`): Used to format dynamic path.
+        * view (`type`): The view-class for the url.
+        * params (`Optional[dict[str, Any]]`): Used to format dynamic path.
 
         """
 
@@ -422,13 +424,13 @@ class Api:
         """
         self._app = middleware(self._app, **config)  # type: ignore
 
-    def add_component(self, c: Type) -> None:
+    def add_component(self, c: type) -> None:
         """
         Register your component class.
 
         **Args**
 
-        * c (`Type`): The component class.
+        * c (`type`): The component class.
 
         """
         self.components[c] = c()
@@ -445,7 +447,7 @@ class Api:
         """
         self.error_handlers.update(eh.handlers)
 
-    def handle(self, e: Type[Exception]) -> Callable[[Type], Type]:
+    def handle(self, e: type[Exception]) -> Callable[[type], type]:
         """
         Bind `Exception` to the decorated view.
 
@@ -456,7 +458,7 @@ class Api:
         """
         eh = ErrorHandler()
 
-        def _inner(cls: Type) -> Type:
+        def _inner(cls: type) -> type:
             eh.handle(e)(cls)
             self.add_error_handler(eh)
             return cls
