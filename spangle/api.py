@@ -32,7 +32,8 @@ class Api:
 
     * router (`spangle.blueprint.Router`): Manage URLs and views.
     * mounted_app (`dict[str, Callable]`): ASGI apps mounted under `Api` .
-    * error_handlers (`dict[type[Exception], type]`): Called when `Exception` occurs.
+    * error_handlers (`dict[type[Exception], type[ErrorHandlerProtocol]]`): Called when
+        `Exception` is raised.
     * request_hooks (`dict[str, list[type]]`): Called against every request.
     * lifespan_handlers (`dict[str, list[Callable]]`): Registered lifespan hooks.
     * favicon (`Optional[str]`): Place of `favicon.ico ` in `static_dir`.
@@ -45,14 +46,14 @@ class Api:
     """
 
     _app: ASGIApp
-    _view_cache: dict[type, Any]
-    _reverse_views: dict[type, str]
+    _view_cache: dict[type[AnyRequestHandlerProtocol], AnyRequestHandlerProtocol]
+    _reverse_views: dict[type[AnyRequestHandlerProtocol], str]
     _jinja_env: jinja2.Environment
 
     router: Router
     mounted_app: dict[str, Callable]
-    error_handlers: dict[type[Exception], type]
-    request_hooks: dict[str, list[type]]
+    error_handlers: dict[type[Exception], type[ErrorHandlerProtocol]]
+    request_hooks: dict[str, list[type[RequestHandlerProtocol]]]
     lifespan_handlers: dict[str, list[Callable]]
     favicon: Optional[str]
     debug: bool
