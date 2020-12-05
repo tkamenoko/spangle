@@ -2,7 +2,7 @@
 WebSocket connection.
 """
 
-from typing import AnyStr, Optional, Type
+from typing import AnyStr, Optional
 from urllib.parse import parse_qsl
 
 import addict
@@ -85,13 +85,13 @@ class Connection:
         else:
             raise TypeError("Unsupported type.")
 
-    async def receive(self, mode: Type[AnyStr]) -> AnyStr:
+    async def receive(self, mode: type[AnyStr]) -> AnyStr:
         """
         Receive data from the client.
 
         **Args**
 
-        * mode(`Type[AnyStr]`): Receiving type, `str` or `bytes` .
+        * mode(`type[AnyStr]`): Receiving type, `str` or `bytes` .
 
         **Returns**
 

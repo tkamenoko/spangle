@@ -2,10 +2,11 @@
 Test client for ASGI app without ASGI server.
 """
 import asyncio
+from collections.abc import Mapping
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from json import JSONDecodeError
-from typing import AnyStr, List, Mapping, Optional, Tuple, Type, TypeVar, Union
+from typing import AnyStr, Optional, TypeVar, Union
 from urllib.parse import quote_plus
 
 import addict
@@ -17,8 +18,8 @@ from starlette.types import ASGIApp
 from urllib3.filepost import RequestField, encode_multipart_formdata
 
 T = TypeVar("T")
-Headers = Union[Mapping, List[Tuple[str, str]]]
-Params = Union[Mapping, List[Tuple[str, str]]]
+Headers = Union[Mapping, list[tuple[str, str]]]
+Params = Union[Mapping, list[tuple[str, str]]]
 
 
 __all__ = [
@@ -159,7 +160,7 @@ class _BaseWebSocket:
         await self._connection.receive_nothing()
         del self._connection
 
-    async def _receive(self, mode: Type[AnyStr]) -> AnyStr:
+    async def _receive(self, mode: type[AnyStr]) -> AnyStr:
         message = await self._connection.receive_output(self.timeout)
         if mode is str:
             type_key = "text"
@@ -247,13 +248,13 @@ class AsyncWebsocketClient(_BaseWebSocket):
         """
         return await self._close(status_code)
 
-    async def receive(self, mode: Type[AnyStr]) -> AnyStr:
+    async def receive(self, mode: type[AnyStr]) -> AnyStr:
         """
         Receive data from the endpoint.
 
         **Args**
 
-        * mode(`Type[AnyStr]`): Receiving type, `str` or `bytes` .
+        * mode(`type[AnyStr]`): Receiving type, `str` or `bytes` .
 
         **Returns**
 
@@ -334,13 +335,13 @@ class WebsocketClient(_BaseWebSocket):
         """
         return self._loop.run_until_complete(self._close(status_code))
 
-    def receive(self, mode: Type[AnyStr]) -> AnyStr:
+    def receive(self, mode: type[AnyStr]) -> AnyStr:
         """
         Receive data from the endpoint.
 
         **Args**
 
-        * mode(`Type[AnyStr]`): Receiving type, `str` or `bytes` .
+        * mode(`type[AnyStr]`): Receiving type, `str` or `bytes` .
 
         **Returns**
 
@@ -516,7 +517,7 @@ class AsyncHttpTestClient(_BaseClient):
         * app (`ASGIApp`): Application instance.
         * timeout (`Optional[int]`): Timeout seconds.
         * host (`str`): Temporary host name.
-        * client(`Tuple[str, int]`): Client address.
+        * client(`tuple[str, int]`): Client address.
         """
         super().__init__(app, timeout, host, client)
 
@@ -574,7 +575,7 @@ class AsyncHttpTestClient(_BaseClient):
     def ws_connect(
         self,
         path: str,
-        subprotocols: List[str] = None,
+        subprotocols: list[str] = None,
         params: Params = None,
         headers: Headers = None,
         cookies: Mapping = None,
@@ -751,7 +752,7 @@ class HttpTestClient(_BaseClient):
         * app (`ASGIApp`): Application instance.
         * timeout (`Optional[int]`): Timeout seconds.
         * host (`str`): Temporary host name.
-        * client(`Tuple[str, int]`): Client address.
+        * client(`tuple[str, int]`): Client address.
 
         """
         super().__init__(app, timeout, host, client)
@@ -819,7 +820,7 @@ class HttpTestClient(_BaseClient):
     def ws_connect(
         self,
         path: str,
-        subprotocols: List[str] = None,
+        subprotocols: list[str] = None,
         params: Params = None,
         headers: Headers = None,
         cookies: Mapping = None,

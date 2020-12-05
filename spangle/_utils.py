@@ -1,7 +1,8 @@
-from typing import Callable, Dict, get_type_hints
+from collections.abc import Callable
+from typing import get_type_hints
 
 
-def _get_annotations(c: Callable) -> Dict[str, type]:
+def _get_annotations(c: Callable) -> dict[str, type]:
     result = get_type_hints(c)
     try:
         result.pop("return")

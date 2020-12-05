@@ -3,35 +3,24 @@ HTTP Request & Response.
 """
 
 
+from collections.abc import AsyncGenerator, Awaitable, Callable
 from http import HTTPStatus
 from http.cookies import SimpleCookie
-from typing import (
-    Any,
-    AsyncGenerator,
-    Awaitable,
-    Callable,
-    Dict,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import Any, Optional, Union
 from urllib.parse import parse_qsl, unquote_plus
 
 import addict
 import chardet
 import jinja2
 from multidict import CIMultiDict, CIMultiDictProxy, MultiDict, MultiDictProxy
+from spangle.exceptions import NotFoundError, TooLargeRequestError
+from spangle.parser import _parse_body
 from starlette.requests import URL, Address
 from starlette.requests import Request as StarletteRequest
 from starlette.responses import JSONResponse, RedirectResponse
 from starlette.responses import Response as StarletteResponse
 from starlette.responses import StreamingResponse
 from starlette.types import Receive, Scope, Send
-
-from spangle.exceptions import NotFoundError, TooLargeRequestError
-from spangle.parser import _parse_body
 
 
 class _Accept:
@@ -102,7 +91,7 @@ class Request:
     )
 
     _request: StarletteRequest
-    _accepts: Optional[List[_Accept]]
+    _accepts: Optional[list[_Accept]]
     _content: Optional[bytes]
     _mimetype: Optional[str]
     _full_url: Optional[str]
@@ -156,8 +145,8 @@ class Request:
         return self._content
 
     @property
-    def cookies(self) -> Dict[str, str]:
-        """(`Dict[str, str]`): The cookies sent in the request, as a dictionary."""
+    def cookies(self) -> dict[str, str]:
+        """(`dict[str, str]`): The cookies sent in the request, as a dictionary."""
         return self._request.cookies
 
     @property
@@ -227,7 +216,7 @@ class Request:
         else:
             return 1
 
-    def accept(self, content_type: str) -> Optional[Tuple[str, float]]:
+    def accept(self, content_type: str) -> Optional[tuple[str, float]]:
         """
         Test given type is acceptable or not.
 
@@ -237,13 +226,13 @@ class Request:
 
         **Returns**
 
-        * Optional[`Tuple[str, float]`]: The first accepted type and its priority in
+        * Optional[`tuple[str, float]`]: The first accepted type and its priority in
             the range: `0.0<=q<=1.0` , or `None` .
 
         """
 
         if self._accepts is None:
-            raw: List[str] = self.headers.getall("Accept", [])
+            raw: list[str] = self.headers.getall("Accept", [])
             a_list = []
             for i in raw:
                 a_values = i.replace(" ", "").split(",")
@@ -258,7 +247,7 @@ class Request:
         return None
 
     @property
-    async def apparent_encoding(self) -> Dict[str, Union[str, float]]:
+    async def apparent_encoding(self) -> dict[str, Union[str, float]]:
         """
         (`Dict[str, Union[str, float]]`): Guess the content encoding, provided by the
             `chardet` library. Must be awaited.
@@ -355,9 +344,9 @@ class Response:
     )
 
     _jinja: Optional[jinja2.Environment]
-    _redirect_to: Optional[Tuple[str, Optional[str]]]
+    _redirect_to: Optional[tuple[str, Optional[str]]]
     _url_for: Optional[Callable]
-    _starlette_resp: Type[StarletteResponse]
+    _starlette_resp: type[StarletteResponse]
     _body: Any
     _text: Optional[str]
     _content: Optional[bytes]

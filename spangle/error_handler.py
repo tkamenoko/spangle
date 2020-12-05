@@ -2,7 +2,7 @@
 Application blueprint for `Exception`.
 """
 
-from typing import Callable, Dict, Type
+from collections.abc import Callable
 
 
 class ErrorHandler:
@@ -12,23 +12,23 @@ class ErrorHandler:
 
     __slots__ = ("handlers",)
 
-    handlers: Dict[Type[Exception], Type]
+    handlers: dict[type[Exception], type]
 
     def __init__(self):
         """Initialize self."""
         self.handlers = {}
 
-    def handle(self, e: Type[Exception]) -> Callable[[Type], Type]:
+    def handle(self, e: type[Exception]) -> Callable[[type], type]:
         """
         Bind `Exception` to the decolated view.
 
         **Args**
 
-        * e (`Type[Exception]`): Subclass of `Exception` you want to handle.
+        * e (`type[Exception]`): Subclass of `Exception` you want to handle.
 
         """
 
-        def _inner(cls: Type) -> Type:
+        def _inner(cls: type) -> type:
             if not callable(
                 getattr(cls, "on_error", None) or getattr(cls, "on_ws_error", None)
             ):
