@@ -4,6 +4,7 @@
 
 - Change target python version>=3.9
 - Remove synchronous test client
+- Add new component system
 
 ## v0.7.4(2020-08-29)
 
