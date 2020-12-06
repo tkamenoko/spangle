@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # CLI Tools
 
 `spangle` provides some tools for development.
@@ -17,27 +21,35 @@ Generated file looks like this:
 ```ts
 // urls.ts
 const tag = (strings: TemplateStringsArray, ...keys: string[]) => {
-    const call = (p: { [key: string]: string }) => {
-        if(keys.length === 0 ){
-            return strings.join();
-        }
-        const parsed = keys.map(x=>p[x]).filter(x=>typeof x !=="undefined")
-        if(Object.keys(parsed).length === 0){
-            return null;
-        }
-        parsed.push("");
-        return strings.map((x,index)=>x+parsed[index]).join("");
+  const call = (p: { [key: string]: string }) => {
+    if (keys.length === 0) {
+      return strings.join();
     }
-    return call;
-}
+    const parsed = keys
+      .map((x) => p[x])
+      .filter((x) => typeof x !== "undefined");
+    if (Object.keys(parsed).length === 0) {
+      return null;
+    }
+    parsed.push("");
+    return strings.map((x, index) => x + parsed[index]).join("");
+  };
+  return call;
+};
 
-const reverse_views = {Index: tag`/`, Store: tag`/store/`, Get: tag`/dynamic/${'key'}/`}
+const reverse_views = {
+  Index: tag`/`,
+  Store: tag`/store/`,
+  Get: tag`/dynamic/${"key"}/`,
+};
 
-export const url_for = (name: string, params: { [key: string]: string } = {}) => {
-    const path_func = reverse_views[name];
-    return path_func?path_func(params):null;
-}
-
+export const url_for = (
+  name: string,
+  params: { [key: string]: string } = {}
+) => {
+  const path_func = reverse_views[name];
+  return path_func ? path_func(params) : null;
+};
 ```
 
 To get a path, use a name of the view class instead of the class itself.
