@@ -1,14 +1,10 @@
-from collections.abc import Callable
-from typing import get_type_hints
+from typing import Awaitable, Union, Callable
 
 
-def _get_annotations(c: Callable) -> dict[str, type]:
-    result = get_type_hints(c)
-    try:
-        result.pop("return")
-    except KeyError:
-        pass
-    return result
+async def execute(f: Union[Callable[[], None], Callable[[], Awaitable[None]]]):
+    result = f()
+    if isinstance(result, Awaitable):
+        await result
 
 
 def _normalize_path(path: str) -> str:

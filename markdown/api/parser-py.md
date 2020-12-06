@@ -8,7 +8,7 @@ Types to parse user uploads.
 ### UploadedFile {: #UploadedFile }
 
 ```python
-class UploadedFile(filename: str, file: tempfile.SpooledTemporaryFile, mimetype: str)
+class UploadedFile(filename: ForwardRef('str'), file: ForwardRef('SpooledTemporaryFile'), mimetype: ForwardRef('str'))
 ```
 
 Named tuple to accept client's uploads via `multipart/form-data` .

@@ -21,49 +21,54 @@ from spangle.models.websocket import Connection
 Converters = dict[str, Callable[[str], Any]]
 
 
-class RequestHandlerProtocol(Protocol):
+class BaseHandlerProtocol(Protocol):
+    def __init__(self) -> None:
+        ...
+
+
+class RequestHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_request(
         self, req: Request, resp: Response, **kw: Any
     ) -> Optional[Response]:
         ...
 
 
-class GetHandlerProtocol(Protocol):
+class GetHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_get(
         self, req: Request, resp: Response, **kw: Any
     ) -> Optional[Response]:
         ...
 
 
-class PostHandlerProtocol(Protocol):
+class PostHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_post(
         self, req: Request, resp: Response, **kw: Any
     ) -> Optional[Response]:
         ...
 
 
-class PutHandlerProtocol(Protocol):
+class PutHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_put(
         self, req: Request, resp: Response, **kw: Any
     ) -> Optional[Response]:
         ...
 
 
-class DeleteHandlerProtocol(Protocol):
+class DeleteHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_delete(
         self, req: Request, resp: Response, **kw: Any
     ) -> Optional[Response]:
         ...
 
 
-class PatchHandlerProtocol(Protocol):
+class PatchHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_patch(
         self, req: Request, resp: Response, **kw: Any
     ) -> Optional[Response]:
         ...
 
 
-class WebsocketHandlerProtocol(Protocol):
+class WebsocketHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_ws(self, conn: Connection, **kw: Any) -> None:
         ...
 

@@ -24,7 +24,7 @@ Mock HTTP client without running server. Lifespan-event is supported by
 * **app** (`ASGIApp`): Application instance.
 * **timeout** (`Optional[int]`): Timeout seconds.
 * **host** (`str`): Temporary host name.
-* **client** (`Tuple[str, int]`): Client address.
+* **client** (`tuple[str, int]`): Client address.
 
 
 ------
@@ -193,7 +193,7 @@ Send request to `app`.
 def ws_connect(
     self,
     path: str,
-    subprotocols: List[str] = None,
+    subprotocols: list[str] = None,
     params: Params = None,
     headers: Headers = None,
     cookies: Mapping = None,
@@ -274,14 +274,14 @@ Emulate WebSocket Connection.
 [**receive**](#AsyncWebsocketClient.receive){: #AsyncWebsocketClient.receive }
 
 ```python
-async def receive(self, mode: Type[AnyStr]) -> AnyStr
+async def receive(self, mode: type[AnyStr]) -> AnyStr
 ```
 
 Receive data from the endpoint.
 
 **Args**
 
-* **mode** (`Type[AnyStr]`): Receiving type, `str` or `bytes` .
+* **mode** (`type[AnyStr]`): Receiving type, `str` or `bytes` .
 
 **Returns**
 
@@ -300,201 +300,6 @@ Send data to the endpoint.
 **Args**
 
 * **data** (`AnyStr`): Data sent to the endpoint, must be `str` or `bytes` .
-
-------
-
-### HttpTestClient {: #HttpTestClient }
-
-```python
-class HttpTestClient(
-    self,
-    app: ASGIApp,
-    timeout: Union[int, float, None] = 1,
-    host="www.example.com",
-    client=("127.0.0.1", 123),)
-```
-
-Mock HTTP client without running server. Lifespan-event is supported by `with`
-    statement.
-
-**Args**
-
-* **app** (`ASGIApp`): Application instance.
-* **timeout** (`Optional[int]`): Timeout seconds.
-* **host** (`str`): Temporary host name.
-* **client** (`Tuple[str, int]`): Client address.
-
-
-------
-
-#### Base classes {: #HttpTestClient-bases }
-
-* `spangle.testing._BaseClient`
-
-
-------
-
-#### Methods {: #HttpTestClient-methods }
-
-[**delete**](#HttpTestClient.delete){: #HttpTestClient.delete }
-
-```python
-def delete(
-    self,
-    path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    timeout: int = None,
-    allow_redirects=True,
-    ) -> HttpTestResponse
-```
-
-Send `DELETE` request to `app` . See [`HttpTestClient.request `](./#HttpTestClient.request) .
-
-------
-
-[**get**](#HttpTestClient.get){: #HttpTestClient.get }
-
-```python
-def get(
-    self,
-    path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    timeout: int = None,
-    allow_redirects=True,
-    ) -> HttpTestResponse
-```
-
-Send `GET` request to `app` . See [`HttpTestClient.request `](./#HttpTestClient.request) .
-
-------
-
-[**patch**](#HttpTestClient.patch){: #HttpTestClient.patch }
-
-```python
-def patch(
-    self,
-    path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    json: Mapping = None,
-    files: Mapping = None,
-    form: Mapping = None,
-    content: bytes = None,
-    timeout: int = None,
-    allow_redirects=True,
-    ) -> HttpTestResponse
-```
-
-Send `PATCH` request to `app` . See [`HttpTestClient.request `](./#HttpTestClient.request) .
-
-------
-
-[**post**](#HttpTestClient.post){: #HttpTestClient.post }
-
-```python
-def post(
-    self,
-    path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    json: Mapping = None,
-    files: Mapping = None,
-    form: Mapping = None,
-    content: bytes = None,
-    timeout: int = None,
-    allow_redirects=True,
-    ) -> HttpTestResponse
-```
-
-Send `POST` request to `app` . See [`HttpTestClient.request `](./#HttpTestClient.request) .
-
-------
-
-[**put**](#HttpTestClient.put){: #HttpTestClient.put }
-
-```python
-def put(
-    self,
-    path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    json: Mapping = None,
-    files: Mapping = None,
-    form: Mapping = None,
-    content: bytes = None,
-    timeout: int = None,
-    allow_redirects=True,
-    ) -> HttpTestResponse
-```
-
-Send `PUT` request to `app` . See [`HttpTestClient.request `](./#HttpTestClient.request) .
-
-------
-
-[**request**](#HttpTestClient.request){: #HttpTestClient.request }
-
-```python
-def request(
-    self,
-    method: str,
-    path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    json: Mapping = None,
-    files: Mapping = None,
-    form: Mapping = None,
-    content: bytes = None,
-    timeout: int = None,
-    allow_redirects=True,
-    ) -> HttpTestResponse
-```
-
-Send request to `app`.
-
-**Args**
-
-* **method** (`str`): HTTP request method.
-* **path** (`str`): Requesting location.
-* **params** (`Params`): Querystring as `dict` or `list` of `(name, value)`.
-* **headers** (`Headers`): HTTP headers.
-* **cookies** (`Mapping`): Sending HTTP cookies.
-* **json** (`Mapping`): Request body as json.
-* **files** (`Mapping`): Multipart form.
-* **form** (`Mapping`): URL encoded form.
-* **content** (`bytes`): Request body as bytes.
-* **timeout** (`int`): Wait limits.
-* **allow_redirects** (`bool`): If `False` , a client gets `30X` response
-    instead of redirection.
-
-**Returns**
-
-* [`HttpTestResponse `](./#HttpTestResponse)
-
-------
-
-[**ws_connect**](#HttpTestClient.ws_connect){: #HttpTestClient.ws_connect }
-
-```python
-def ws_connect(
-    self,
-    path: str,
-    subprotocols: List[str] = None,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    timeout: int = None,
-    ) -> WebsocketClient
-```
-
-Create WebSocket Connection.
 
 ------
 
@@ -527,102 +332,3 @@ Do not use manually.
     `resp.json.what.you.want` .
 
 * **text**{: #HttpTestResponse.text } (`Optional[str]`): Response body, as UTF-8 text.
-
-
-------
-
-### WebsocketClient {: #WebsocketClient }
-
-```python
-class WebsocketClient(
-    self,
-    http: "HttpTestClient",
-    path: str = "",
-    headers: CIMultiDict = None,
-    params: Params = None,
-    cookies: Mapping = None,
-    timeout: int = None,)
-```
-
-WebSocket test client. It is expected to be called from
-    [`HttpTestClient `](./#HttpTestClient) .
-
-**Attributes**
-
-* **host** (`str`): Dummy domain.
-* **path** (`str`): WebSocket endpoint.
-* **headers** (`CIMultiDict`): Headers used to connect.
-* **params** (`Params`): Parsed querystrings.
-* **timeout** (`Optional[int]`): How long test client waits for.
-
-Do not use manually.
-
-
-------
-
-#### Base classes {: #WebsocketClient-bases }
-
-* `spangle.testing._BaseWebSocket`
-
-
-------
-
-#### Methods {: #WebsocketClient-methods }
-
-[**close**](#WebsocketClient.close){: #WebsocketClient.close }
-
-```python
-def close(self, status_code=1000)
-```
-
-Close the connection.
-
-**Args**
-
-* **status_code** (`int`): WebSocket status code.
-
-------
-
-[**connect**](#WebsocketClient.connect){: #WebsocketClient.connect }
-
-```python
-def connect(self, path: str = None)
-```
-
-Emulate WebSocket Connection.
-
-**Args**
-
-* **path** (`Optional[str]`): Overwrite `self.path` .
-
-------
-
-[**receive**](#WebsocketClient.receive){: #WebsocketClient.receive }
-
-```python
-def receive(self, mode: Type[AnyStr]) -> AnyStr
-```
-
-Receive data from the endpoint.
-
-**Args**
-
-* **mode** (`Type[AnyStr]`): Receiving type, `str` or `bytes` .
-
-**Returns**
-
-* `AnyStr`: Data with specified type.
-
-------
-
-[**send**](#WebsocketClient.send){: #WebsocketClient.send }
-
-```python
-def send(self, data: AnyStr)
-```
-
-Send data to the endpoint.
-
-**Args**
-
-* **data** (`AnyStr`): Data sent to the endpoint, must be `str` or `bytes` .
