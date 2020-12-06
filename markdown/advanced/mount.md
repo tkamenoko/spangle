@@ -1,7 +1,10 @@
+---
+version: v0.8.0
+---
+
 # Mount Other ASGI App
 
 If you want to use existing ASGI app in your app, you can nest the app in yours by using [`Api.mount`](/api/api-py#Api.mount).
-
 
 ## `ariadne` example
 
@@ -31,7 +34,7 @@ The `scope` looks like this:
 
 ```python
 scope = {
-    ... 
+    ...
     "extensions": {
         "spangle": {
             # for HTTP connection.
@@ -39,10 +42,10 @@ scope = {
             "resp": models.Response,
             # for WebSocket connection.
             "conn": models.Connection,
-            # scheme agnostic.
-            "components": Api.components # Dict[Type, Any]
         }
     }
 }
 
 ```
+
+To use some components, just call `use_component` .
