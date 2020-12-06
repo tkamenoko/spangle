@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # Test Client
 
 [`Api.client`](/api/api-py#Api.client) is useful for unittest. The client is based on [`httpx`](https://github.com/encode/httpx) .
@@ -19,19 +23,13 @@ class TestView:
 def start(comps):
     print("App is starting...")
 
-# `with` statement emulates lifespan events.
-with api.client() as client:
+# `async with` statement emulates lifespan events.
+async with api.client() as client:
     # console shows `App is starting...` .
     path = api.url_for(TestView, {"value": "spam"})
-    response = client.get(path)
+    response = await client.get(path)
     assert response.status_code = 418
     assert response.text = "spam"
 # shutdown hooks are called here.
-
-# asynchronous client is also available.
-async with api.async_client() as client:
-    # console shows `App is starting...` .
-    response = await client.get(...)
-    ...
 
 ```
