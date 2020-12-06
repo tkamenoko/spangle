@@ -514,6 +514,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../component-py/" class="md-nav__link">
+      Module component
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../error_handler-py/" class="md-nav__link">
       Module error_handler
     </a>
@@ -565,13 +577,13 @@
 
   <li class="md-nav__item md-nav__item--active md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-8" type="checkbox" id="nav-14-8" checked>
-    <label class="md-nav__link" for="nav-14-8">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" checked>
+    <label class="md-nav__link" for="nav-14-9">
       Models
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="Models" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-8">
+      <label class="md-nav__title" for="nav-14-9">
         <span class="md-nav__icon md-icon"></span>
         Models
       </label>
@@ -697,13 +709,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
-    <label class="md-nav__link" for="nav-14-9">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-10" type="checkbox" id="nav-14-10" >
+    <label class="md-nav__link" for="nav-14-10">
       CLI
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="CLI" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-9">
+      <label class="md-nav__title" for="nav-14-10">
         <span class="md-nav__icon md-icon"></span>
         CLI
       </label>
@@ -868,16 +880,16 @@
 </ul>
 <hr />
 <p><a href="#Connection.receive" id="Connection.receive"><strong>receive</strong></a></p>
-<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">AnyStr</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">AnyStr</span>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">receive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="nb">type</span><span class="p">[</span><span class="nb">bytes</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">]</span>
 </code></pre></div>
 <p>Receive data from the client.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>mode</strong> (<code>Type[AnyStr]</code>): Receiving type, <code>str</code> or <code>bytes</code> .</li>
+<li><strong>mode</strong> (<code>Union[type[str], type[bytes]]</code>): Receiving type, <code>str</code> or <code>bytes</code> .</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li><code>AnyStr</code>: Data with specified type.</li>
+<li><code>Union[str, bytes]</code>: Data with specified type.</li>
 </ul>
 <hr />
 <p><a href="#Connection.send" id="Connection.send"><strong>send</strong></a></p>

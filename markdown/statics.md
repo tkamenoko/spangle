@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # Static Files
 
 You should serve static files from other servers like `nginx` in production, but `spangle` provides static file response for developing.

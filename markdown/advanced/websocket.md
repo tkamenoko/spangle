@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # WebSocket
 
 `spangle` supports WebSocket connection.

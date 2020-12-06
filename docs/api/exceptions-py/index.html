@@ -514,6 +514,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../component-py/" class="md-nav__link">
+      Module component
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../error_handler-py/" class="md-nav__link">
       Module error_handler
     </a>
@@ -707,13 +719,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-8" type="checkbox" id="nav-14-8" >
-    <label class="md-nav__link" for="nav-14-8">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
+    <label class="md-nav__link" for="nav-14-9">
       Models
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="Models" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-8">
+      <label class="md-nav__title" for="nav-14-9">
         <span class="md-nav__icon md-icon"></span>
         Models
       </label>
@@ -768,13 +780,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
-    <label class="md-nav__link" for="nav-14-9">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-10" type="checkbox" id="nav-14-10" >
+    <label class="md-nav__link" for="nav-14-10">
       CLI
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="CLI" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-9">
+      <label class="md-nav__title" for="nav-14-10">
         <span class="md-nav__icon md-icon"></span>
         CLI
       </label>
@@ -972,14 +984,14 @@
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Method not allowed.&quot;</span><span class="p">,</span>
     <span class="n">status</span><span class="o">=</span><span class="n">HTTPStatus</span><span class="o">.</span><span class="n">METHOD_NOT_ALLOWED</span><span class="p">,</span>
-    <span class="n">allowed_methods</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,)</span>
+    <span class="n">allowed_methods</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,)</span>
 </code></pre></div>
 <p>405: Unexpected method. Safe methods like <code>GET</code> will be accepted anytime.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>message</strong> (<code>str</code>): Print on error page.</li>
 <li><strong>status</strong> (<code>int</code>): HTTP status code.</li>
-<li><strong>headers</strong> (<code>Dict[str, str]</code>): HTTP headers.</li>
+<li><strong>headers</strong> (<code>dict[str, str]</code>): HTTP headers.</li>
 </ul>
 <hr />
 <h4 id="MethodNotAllowedError-bases">Base classes<a class="headerlink" href="#MethodNotAllowedError-bases" title="Permanent link">&para;</a></h4>
@@ -995,7 +1007,7 @@
 <ul>
 <li><strong>message</strong> (<code>str</code>): Print on error page.</li>
 <li><strong>status</strong> (<code>int</code>): HTTP status code.</li>
-<li><strong>headers</strong> (<code>Dict[str, str]</code>): HTTP headers.</li>
+<li><strong>headers</strong> (<code>dict[str, str]</code>): HTTP headers.</li>
 </ul>
 <hr />
 <h4 id="NotFoundError-bases">Base classes<a class="headerlink" href="#NotFoundError-bases" title="Permanent link">&para;</a></h4>
@@ -1011,7 +1023,7 @@
 <ul>
 <li><strong>message</strong> (<code>str</code>): Print on error page.</li>
 <li><strong>status</strong> (<code>int</code>): HTTP status code.</li>
-<li><strong>headers</strong> (<code>Dict[str, str]</code>): HTTP headers.</li>
+<li><strong>headers</strong> (<code>dict[str, str]</code>): HTTP headers.</li>
 </ul>
 <hr />
 <h4 id="ParseError-bases">Base classes<a class="headerlink" href="#ParseError-bases" title="Permanent link">&para;</a></h4>
@@ -1025,14 +1037,14 @@
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Something wrong.&quot;</span><span class="p">,</span>
     <span class="n">status</span><span class="o">=</span><span class="n">HTTPStatus</span><span class="o">.</span><span class="n">INTERNAL_SERVER_ERROR</span><span class="p">,</span>
-    <span class="n">headers</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,)</span>
+    <span class="n">headers</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,)</span>
 </code></pre></div>
 <p>500: Base class of spangle-errors.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>message</strong> (<code>str</code>): Print on error page.</li>
 <li><strong>status</strong> (<code>int</code>): HTTP status code.</li>
-<li><strong>headers</strong> (<code>Dict[str, str]</code>): HTTP headers.</li>
+<li><strong>headers</strong> (<code>dict[str, str]</code>): HTTP headers.</li>
 </ul>
 <hr />
 <h4 id="SpangleError-bases">Base classes<a class="headerlink" href="#SpangleError-bases" title="Permanent link">&para;</a></h4>
@@ -1048,7 +1060,7 @@
 <ul>
 <li><strong>message</strong> (<code>str</code>): Print on error page.</li>
 <li><strong>status</strong> (<code>int</code>): HTTP status code.</li>
-<li><strong>headers</strong> (<code>Dict[str, str]</code>): HTTP headers.</li>
+<li><strong>headers</strong> (<code>dict[str, str]</code>): HTTP headers.</li>
 </ul>
 <hr />
 <h4 id="TooLargeRequestError-bases">Base classes<a class="headerlink" href="#TooLargeRequestError-bases" title="Permanent link">&para;</a></h4>

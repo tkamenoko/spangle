@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # Use Decorator
 
 To append common routines to views, you can make your own decorator.
@@ -9,8 +13,9 @@ This is an example to implement your `login_required` decorator.
 ```python
 def login_required(f):
     async def inner(view, req: Request, resp: Response, **params):
+        auth = use_component(AuthComp)
         token = req.headers["authorization"]
-        user = await view.auth.get_user(token)
+        user = await auth.get_user(token)
         if not user:
             raise AuthError("Need to login.")
         req.state.user = user
@@ -21,10 +26,6 @@ def login_required(f):
 
 @api.route("/secrets")
 class Secret:
-    def __init__(self, auth: AuthComp):
-        # a decorated view must have components used in decorators.
-        self.auth = auth
-
     @login_required
     async def on_request(self, req, resp):
         assert req.state.user

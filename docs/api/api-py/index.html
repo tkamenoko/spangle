@@ -578,6 +578,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../component-py/" class="md-nav__link">
+      Module component
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../error_handler-py/" class="md-nav__link">
       Module error_handler
     </a>
@@ -627,13 +639,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-8" type="checkbox" id="nav-14-8" >
-    <label class="md-nav__link" for="nav-14-8">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
+    <label class="md-nav__link" for="nav-14-9">
       Models
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="Models" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-8">
+      <label class="md-nav__title" for="nav-14-9">
         <span class="md-nav__icon md-icon"></span>
         Models
       </label>
@@ -688,13 +700,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
-    <label class="md-nav__link" for="nav-14-9">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-10" type="checkbox" id="nav-14-10" >
+    <label class="md-nav__link" for="nav-14-10">
       CLI
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="CLI" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-9">
+      <label class="md-nav__title" for="nav-14-10">
         <span class="md-nav__icon md-icon"></span>
         CLI
       </label>
@@ -818,22 +830,22 @@
     <span class="n">templates_dir</span><span class="o">=</span><span class="s2">&quot;templates&quot;</span><span class="p">,</span>
     <span class="n">routing</span><span class="o">=</span><span class="s2">&quot;no_slash&quot;</span><span class="p">,</span>
     <span class="n">default_route</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">middlewares</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">components</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">middlewares</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="nb">dict</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">components</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">AnyComponentProtocol</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">max_upload_bytes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">**</span> <span class="mi">10</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,)</span>
 </code></pre></div>
 <p>The main application class.</p>
 <p><strong>Attributes</strong></p>
 <ul>
 <li><strong>router</strong> (<a href="../blueprint-py#Router"><code>Router</code></a>): Manage URLs and views.</li>
-<li><strong>mounted_app</strong> (<code>Dict[str, Callable]</code>): ASGI apps mounted under <code>Api</code> .</li>
-<li><strong>error_handlers</strong> (<code>Dict[Type[Exception], type]</code>): Called when <code>Exception</code> occurs.</li>
-<li><strong>request_hooks</strong> (<code>Dict[str, List[type]]</code>): Called against every request.</li>
-<li><strong>lifespan_handlers</strong> (<code>Dict[str, List[Callable]]</code>): Registered lifespan hooks.</li>
+<li><strong>mounted_app</strong> (<code>dict[str, Callable]</code>): ASGI apps mounted under <code>Api</code> .</li>
+<li><strong>error_handlers</strong> (<code>dict[type[Exception], type[ErrorHandlerProtocol]]</code>): Called when
+    <code>Exception</code> is raised.</li>
+<li><strong>request_hooks</strong> (<code>dict[str, list[type]]</code>): Called against every request.</li>
+<li><strong>lifespan_handlers</strong> (<code>dict[str, list[Callable]]</code>): Registered lifespan hooks.</li>
 <li><strong>favicon</strong> (<code>Optional[str]</code>): Place of <code>favicon.ico</code> in <code>static_dir</code>.</li>
 <li><strong>debug</strong> (<code>bool</code>): Server running mode.</li>
 <li><strong>routing</strong> (<code>str</code>): Routing strategy about trailing slash.</li>
-<li><strong>components</strong> (<code>Dict[Type, Any]</code>): Classes shared by any views or hooks.</li>
 <li><strong>templates_dir</strong> (<code>str</code>): Path to <code>Jinja2</code> templates.</li>
 <li><strong>max_upload_bytes</strong> (<code>int</code>): Allowed user uploads size.</li>
 </ul>
@@ -866,9 +878,9 @@
 <p><strong>default_route</strong> (<code>Optional[str]</code>): Use the view bound with given path instead
     of returning 404.</p>
 </li>
-<li><strong>middlewares</strong> (<code>Optional[List[Tuple[Callable, dict]]]</code>): Your custom list of
+<li><strong>middlewares</strong> (<code>Optional[list[tuple[Callable, dict]]]</code>): Your custom list of
     asgi middlewares. Add later, called faster.</li>
-<li><strong>components</strong> (<code>Optional[List[Type]]</code>): List of class used in your views.</li>
+<li><strong>components</strong> (<code>Optional[list[type[AnyComponentProtocol]]]</code>): list of class used in your views.</li>
 <li><strong>max_upload_bytes</strong> (<code>int</code>): Limit of user upload size. Defaults to 10MB.</li>
 </ul>
 <hr />
@@ -882,15 +894,6 @@
 <li><strong>path</strong> (<code>str</code>): Prefix for the blueprint.</li>
 <li><strong>blueprint</strong> (<a href="../blueprint-py#Blueprint"><code>Blueprint</code></a>): A <a href="../blueprint-py#Blueprint"><code>Blueprint</code></a>
     instance to mount.</li>
-</ul>
-<hr />
-<p><a href="#Api.add_component" id="Api.add_component"><strong>add_component</strong></a></p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
-</code></pre></div>
-<p>Register your component class.</p>
-<p><strong>Args</strong></p>
-<ul>
-<li><strong>c</strong> (<code>Type</code>): The component class.</li>
 </ul>
 <hr />
 <p><a href="#Api.add_error_handler" id="Api.add_error_handler"><strong>add_error_handler</strong></a></p>
@@ -910,8 +913,7 @@
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>event_type</strong> (<code>str</code>): The event type, <code>"startup"</code> or <code>"shutdown"</code> .</li>
-<li><strong>handler</strong> (<code>Callable</code>): The function called at the event. Can accept
-    registered components by setting type hints to args.</li>
+<li><strong>handler</strong> (<code>Callable</code>): The function called at the event.</li>
 </ul>
 <p><strong>Raises</strong></p>
 <ul>
@@ -929,18 +931,27 @@
 </ul>
 <hr />
 <p><a href="#Api.after_request" id="Api.after_request"><strong>after_request</strong></a></p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">after_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">after_request</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">RequestHandlerProtocol</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">RequestHandlerProtocol</span><span class="p">]</span>
 </code></pre></div>
 <p>Decorator to add a class called after each request processed.</p>
 <hr />
-<p><a href="#Api.async_client" id="Api.async_client"><strong>async_client</strong></a></p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">async_client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncHttpTestClient</span>
+<p><a href="#Api.before_request" id="Api.before_request"><strong>before_request</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">before_request</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">RequestHandlerProtocol</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">RequestHandlerProtocol</span><span class="p">]</span>
+</code></pre></div>
+<p>Decorator to add a class called before each request processed.</p>
+<hr />
+<p><a href="#Api.client" id="Api.client"><strong>client</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AsyncHttpTestClient</span>
 </code></pre></div>
 <p>Asynchronous test client.</p>
 <p>To test lifespan events, use <code>async with</code> statement.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>timeout</strong> (<code>Optional[int]</code>): Seconds waiting for startup/shutdown/requests.
+<li><strong>timeout</strong> (<code>Optional[float]</code>): Seconds waiting for startup/shutdown/requests.
     to disable, set <code>None</code> . Default: <code>1</code> .</li>
 </ul>
 <p><strong>Returns</strong></p>
@@ -948,28 +959,10 @@
 <li><a href="../testing-py#AsyncHttpTestClient"><code>AsyncHttpTestClient</code></a></li>
 </ul>
 <hr />
-<p><a href="#Api.before_request" id="Api.before_request"><strong>before_request</strong></a></p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">before_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">cls</span><span class="p">:</span> <span class="n">Type</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Type</span>
-</code></pre></div>
-<p>Decorator to add a class called before each request processed.</p>
-<hr />
-<p><a href="#Api.client" id="Api.client"><strong>client</strong></a></p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">client</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">HttpTestClient</span>
-</code></pre></div>
-<p>Dummy client for testing.</p>
-<p>To test lifespan events, use <code>with</code> statement.</p>
-<p><strong>Args</strong></p>
-<ul>
-<li><strong>timeout</strong> (<code>Optional[int]</code>): Seconds waiting for startup/shutdown/requests.
-    to disable, set <code>None</code> . Default: <code>1</code> .</li>
-</ul>
-<p><strong>Returns</strong></p>
-<ul>
-<li><a href="../testing-py#HttpTestClient"><code>HttpTestClient</code></a></li>
-</ul>
-<hr />
 <p><a href="#Api.handle" id="Api.handle"><strong>handle</strong></a></p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="ne">Exception</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Type</span><span class="p">],</span> <span class="n">Type</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">handle</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="ne">Exception</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">type</span><span class="p">[</span><span class="n">ErrorHandlerProtocol</span><span class="p">]],</span> <span class="nb">type</span><span class="p">[</span><span class="n">ErrorHandlerProtocol</span><span class="p">]]</span>
 </code></pre></div>
 <p>Bind <code>Exception</code> to the decorated view.</p>
 <p><strong>Args</strong></p>
@@ -997,32 +990,51 @@
 </code></pre></div>
 <p>Decorator for shutdown events.</p>
 <hr />
+<p><a href="#Api.register_component" id="Api.register_component"><strong>register_component</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">register_component</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">AnyComponentProtocol</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">type</span><span class="p">[</span><span class="n">AnyComponentProtocol</span><span class="p">]</span>
+</code></pre></div>
+<p>Register component to api instance.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>component</strong> (<code>type[AnyComponentProtocol]</code>): Component class.</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li>Component class itself.</li>
+</ul>
+<hr />
 <p><a href="#Api.route" id="Api.route"><strong>route</strong></a></p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">route</span><span class="p">(</span>
     <span class="bp">self</span><span class="p">,</span>
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="o">*</span><span class="p">,</span>
-    <span class="n">converters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">converters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">str</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">routing</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Type</span><span class="p">],</span> <span class="n">Type</span><span class="p">]</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">type</span><span class="p">[</span><span class="n">AnyRequestHandlerProtocol</span><span class="p">]],</span> <span class="nb">type</span><span class="p">[</span><span class="n">AnyRequestHandlerProtocol</span><span class="p">]]</span>
 </code></pre></div>
 <p>Mount the decorated view to the given path directly.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>path</strong> (<code>str</code>): The location for the view.</li>
-<li><strong>converters</strong> (<code>Optional[Dict[str, Callable[[str], Any]]]</code>): Params converters
+<li><strong>converters</strong> (<code>Optional[dict[str, Callable[[str], Any]]]</code>): Params converters
     for dynamic routing.</li>
 <li><strong>routing</strong> (<code>Optional[str]</code>): Routing strategy.</li>
 </ul>
 <hr />
 <p><a href="#Api.url_for" id="Api.url_for"><strong>url_for</strong></a></p>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">url_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">view</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">url_for</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">view</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">AnyRequestHandlerProtocol</span><span class="p">],</span>
+    <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span>
 </code></pre></div>
 <p>Map view-class to path formatted with given params.</p>
 <p><strong>Args</strong></p>
 <ul>
-<li><strong>view</strong> (<code>Type</code>): The view-class for the url.</li>
-<li><strong>params</strong> (<code>Optional[Dict[str, Any]]</code>): Used to format dynamic path.</li>
+<li><strong>view</strong> (<code>type[AnyRequestHandlerProtocol]</code>): The view-class for the url.</li>
+<li><strong>params</strong> (<code>Optional[dict[str, Any]]</code>): Used to format dynamic path.</li>
 </ul>
                 
               

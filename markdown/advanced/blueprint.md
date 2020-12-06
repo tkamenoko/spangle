@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # Application Blueprint
 
 Want to split an application? Or put views together under the same route? Use [`Blueprint`](/api/blueprint-py#Blueprint) .
@@ -20,7 +24,7 @@ class Tag:
     pass
 
 @bp.on_start
-async def start_bp(comp):
+async def start_bp():
     pass
 
 api = Api()
@@ -29,7 +33,7 @@ api.add_blueprint("/images", bp)
 ```
 
 !!! Note
-    `Blueprint` instance is *not* an ASGI application.
+`Blueprint` instance is _not_ an ASGI application.
 
 ## Nest blueprints
 

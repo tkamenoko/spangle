@@ -9,13 +9,12 @@ version: v0.8.0
 ## Define your components
 
 ```python
-from spangle import register_component
-
-@register_component
 class MyComponent:
     # `__init__` must take no args except `self` .
     def __init__(self):
         self.value = 42
+
+api.register_component(MyComponent)
 
 ```
 
