@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # Lifespan Event
 
 `spangle` supports [lifespan events](https://asgi.readthedocs.io/en/latest/specs/lifespan.html) .
@@ -8,11 +12,11 @@ As you read [this](/component) , components have lifecycle event hooks.
 
 ```python
 class Life:
-    async def startup(self, comps: dict):
+    async def startup(self):
         # called once while starting server.
         pass
 
-    def shutdown(self, comps: dict):
+    def shutdown(self):
         # called once before shutdown.
         pass
 
@@ -24,12 +28,12 @@ You can also create hooks as functions. Components are available in the function
 
 ```python
 @api.on_start
-async def startup(comps: dict):
+async def startup():
     # called AFTER component's hooks.
     pass
 
 @api.on_stop
-def shutdown(comps: dict):
+def shutdown():
     # called BEFORE component's hooks.
     pass
 
