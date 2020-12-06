@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # Default Routing for Single Page Application
 
 To create single page application, `default_route` and multiple routing help you.
