@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # spangle
 
 [![PyPI](https://img.shields.io/pypi/v/spangle)](https://pypi.org/project/spangle/)
@@ -56,7 +60,7 @@ Contributions are welcome!
 
 ### Prerequisites
 
-- Python>=3.8
+- Python>=3.9
 - git
 - poetry
 
