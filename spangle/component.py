@@ -12,27 +12,47 @@ if TYPE_CHECKING:
 
 
 class ComponentProtocol(Protocol):
+    """
+    Component must be initialized without arguments.
+    """
+
     def __init__(self) -> None:
         ...
 
 
 class AsyncStartupComponentProtocol(ComponentProtocol, Protocol):
     async def startup(self) -> None:
+        """
+        Called on server startup. To access other components, use
+            `spangle.component.use_component` .
+        """
         ...
 
 
 class SyncStartupComponentProtocol(ComponentProtocol, Protocol):
     def startup(self) -> None:
+        """
+        Called on server startup. To access other components, use
+            `spangle.component.use_component` .
+        """
         ...
 
 
 class AsyncShutdownComponentProtocol(ComponentProtocol, Protocol):
     async def shutdown(self) -> None:
+        """
+        Called on server shutdown. To access other components, use
+            `spangle.component.use_component` .
+        """
         ...
 
 
 class SyncShutdownComponentProtocol(ComponentProtocol, Protocol):
     def shutdown(self) -> None:
+        """
+        Called on server shutdown. To access other components, use
+            `spangle.component.use_component` .
+        """
         ...
 
 

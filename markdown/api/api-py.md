@@ -18,8 +18,8 @@ class Api(
     templates_dir="templates",
     routing="no_slash",
     default_route: Optional[str] = None,
-    middlewares: Optional[List[Tuple[Callable, dict]]] = None,
-    components: List[type] = None,
+    middlewares: Optional[list[tuple[Callable, dict]]] = None,
+    components: list[type] = None,
     max_upload_bytes: int = 10 * (2 ** 10) ** 2,)
 ```
 
@@ -28,14 +28,14 @@ The main application class.
 **Attributes**
 
 * **router** ([`Router `](../blueprint-py#Router)): Manage URLs and views.
-* **mounted_app** (`Dict[str, Callable]`): ASGI apps mounted under `Api` .
-* **error_handlers** (`Dict[Type[Exception], type]`): Called when `Exception` occurs.
-* **request_hooks** (`Dict[str, List[type]]`): Called against every request.
-* **lifespan_handlers** (`Dict[str, List[Callable]]`): Registered lifespan hooks.
+* **mounted_app** (`dict[str, Callable]`): ASGI apps mounted under `Api` .
+* **error_handlers** (`dict[type[Exception], type[ErrorHandlerProtocol]]`): Called when
+    `Exception` is raised.
+* **request_hooks** (`dict[str, list[type]]`): Called against every request.
+* **lifespan_handlers** (`dict[str, list[Callable]]`): Registered lifespan hooks.
 * **favicon** (`Optional[str]`): Place of `favicon.ico ` in `static_dir`.
 * **debug** (`bool`): Server running mode.
 * **routing** (`str`): Routing strategy about trailing slash.
-* **components** (`Dict[Type, Any]`): Classes shared by any views or hooks.
 * **templates_dir** (`str`): Path to `Jinja2` templates.
 * **max_upload_bytes** (`int`): Allowed user uploads size.
 
@@ -64,9 +64,9 @@ The main application class.
 
 * **default_route** (`Optional[str]`): Use the view bound with given path instead
     of returning 404.
-* **middlewares** (`Optional[List[Tuple[Callable, dict]]]`): Your custom list of
+* **middlewares** (`Optional[list[tuple[Callable, dict]]]`): Your custom list of
     asgi middlewares. Add later, called faster.
-* **components** (`Optional[List[Type]]`): List of class used in your views.
+* **components** (`Optional[list[type]]`): list of class used in your views.
 * **max_upload_bytes** (`int`): Limit of user upload size. Defaults to 10MB.
 
 
@@ -87,20 +87,6 @@ Mount a blueprint under the given path, and register error/event handlers.
 * **path** (`str`): Prefix for the blueprint.
 * **blueprint** ([`Blueprint `](../blueprint-py#Blueprint)): A [`Blueprint `](../blueprint-py#Blueprint)
     instance to mount.
-
-------
-
-[**add_component**](#Api.add_component){: #Api.add_component }
-
-```python
-def add_component(self, c: Type) -> None
-```
-
-Register your component class.
-
-**Args**
-
-* **c** (`Type`): The component class.
 
 ------
 
@@ -130,8 +116,7 @@ Register functions called at startup/shutdown.
 **Args**
 
 * **event_type** (`str`): The event type, `"startup"` or `"shutdown"` .
-* **handler** (`Callable`): The function called at the event. Can accept
-    registered components by setting type hints to args.
+* **handler** (`Callable`): The function called at the event.
 
 **Raises**
 
@@ -157,38 +142,21 @@ ASGI middleware. Add faster, called later.
 [**after_request**](#Api.after_request){: #Api.after_request }
 
 ```python
-def after_request(self, cls: Type) -> Type
+def after_request(
+    self, handler: type[RequestHandlerProtocol]
+    ) -> type[RequestHandlerProtocol]
 ```
 
 Decorator to add a class called after each request processed.
 
 ------
 
-[**async_client**](#Api.async_client){: #Api.async_client }
-
-```python
-def async_client(self, timeout: Union[int, float, None] = 1) -> AsyncHttpTestClient
-```
-
-Asynchronous test client.
-
-To test lifespan events, use `async with` statement.
-
-**Args**
-
-* **timeout** (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
-    to disable, set `None` . Default: `1` .
-
-**Returns**
-
-* [`AsyncHttpTestClient `](../testing-py#AsyncHttpTestClient)
-
-------
-
 [**before_request**](#Api.before_request){: #Api.before_request }
 
 ```python
-def before_request(self, cls: Type) -> Type
+def before_request(
+    self, handler: type[RequestHandlerProtocol]
+    ) -> type[RequestHandlerProtocol]
 ```
 
 Decorator to add a class called before each request processed.
@@ -198,28 +166,30 @@ Decorator to add a class called before each request processed.
 [**client**](#Api.client){: #Api.client }
 
 ```python
-def client(self, timeout: Union[int, float, None] = 1) -> HttpTestClient
+def client(self, timeout: Optional[float] = 1) -> AsyncHttpTestClient
 ```
 
-Dummy client for testing.
+Asynchronous test client.
 
-To test lifespan events, use `with` statement.
+To test lifespan events, use `async with` statement.
 
 **Args**
 
-* **timeout** (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
+* **timeout** (`Optional[float]`): Seconds waiting for startup/shutdown/requests.
     to disable, set `None` . Default: `1` .
 
 **Returns**
 
-* [`HttpTestClient `](../testing-py#HttpTestClient)
+* [`AsyncHttpTestClient `](../testing-py#AsyncHttpTestClient)
 
 ------
 
 [**handle**](#Api.handle){: #Api.handle }
 
 ```python
-def handle(self, e: Type[Exception]) -> Callable[[Type], Type]
+def handle(
+    self, e: type[Exception]
+    ) -> Callable[[type[ErrorHandlerProtocol]], type[ErrorHandlerProtocol]]
 ```
 
 Bind `Exception` to the decorated view.
@@ -272,9 +242,9 @@ def route(
     self,
     path: str,
     *,
-    converters: Optional[Dict[str, Callable[[str], Any]]] = None,
+    converters: Optional[dict[str, Callable[[str], Any]]] = None,
     routing: Optional[str] = None,
-    ) -> Callable[[Type], Type]
+    ) -> Callable[[type[AnyRequestHandlerProtocol]], type[AnyRequestHandlerProtocol]]
 ```
 
 Mount the decorated view to the given path directly.
@@ -282,7 +252,7 @@ Mount the decorated view to the given path directly.
 **Args**
 
 * **path** (`str`): The location for the view.
-* **converters** (`Optional[Dict[str, Callable[[str], Any]]]`): Params converters
+* **converters** (`Optional[dict[str, Callable[[str], Any]]]`): Params converters
     for dynamic routing.
 * **routing** (`Optional[str]`): Routing strategy.
 
@@ -291,12 +261,16 @@ Mount the decorated view to the given path directly.
 [**url_for**](#Api.url_for){: #Api.url_for }
 
 ```python
-def url_for(self, view, params: Optional[Dict[str, Any]] = None) -> str
+def url_for(
+    self,
+    view: type[AnyRequestHandlerProtocol],
+    params: Optional[dict[str, Any]] = None,
+    ) -> str
 ```
 
 Map view-class to path formatted with given params.
 
 **Args**
 
-* **view** (`Type`): The view-class for the url.
-* **params** (`Optional[Dict[str, Any]]`): Used to format dynamic path.
+* **view** (`type[AnyRequestHandlerProtocol]`): The view-class for the url.
+* **params** (`Optional[dict[str, Any]]`): Used to format dynamic path.

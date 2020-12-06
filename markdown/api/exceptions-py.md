@@ -12,7 +12,7 @@ class MethodNotAllowedError(
     self,
     message="Method not allowed.",
     status=HTTPStatus.METHOD_NOT_ALLOWED,
-    allowed_methods: Set[str] = None,)
+    allowed_methods: set[str] = None,)
 ```
 
 405: Unexpected method. Safe methods like `GET` will be accepted anytime.
@@ -21,7 +21,7 @@ class MethodNotAllowedError(
 
 * **message** (`str`): Print on error page.
 * **status** (`int`): HTTP status code.
-* **headers** (`Dict[str, str]`): HTTP headers.
+* **headers** (`dict[str, str]`): HTTP headers.
 
 
 ------
@@ -45,7 +45,7 @@ class NotFoundError(self, message="Content not found.", status=HTTPStatus.NOT_FO
 
 * **message** (`str`): Print on error page.
 * **status** (`int`): HTTP status code.
-* **headers** (`Dict[str, str]`): HTTP headers.
+* **headers** (`dict[str, str]`): HTTP headers.
 
 
 ------
@@ -69,7 +69,7 @@ class ParseError(self, message="Unsupported format.", status=HTTPStatus.BAD_REQU
 
 * **message** (`str`): Print on error page.
 * **status** (`int`): HTTP status code.
-* **headers** (`Dict[str, str]`): HTTP headers.
+* **headers** (`dict[str, str]`): HTTP headers.
 
 
 ------
@@ -89,7 +89,7 @@ class SpangleError(
     self,
     message="Something wrong.",
     status=HTTPStatus.INTERNAL_SERVER_ERROR,
-    headers: Dict[str, str] = None,)
+    headers: dict[str, str] = None,)
 ```
 
 500: Base class of spangle-errors.
@@ -98,7 +98,7 @@ class SpangleError(
 
 * **message** (`str`): Print on error page.
 * **status** (`int`): HTTP status code.
-* **headers** (`Dict[str, str]`): HTTP headers.
+* **headers** (`dict[str, str]`): HTTP headers.
 
 
 ------
@@ -122,7 +122,7 @@ class TooLargeRequestError(self, message="Payload too large.", status=HTTPStatus
 
 * **message** (`str`): Print on error page.
 * **status** (`int`): HTTP status code.
-* **headers** (`Dict[str, str]`): HTTP headers.
+* **headers** (`dict[str, str]`): HTTP headers.
 
 
 ------
