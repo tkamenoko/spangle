@@ -13,13 +13,14 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from spangle import models
 from spangle._dispatcher import _dispatch_http, _dispatch_websocket
-from spangle._utils import _normalize_path
+from spangle._utils import _normalize_path, execute
 from spangle.blueprint import (
     AnyRequestHandlerProtocol,
     Blueprint,
     RequestHandlerProtocol,
     Router,
 )
+from spangle.component import cache, register_component
 from spangle.error_handler import ErrorHandler, ErrorHandlerProtocol
 from spangle.testing import AsyncHttpTestClient
 
@@ -39,7 +40,6 @@ class Api:
     * favicon (`Optional[str]`): Place of `favicon.ico ` in `static_dir`.
     * debug (`bool`): Server running mode.
     * routing (`str`): Routing strategy about trailing slash.
-    * components (`dict[type, Any]`): Classes shared by any views or hooks.
     * templates_dir (`str`): Path to `Jinja2` templates.
     * max_upload_bytes (`int`): Allowed user uploads size.
 
@@ -58,7 +58,6 @@ class Api:
     favicon: Optional[str]
     debug: bool
     routing: str
-    components: dict[type, Any]
     templates_dir: str
     max_upload_bytes: int
 
@@ -123,10 +122,9 @@ class Api:
             if favicon:
                 self.favicon = f"{static_root}/{favicon}"
         # init components
-        self.components = {}
         for component in components or []:
-            self.add_component(component)
-        self.components[self.__class__] = self
+            register_component(component)
+        cache.api = self
         # init lifespan handlers
         self.lifespan_handlers = {"startup": [], "shutdown": []}
         # Jinja environment
@@ -205,9 +203,7 @@ class Api:
                     raise TypeError(f"`{scope['type']}` is not supported.")
 
                 scope["extensions"] = scope.get("extensions", {})
-                scope["extensions"].update(
-                    {"spangle": dict(components=self.components, **model)}
-                )
+                scope["extensions"].update({"spangle": dict(**model)})
                 await app(scope, receive, send)
                 return
 
@@ -229,8 +225,7 @@ class Api:
         **Args**
 
         * event_type (`str`): The event type, `"startup"` or `"shutdown"` .
-        * handler (`Callable`): The function called at the event. Can accept
-            registered components by setting type hints to args.
+        * handler (`Callable`): The function called at the event.
 
         **Raises**
 
@@ -252,38 +247,20 @@ class Api:
         return f
 
     async def _startup(self) -> None:
-        async def _execute(f):
-            if asyncio.iscoroutinefunction(f):
-                await f(self.components)
-            else:
-                f(self.components)
 
         # call `startup` of components first.
-        [
-            await _execute(getattr(c, "startup", lambda _: None))
-            for c in self.components.values()
-            if c is not self
-        ]
+        await cache.startup()
 
         # call startup handlers.
-        [await _execute(handler) for handler in self.lifespan_handlers["startup"]]
+        [await execute(handler) for handler in self.lifespan_handlers["startup"]]
 
     async def _shutdown(self) -> None:
-        async def _execute(f):
-            if asyncio.iscoroutinefunction(f):
-                await f(self.components)
-            else:
-                f(self.components)
 
         # call shutdown handlers.
-        [await _execute(handler) for handler in self.lifespan_handlers["shutdown"]]
+        [await execute(handler) for handler in self.lifespan_handlers["shutdown"]]
 
         # call `shutdown` of components at last.
-        [
-            await _execute(getattr(c, "shutdown", lambda _: None))
-            for c in self.components.values()
-            if c is not self
-        ]
+        await cache.shutdown()
 
     def client(self, timeout: Optional[float] = 1) -> AsyncHttpTestClient:
         """
@@ -421,17 +398,6 @@ class Api:
 
         """
         self._app = middleware(self._app, **config)  # type: ignore
-
-    def add_component(self, c: type) -> None:
-        """
-        Register your component class.
-
-        **Args**
-
-        * c (`type`): The component class.
-
-        """
-        self.components[c] = c()
 
     def add_error_handler(self, eh: ErrorHandler) -> None:
         """
