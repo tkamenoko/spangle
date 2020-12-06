@@ -573,6 +573,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../api/component-py/" class="md-nav__link">
+      Module component
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../api/error_handler-py/" class="md-nav__link">
       Module error_handler
     </a>
@@ -622,13 +634,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-8" type="checkbox" id="nav-14-8" >
-    <label class="md-nav__link" for="nav-14-8">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
+    <label class="md-nav__link" for="nav-14-9">
       Models
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="Models" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-8">
+      <label class="md-nav__title" for="nav-14-9">
         <span class="md-nav__icon md-icon"></span>
         Models
       </label>
@@ -683,13 +695,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
-    <label class="md-nav__link" for="nav-14-9">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-10" type="checkbox" id="nav-14-10" >
+    <label class="md-nav__link" for="nav-14-10">
       CLI
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="CLI" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-9">
+      <label class="md-nav__title" for="nav-14-10">
         <span class="md-nav__icon md-icon"></span>
         CLI
       </label>
@@ -797,7 +809,7 @@
                 <h1 id="websocket">WebSocket<a class="headerlink" href="#websocket" title="Permanent link">&para;</a></h1>
 <p><code>spangle</code> supports WebSocket connection.</p>
 <h2 id="websocket-view-class">WebSocket view class<a class="headerlink" href="#websocket-view-class" title="Permanent link">&para;</a></h2>
-<p>You can define a WebSocket endpoint the same as HTTP endpoint, but the name is <code>on_ws</code> . </p>
+<p>You can define a WebSocket endpoint the same as HTTP endpoint, but the name is <code>on_ws</code> .</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/websocket/</span><span class="si">{name}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">routing</span><span class="o">=</span><span class="s2">&quot;clone&quot;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">WebSocket</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_ws</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -813,8 +825,8 @@
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>HTTP Upgrade Request is processed in an ASGI server, so you don&rsquo;t need to send <code>101 Switching Protocols</code> manually.</p>
 </div>
+<p>HTTP Upgrade Request is processed in an ASGI server, so you don&rsquo;t need to send <code>101 Switching Protocols</code> manually.</p>
 <h2 id="error-handling-for-websocket">Error handling for WebSocket<a class="headerlink" href="#error-handling-for-websocket" title="Permanent link">&para;</a></h2>
 <p>You can process WebSocket errors with <a href="../error-handling"><code>ErrorHandler</code></a>.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">handle</span><span class="p">(</span><span class="ne">TypeError</span><span class="p">)</span>
@@ -838,16 +850,7 @@
 <p>Note that <code>after_request</code> hooks are called after connection closing.</p>
 <h2 id="websocket-testing">WebSocket Testing<a class="headerlink" href="#websocket-testing" title="Permanent link">&para;</a></h2>
 <p>WebSocket test cllient is also available.</p>
-<div class="highlight"><pre><span></span><code><span class="k">with</span> <span class="n">api</span><span class="o">.</span><span class="n">client</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
-    <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">ws_connect</span><span class="p">(</span><span class="s2">&quot;/websocket/spam&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;hello, spam!&quot;</span>
-        <span class="n">connection</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="s2">&quot;snakes&quot;</span><span class="p">)</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;you said `snakes` .&quot;</span>
-
-<span class="c1"># async version.</span>
-<span class="k">async</span> <span class="k">with</span> <span class="n">api</span><span class="o">.</span><span class="n">async_client</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">with</span> <span class="n">api</span><span class="o">.</span><span class="n">client</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">with</span> <span class="n">client</span><span class="o">.</span><span class="n">ws_connect</span><span class="p">(</span><span class="s2">&quot;/websocket/spam&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">connection</span><span class="p">:</span>
         <span class="n">data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">connection</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;hello, spam!&quot;</span>
@@ -855,6 +858,8 @@
         <span class="n">data</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="n">receive</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
         <span class="k">assert</span> <span class="n">data</span> <span class="o">==</span> <span class="s2">&quot;you said `async!` .&quot;</span>
 </code></pre></div>
+                
+                  
                 
               
               

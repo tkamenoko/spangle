@@ -571,6 +571,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../api/component-py/" class="md-nav__link">
+      Module component
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../api/error_handler-py/" class="md-nav__link">
       Module error_handler
     </a>
@@ -620,13 +632,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-8" type="checkbox" id="nav-14-8" >
-    <label class="md-nav__link" for="nav-14-8">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
+    <label class="md-nav__link" for="nav-14-9">
       Models
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="Models" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-8">
+      <label class="md-nav__title" for="nav-14-9">
         <span class="md-nav__icon md-icon"></span>
         Models
       </label>
@@ -681,13 +693,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
-    <label class="md-nav__link" for="nav-14-9">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-10" type="checkbox" id="nav-14-10" >
+    <label class="md-nav__link" for="nav-14-10">
       CLI
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="CLI" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-9">
+      <label class="md-nav__title" for="nav-14-10">
         <span class="md-nav__icon md-icon"></span>
         CLI
       </label>
@@ -795,47 +807,47 @@
                 <h1 id="component">Component<a class="headerlink" href="#component" title="Permanent link">&para;</a></h1>
 <p><code>Component</code> is an object shared in <code>spangle</code> app. It is useful to store database connections or global configurations.</p>
 <h2 id="define-your-components">Define your components<a class="headerlink" href="#define-your-components" title="Permanent link">&para;</a></h2>
-<p>This is a simple example.</p>
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">MyComponent</span><span class="p">:</span>
     <span class="c1"># `__init__` must take no args except `self` .</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">42</span>
 
-<span class="c1"># register component.</span>
-<span class="n">api</span><span class="o">.</span><span class="n">add_component</span><span class="p">(</span><span class="n">MyComponent</span><span class="p">)</span>
+<span class="n">api</span><span class="o">.</span><span class="n">register_component</span><span class="p">(</span><span class="n">MyComponent</span><span class="p">)</span>
 </code></pre></div>
 <p>Now, you are ready to use that component in your <code>api</code> .</p>
 <h2 id="use-components-in-view-classes">Use components in view-classes<a class="headerlink" href="#use-components-in-view-classes" title="Permanent link">&para;</a></h2>
-<p>To use components in view classes, add <a href="https://docs.python.org/3/library/typing.html">type annotations</a> to args of <code>__init__</code> .</p>
-<div class="highlight"><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/comp&quot;</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">UseComponent</span><span class="p">:</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">my_comp</span><span class="p">:</span> <span class="n">MyComponent</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">my_comp</span> <span class="o">=</span> <span class="n">my_comp</span>
+<p>To use components in view classes, call <a href="/api/component-py#use_component"><code>use_component</code></a>.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span> <span class="nn">spangle</span> <span class="kn">import</span> <span class="n">use_component</span>
 
+<span class="nd">@api</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s2">&quot;/comp&quot;</span><span class="p">)</span>
+<span class="k">class</span> <span class="nc">UseComponent</span><span class="p">:</span>
     <span class="k">async</span> <span class="k">def</span> <span class="nf">on_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">resp</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">my_comp</span><span class="o">.</span><span class="n">valule</span> <span class="o">==</span> <span class="mi">42</span>
+        <span class="n">my_comp</span> <span class="o">=</span> <span class="n">use_component</span><span class="p">(</span><span class="n">MyComponent</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">my_comp</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">42</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>According to <a href="https://12factor.net/processes">The Twelve-FactorApp</a> , every application process should be stateless. In other words, components should contain config or database connection, but not session data. Do not use a component as a datastore.</p>
 </div>
+<p>According to <a href="https://12factor.net/processes">The Twelve-FactorApp</a> , every application process should be stateless. In other words, components should contain config or database connection, but not session data. Do not use a component as a datastore.</p>
 <h2 id="use-components-from-another-component">Use components from another component<a class="headerlink" href="#use-components-from-another-component" title="Permanent link">&para;</a></h2>
 <p>A component can refer other components.</p>
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">AnotherComp</span><span class="p">:</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># `async` is optional.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">my_comp</span> <span class="o">=</span> <span class="n">comps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">MyComponent</span><span class="p">)</span>
+        <span class="n">my_comp</span> <span class="o">=</span> <span class="n">use_component</span><span class="p">(</span><span class="n">MyComponent</span><span class="p">)</span>
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>There is no way to define the order of startup hooks. Do not expect that <code>startup</code> hooks of other components are already completed.</p>
 </div>
+<p>There is no way to define the order of startup hooks. Do not expect that <code>startup</code> hooks of other components are already completed.</p>
 <h2 id="use-api-instance-as-a-component">Use <code>Api</code> instance as a component<a class="headerlink" href="#use-api-instance-as-a-component" title="Permanent link">&para;</a></h2>
-<p><code>comps</code> is an instance of <code>Dict[type, object]</code> and contains <a href="/api/api-py#Api"><code>Api</code></a> and its instance. You can use <code>Api</code> instance in view classes or components.</p>
+<p>You can use <code>Api</code> instance in view classes or components by calling <a href="/api/component-py#use_api"><code>use_api</code></a>.</p>
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Comp</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">comps</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">Api</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">api</span> <span class="o">=</span> <span class="n">use_api</span><span class="p">()</span>
 </code></pre></div>
+                
+                  
                 
               
               

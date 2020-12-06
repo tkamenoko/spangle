@@ -559,6 +559,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../../api/component-py/" class="md-nav__link">
+      Module component
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../../api/error_handler-py/" class="md-nav__link">
       Module error_handler
     </a>
@@ -608,13 +620,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-8" type="checkbox" id="nav-14-8" >
-    <label class="md-nav__link" for="nav-14-8">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
+    <label class="md-nav__link" for="nav-14-9">
       Models
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="Models" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-8">
+      <label class="md-nav__title" for="nav-14-9">
         <span class="md-nav__icon md-icon"></span>
         Models
       </label>
@@ -669,13 +681,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
-    <label class="md-nav__link" for="nav-14-9">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-10" type="checkbox" id="nav-14-10" >
+    <label class="md-nav__link" for="nav-14-10">
       CLI
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="CLI" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-9">
+      <label class="md-nav__title" for="nav-14-10">
         <span class="md-nav__icon md-icon"></span>
         CLI
       </label>
@@ -783,7 +795,7 @@
     <span class="k">pass</span>
 
 <span class="nd">@bp</span><span class="o">.</span><span class="n">on_start</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">start_bp</span><span class="p">(</span><span class="n">comp</span><span class="p">):</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">start_bp</span><span class="p">():</span>
     <span class="k">pass</span>
 
 <span class="n">api</span> <span class="o">=</span> <span class="n">Api</span><span class="p">()</span>
@@ -791,8 +803,8 @@
 </code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><code>Blueprint</code> instance is <em>not</em> an ASGI application.</p>
 </div>
+<p><code>Blueprint</code> instance is <em>not</em> an ASGI application.</p>
 <h2 id="nest-blueprints">Nest blueprints<a class="headerlink" href="#nest-blueprints" title="Permanent link">&para;</a></h2>
 <p>A <code>Blueprint</code> instance can nest another one.</p>
 <div class="highlight"><pre><span></span><code><span class="n">child_bp</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">()</span>
@@ -805,6 +817,8 @@
 <span class="n">parent_bp</span><span class="o">.</span><span class="n">add_blueprint</span><span class="p">(</span><span class="s2">&quot;/and&quot;</span><span class="p">,</span> <span class="n">child_bp</span><span class="p">)</span>
 <span class="n">api</span><span class="o">.</span><span class="n">add_blueprint</span><span class="p">(</span><span class="s2">&quot;/parent&quot;</span><span class="p">,</span> <span class="n">parent_bp</span><span class="p">)</span>
 </code></pre></div>
+                
+                  
                 
               
               

@@ -557,6 +557,18 @@
 
 
   <li class="md-nav__item">
+    <a href="../api/component-py/" class="md-nav__link">
+      Module component
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
     <a href="../api/error_handler-py/" class="md-nav__link">
       Module error_handler
     </a>
@@ -606,13 +618,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-8" type="checkbox" id="nav-14-8" >
-    <label class="md-nav__link" for="nav-14-8">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
+    <label class="md-nav__link" for="nav-14-9">
       Models
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="Models" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-8">
+      <label class="md-nav__title" for="nav-14-9">
         <span class="md-nav__icon md-icon"></span>
         Models
       </label>
@@ -667,13 +679,13 @@
 
   <li class="md-nav__item md-nav__item--nested">
     
-    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-9" type="checkbox" id="nav-14-9" >
-    <label class="md-nav__link" for="nav-14-9">
+    <input class="md-nav__toggle md-toggle" data-md-toggle="nav-14-10" type="checkbox" id="nav-14-10" >
+    <label class="md-nav__link" for="nav-14-10">
       CLI
       <span class="md-nav__icon md-icon"></span>
     </label>
     <nav class="md-nav" aria-label="CLI" data-md-level="2">
-      <label class="md-nav__title" for="nav-14-9">
+      <label class="md-nav__title" for="nav-14-10">
         <span class="md-nav__icon md-icon"></span>
         CLI
       </label>
@@ -769,26 +781,28 @@
 <h2 id="define-events-in-components">Define events in components<a class="headerlink" href="#define-events-in-components" title="Permanent link">&para;</a></h2>
 <p>As you read <a href="/component">this</a> , components have lifecycle event hooks.</p>
 <div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Life</span><span class="p">:</span>
-    <span class="k">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># called once while starting server.</span>
         <span class="k">pass</span>
 
-    <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="c1"># called once before shutdown.</span>
         <span class="k">pass</span>
 </code></pre></div>
 <h2 id="define-events-as-functions">Define events as functions<a class="headerlink" href="#define-events-as-functions" title="Permanent link">&para;</a></h2>
 <p>You can also create hooks as functions. Components are available in the functions.</p>
 <div class="highlight"><pre><span></span><code><span class="nd">@api</span><span class="o">.</span><span class="n">on_start</span>
-<span class="k">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">(</span><span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">async</span> <span class="k">def</span> <span class="nf">startup</span><span class="p">():</span>
     <span class="c1"># called AFTER component&#39;s hooks.</span>
     <span class="k">pass</span>
 
 <span class="nd">@api</span><span class="o">.</span><span class="n">on_stop</span>
-<span class="k">def</span> <span class="nf">shutdown</span><span class="p">(</span><span class="n">comps</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">shutdown</span><span class="p">():</span>
     <span class="c1"># called BEFORE component&#39;s hooks.</span>
     <span class="k">pass</span>
 </code></pre></div>
+                
+                  
                 
               
               
