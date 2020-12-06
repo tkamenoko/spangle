@@ -176,26 +176,6 @@ Called on server startup. To access other components, use
 
 ## Functions
 
-### register_component {: #register_component }
-
-```python
-def register_component(
-    component: type[AnyComponentProtocol],
-) -> type[AnyComponentProtocol]
-```
-
-Register component class. You can use this function as decolator.
-
-**Args**
-
-* **component** (`type[spangle.component.AnyComponentProtocol]`): Component class.
-
-**Returns**
-
-* `type[spangle.component.AnyComponentProtocol]`: Registered class itself.
-
-------
-
 ### use_api {: #use_api }
 
 ```python

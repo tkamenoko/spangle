@@ -1,6 +1,6 @@
 from .api import Api
 from .blueprint import Blueprint
-from .component import register_component, use_api, use_component
+from .component import use_api, use_component
 from .error_handler import ErrorHandler
 from .models import Connection, Request, Response
 from .parser import UploadedFile
@@ -8,7 +8,6 @@ from .parser import UploadedFile
 __all__ = [
     "Api",
     "Blueprint",
-    "register_component",
     "use_api",
     "use_component",
     "ErrorHandler",

@@ -126,21 +126,3 @@ def use_api() -> Api:
 
     """
     return cache.api
-
-
-def register_component(
-    component: type[AnyComponentProtocol],
-) -> type[AnyComponentProtocol]:
-    """
-    Register component class. You can use this function as decolator.
-
-    **Args**
-
-    * component (`type[spangle.component.AnyComponentProtocol]`): Component class.
-
-    **Returns**
-
-    * `type[spangle.component.AnyComponentProtocol]`: Registered class itself.
-    """
-    cache.components[component] = component()
-    return component

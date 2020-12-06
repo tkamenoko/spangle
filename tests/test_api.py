@@ -6,7 +6,7 @@ from ward.expect import raises
 
 from spangle import Api
 from spangle.exceptions import NotFoundError
-from spangle.component import use_api, register_component, use_component
+from spangle.component import use_api, use_component
 
 
 @fixture
@@ -40,13 +40,13 @@ class StoreAsync:
 
 @fixture
 def store_sync(api: Api = api):
-    register_component(StoreSync)
+    api.register_component(StoreSync)
     return StoreSync
 
 
 @fixture
 def store_async(api: Api = api):
-    register_component(StoreAsync)
+    api.register_component(StoreAsync)
     return StoreAsync
 
 

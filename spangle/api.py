@@ -20,7 +20,7 @@ from spangle.blueprint import (
     RequestHandlerProtocol,
     Router,
 )
-from spangle.component import cache, register_component
+from spangle.component import AnyComponentProtocol, cache
 from spangle.error_handler import ErrorHandler, ErrorHandlerProtocol
 from spangle.testing import AsyncHttpTestClient
 
@@ -72,7 +72,7 @@ class Api:
         routing="no_slash",
         default_route: Optional[str] = None,
         middlewares: Optional[list[tuple[Callable, dict]]] = None,
-        components: list[type] = None,
+        components: list[type[AnyComponentProtocol]] = None,
         max_upload_bytes: int = 10 * (2 ** 10) ** 2,
     ) -> None:
         """
@@ -103,7 +103,7 @@ class Api:
             of returning 404.
         * middlewares (`Optional[list[tuple[Callable, dict]]]`): Your custom list of
             asgi middlewares. Add later, called faster.
-        * components (`Optional[list[type]]`): list of class used in your views.
+        * components (`Optional[list[type[AnyComponentProtocol]]]`): list of class used in your views.
         * max_upload_bytes (`int`): Limit of user upload size. Defaults to 10MB.
 
         """
@@ -123,7 +123,7 @@ class Api:
                 self.favicon = f"{static_root}/{favicon}"
         # init components
         for component in components or []:
-            register_component(component)
+            self.register_component(component)
         cache.api = self
         # init lifespan handlers
         self.lifespan_handlers = {"startup": [], "shutdown": []}
@@ -293,6 +293,24 @@ class Api:
         """Decorator to add a class called after each request processed."""
         self.request_hooks["after"].append(handler)
         return handler
+
+    def register_component(
+        self, component: type[AnyComponentProtocol]
+    ) -> type[AnyComponentProtocol]:
+        """
+        Register component to api instance.
+
+        **Args**
+
+        * component (`type[AnyComponentProtocol]`): Component class.
+
+        **Returns**
+
+        * Component class itself.
+
+        """
+        cache.components[component] = component()
+        return component
 
     def add_blueprint(self, path: str, blueprint: Blueprint) -> None:
         """

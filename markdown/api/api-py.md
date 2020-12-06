@@ -19,7 +19,7 @@ class Api(
     routing="no_slash",
     default_route: Optional[str] = None,
     middlewares: Optional[list[tuple[Callable, dict]]] = None,
-    components: list[type] = None,
+    components: list[type[AnyComponentProtocol]] = None,
     max_upload_bytes: int = 10 * (2 ** 10) ** 2,)
 ```
 
@@ -66,7 +66,7 @@ The main application class.
     of returning 404.
 * **middlewares** (`Optional[list[tuple[Callable, dict]]]`): Your custom list of
     asgi middlewares. Add later, called faster.
-* **components** (`Optional[list[type]]`): list of class used in your views.
+* **components** (`Optional[list[type[AnyComponentProtocol]]]`): list of class used in your views.
 * **max_upload_bytes** (`int`): Limit of user upload size. Defaults to 10MB.
 
 
@@ -232,6 +232,26 @@ def on_stop(self, f: Callable) -> Callable
 ```
 
 Decorator for shutdown events.
+
+------
+
+[**register_component**](#Api.register_component){: #Api.register_component }
+
+```python
+def register_component(
+    self, component: type[AnyComponentProtocol]
+    ) -> type[AnyComponentProtocol]
+```
+
+Register component to api instance.
+
+**Args**
+
+* **component** (`type[AnyComponentProtocol]`): Component class.
+
+**Returns**
+
+* Component class itself.
 
 ------
 
