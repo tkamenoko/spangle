@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.8.0(Unreleased)
+## v0.8.0(2020-12-07)
 
 - Change target python version>=3.9
 - Remove synchronous test client
