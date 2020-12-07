@@ -1,10 +1,12 @@
+---
+version: v0.8.0
+---
+
 # Component
 
 `Component` is an object shared in `spangle` app. It is useful to store database connections or global configurations.
 
 ## Define your components
-
-This is a simple example.
 
 ```python
 class MyComponent:
@@ -12,8 +14,7 @@ class MyComponent:
     def __init__(self):
         self.value = 42
 
-# register component.
-api.add_component(MyComponent)
+api.register_component(MyComponent)
 
 ```
 
@@ -21,21 +22,21 @@ Now, you are ready to use that component in your `api` .
 
 ## Use components in view-classes
 
-To use components in view classes, add [type annotations](https://docs.python.org/3/library/typing.html) to args of `__init__` .
+To use components in view classes, call [`use_component`](/api/component-py#use_component).
 
 ```python
+from spangle import use_component
+
 @api.route("/comp")
 class UseComponent:
-    def __init__(self, my_comp: MyComponent):
-        self.my_comp = my_comp
-
     async def on_get(self, req, resp):
-        assert self.my_comp.valule == 42
+        my_comp = use_component(MyComponent)
+        assert my_comp.value == 42
 
 ```
 
 !!! Note
-    According to [The Twelve-FactorApp](https://12factor.net/processes) , every application process should be stateless. In other words, components should contain config or database connection, but not session data. Do not use a component as a datastore.
+According to [The Twelve-FactorApp](https://12factor.net/processes) , every application process should be stateless. In other words, components should contain config or database connection, but not session data. Do not use a component as a datastore.
 
 ## Use components from another component
 
@@ -43,22 +44,22 @@ A component can refer other components.
 
 ```python
 class AnotherComp:
-    async def startup(self, comps: dict):
+    async def startup(self):
         # `async` is optional.
-        self.my_comp = comps.get(MyComponent)
+        my_comp = use_component(MyComponent)
 
 ```
 
 !!! Note
-    There is no way to define the order of startup hooks. Do not expect that `startup` hooks of other components are already completed.
+There is no way to define the order of startup hooks. Do not expect that `startup` hooks of other components are already completed.
 
 ## Use `Api` instance as a component
 
-`comps` is an instance of `Dict[type, object]` and contains [`Api`](/api/api-py#Api) and its instance. You can use `Api` instance in view classes or components.
+You can use `Api` instance in view classes or components by calling [`use_api`](/api/component-py#use_api).
 
 ```python
 class Comp:
-    def startup(self, comps: dict):
-        self.api = comps.get(Api)
+    def startup(self):
+        api = use_api()
 
 ```

@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # Error Handling
 
 `spangle` provides minimum error response by default. You can make custom error handler for any type of `Exception` .

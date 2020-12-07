@@ -9,6 +9,8 @@
 
 [spangle.cli](cli)
 
+[spangle.component](component-py)
+
 [spangle.error_handler](error_handler-py)
 
 [spangle.exceptions](exceptions-py)

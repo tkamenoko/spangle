@@ -1,27 +1,27 @@
 """
 `spangle` exceptions.
 """
-from typing import Set, Dict
+
 from http import HTTPStatus
 
 
 class SpangleError(Exception):
     """500: Base class of spangle-errors."""
 
-    headers: Dict[str, str]
+    headers: dict[str, str]
 
     def __init__(
         self,
         message="Something wrong.",
         status=HTTPStatus.INTERNAL_SERVER_ERROR,
-        headers: Dict[str, str] = None,
+        headers: dict[str, str] = None,
     ):
         """
         **Args**
 
         * message (`str`): Print on error page.
         * status (`int`): HTTP status code.
-        * headers (`Dict[str, str]`): HTTP headers.
+        * headers (`dict[str, str]`): HTTP headers.
 
         """
         super().__init__(message)
@@ -51,7 +51,7 @@ class MethodNotAllowedError(SpangleError):
         self,
         message="Method not allowed.",
         status=HTTPStatus.METHOD_NOT_ALLOWED,
-        allowed_methods: Set[str] = None,
+        allowed_methods: set[str] = None,
     ):
         assert allowed_methods
         headers = {"Allow": ", ".join([m.upper() for m in allowed_methods])}

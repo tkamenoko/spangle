@@ -1,8 +1,10 @@
 """Main Api class."""
+# bug: using `collections.abc` causes `TypeError: unhashable type: 'list'`
+# from collections.abc import Callable
 
 import asyncio
 import re
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Callable, Optional
 
 import jinja2
 from starlette.middleware.errors import ServerErrorMiddleware
@@ -11,10 +13,16 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from spangle import models
 from spangle._dispatcher import _dispatch_http, _dispatch_websocket
-from spangle._utils import _normalize_path
-from spangle.blueprint import Blueprint, Router
-from spangle.error_handler import ErrorHandler
-from spangle.testing import HttpTestClient, AsyncHttpTestClient
+from spangle._utils import _normalize_path, execute
+from spangle.blueprint import (
+    AnyRequestHandlerProtocol,
+    Blueprint,
+    RequestHandlerProtocol,
+    Router,
+)
+from spangle.component import AnyComponentProtocol, cache
+from spangle.error_handler import ErrorHandler, ErrorHandlerProtocol
+from spangle.testing import AsyncHttpTestClient
 
 
 class Api:
@@ -24,33 +32,32 @@ class Api:
     **Attributes**
 
     * router (`spangle.blueprint.Router`): Manage URLs and views.
-    * mounted_app (`Dict[str, Callable]`): ASGI apps mounted under `Api` .
-    * error_handlers (`Dict[Type[Exception], type]`): Called when `Exception` occurs.
-    * request_hooks (`Dict[str, List[type]]`): Called against every request.
-    * lifespan_handlers (`Dict[str, List[Callable]]`): Registered lifespan hooks.
+    * mounted_app (`dict[str, Callable]`): ASGI apps mounted under `Api` .
+    * error_handlers (`dict[type[Exception], type[ErrorHandlerProtocol]]`): Called when
+        `Exception` is raised.
+    * request_hooks (`dict[str, list[type]]`): Called against every request.
+    * lifespan_handlers (`dict[str, list[Callable]]`): Registered lifespan hooks.
     * favicon (`Optional[str]`): Place of `favicon.ico ` in `static_dir`.
     * debug (`bool`): Server running mode.
     * routing (`str`): Routing strategy about trailing slash.
-    * components (`Dict[Type, Any]`): Classes shared by any views or hooks.
     * templates_dir (`str`): Path to `Jinja2` templates.
     * max_upload_bytes (`int`): Allowed user uploads size.
 
     """
 
     _app: ASGIApp
-    _view_cache: Dict[Type, Any]
-    _reverse_views: Dict[type, str]
+    _view_cache: dict[type[AnyRequestHandlerProtocol], AnyRequestHandlerProtocol]
+    _reverse_views: dict[type[AnyRequestHandlerProtocol], str]
     _jinja_env: jinja2.Environment
 
     router: Router
-    mounted_app: Dict[str, Callable]
-    error_handlers: Dict[Type[Exception], type]
-    request_hooks: Dict[str, List[type]]
-    lifespan_handlers: Dict[str, List[Callable]]
+    mounted_app: dict[str, Callable]
+    error_handlers: dict[type[Exception], type[ErrorHandlerProtocol]]
+    request_hooks: dict[str, list[type[RequestHandlerProtocol]]]
+    lifespan_handlers: dict[str, list[Callable]]
     favicon: Optional[str]
     debug: bool
     routing: str
-    components: Dict[Type, Any]
     templates_dir: str
     max_upload_bytes: int
 
@@ -64,8 +71,8 @@ class Api:
         templates_dir="templates",
         routing="no_slash",
         default_route: Optional[str] = None,
-        middlewares: Optional[List[Tuple[Callable, dict]]] = None,
-        components: List[type] = None,
+        middlewares: Optional[list[tuple[Callable, dict]]] = None,
+        components: list[type[AnyComponentProtocol]] = None,
         max_upload_bytes: int = 10 * (2 ** 10) ** 2,
     ) -> None:
         """
@@ -94,9 +101,9 @@ class Api:
 
         * default_route (`Optional[str]`): Use the view bound with given path instead
             of returning 404.
-        * middlewares (`Optional[List[Tuple[Callable, dict]]]`): Your custom list of
+        * middlewares (`Optional[list[tuple[Callable, dict]]]`): Your custom list of
             asgi middlewares. Add later, called faster.
-        * components (`Optional[List[Type]]`): List of class used in your views.
+        * components (`Optional[list[type[AnyComponentProtocol]]]`): list of class used in your views.
         * max_upload_bytes (`int`): Limit of user upload size. Defaults to 10MB.
 
         """
@@ -115,10 +122,9 @@ class Api:
             if favicon:
                 self.favicon = f"{static_root}/{favicon}"
         # init components
-        self.components = {}
         for component in components or []:
-            self.add_component(component)
-        self.components[self.__class__] = self
+            self.register_component(component)
+        cache.api = self
         # init lifespan handlers
         self.lifespan_handlers = {"startup": [], "shutdown": []}
         # Jinja environment
@@ -193,11 +199,11 @@ class Api:
                     }
                 elif scope["type"] == "websocket":
                     model = {"conn": models.websocket.Connection(scope, receive, send)}
+                else:
+                    raise TypeError(f"`{scope['type']}` is not supported.")
 
                 scope["extensions"] = scope.get("extensions", {})
-                scope["extensions"].update(
-                    {"spangle": dict(components=self.components, **model)}
-                )
+                scope["extensions"].update({"spangle": dict(**model)})
                 await app(scope, receive, send)
                 return
 
@@ -219,8 +225,7 @@ class Api:
         **Args**
 
         * event_type (`str`): The event type, `"startup"` or `"shutdown"` .
-        * handler (`Callable`): The function called at the event. Can accept
-            registered components by setting type hints to args.
+        * handler (`Callable`): The function called at the event.
 
         **Raises**
 
@@ -242,58 +247,22 @@ class Api:
         return f
 
     async def _startup(self) -> None:
-        async def _execute(f):
-            if asyncio.iscoroutinefunction(f):
-                await f(self.components)
-            else:
-                f(self.components)
 
         # call `startup` of components first.
-        [
-            await _execute(getattr(c, "startup", lambda _: None))
-            for c in self.components.values()
-            if c is not self
-        ]
+        await cache.startup()
 
         # call startup handlers.
-        [await _execute(handler) for handler in self.lifespan_handlers["startup"]]
+        [await execute(handler) for handler in self.lifespan_handlers["startup"]]
 
     async def _shutdown(self) -> None:
-        async def _execute(f):
-            if asyncio.iscoroutinefunction(f):
-                await f(self.components)
-            else:
-                f(self.components)
 
         # call shutdown handlers.
-        [await _execute(handler) for handler in self.lifespan_handlers["shutdown"]]
+        [await execute(handler) for handler in self.lifespan_handlers["shutdown"]]
 
         # call `shutdown` of components at last.
-        [
-            await _execute(getattr(c, "shutdown", lambda _: None))
-            for c in self.components.values()
-            if c is not self
-        ]
+        await cache.shutdown()
 
-    def client(self, timeout: Union[int, float, None] = 1) -> HttpTestClient:
-        """
-        Dummy client for testing.
-
-        To test lifespan events, use `with` statement.
-
-        **Args**
-
-        * timeout (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
-            to disable, set `None` . Default: `1` .
-
-        **Returns**
-
-        * `spangle.testing.HttpTestClient`
-
-        """
-        return HttpTestClient(self, timeout=timeout)
-
-    def async_client(self, timeout: Union[int, float, None] = 1) -> AsyncHttpTestClient:
+    def client(self, timeout: Optional[float] = 1) -> AsyncHttpTestClient:
         """
         Asynchronous test client.
 
@@ -301,7 +270,7 @@ class Api:
 
         **Args**
 
-        * timeout (`Optional[int]`): Seconds waiting for startup/shutdown/requests.
+        * timeout (`Optional[float]`): Seconds waiting for startup/shutdown/requests.
             to disable, set `None` . Default: `1` .
 
         **Returns**
@@ -311,15 +280,37 @@ class Api:
         """
         return AsyncHttpTestClient(self, timeout=timeout)
 
-    def before_request(self, cls: Type) -> Type:
+    def before_request(
+        self, handler: type[RequestHandlerProtocol]
+    ) -> type[RequestHandlerProtocol]:
         """Decorator to add a class called before each request processed."""
-        self.request_hooks["before"].append(cls)
-        return cls
+        self.request_hooks["before"].append(handler)
+        return handler
 
-    def after_request(self, cls: Type) -> Type:
+    def after_request(
+        self, handler: type[RequestHandlerProtocol]
+    ) -> type[RequestHandlerProtocol]:
         """Decorator to add a class called after each request processed."""
-        self.request_hooks["after"].append(cls)
-        return cls
+        self.request_hooks["after"].append(handler)
+        return handler
+
+    def register_component(
+        self, component: type[AnyComponentProtocol]
+    ) -> type[AnyComponentProtocol]:
+        """
+        Register component to api instance.
+
+        **Args**
+
+        * component (`type[AnyComponentProtocol]`): Component class.
+
+        **Returns**
+
+        * Component class itself.
+
+        """
+        cache.components[component] = component()
+        return component
 
     def add_blueprint(self, path: str, blueprint: Blueprint) -> None:
         """
@@ -359,22 +350,22 @@ class Api:
         self,
         path: str,
         *,
-        converters: Optional[Dict[str, Callable[[str], Any]]] = None,
+        converters: Optional[dict[str, Callable[[str], Any]]] = None,
         routing: Optional[str] = None,
-    ) -> Callable[[Type], Type]:
+    ) -> Callable[[type[AnyRequestHandlerProtocol]], type[AnyRequestHandlerProtocol]]:
         """
         Mount the decorated view to the given path directly.
 
         **Args**
 
         * path (`str`): The location for the view.
-        * converters (`Optional[Dict[str, Callable[[str], Any]]]`): Params converters
+        * converters (`Optional[dict[str, Callable[[str], Any]]]`): Params converters
             for dynamic routing.
         * routing (`Optional[str]`): Routing strategy.
 
         """
 
-        def _inner(cls: Type) -> Type:
+        def _inner(cls: type) -> type:
             _bp = Blueprint()
             _bp.route(path=path, converters=converters, routing=routing)(cls)
             self.add_blueprint("", _bp)
@@ -394,14 +385,18 @@ class Api:
         """
         self.mounted_app.update({_normalize_path(path): app})
 
-    def url_for(self, view, params: Optional[Dict[str, Any]] = None) -> str:
+    def url_for(
+        self,
+        view: type[AnyRequestHandlerProtocol],
+        params: Optional[dict[str, Any]] = None,
+    ) -> str:
         """
         Map view-class to path formatted with given params.
 
         **Args**
 
-        * view (`Type`): The view-class for the url.
-        * params (`Optional[Dict[str, Any]]`): Used to format dynamic path.
+        * view (`type[AnyRequestHandlerProtocol]`): The view-class for the url.
+        * params (`Optional[dict[str, Any]]`): Used to format dynamic path.
 
         """
 
@@ -422,17 +417,6 @@ class Api:
         """
         self._app = middleware(self._app, **config)  # type: ignore
 
-    def add_component(self, c: Type) -> None:
-        """
-        Register your component class.
-
-        **Args**
-
-        * c (`Type`): The component class.
-
-        """
-        self.components[c] = c()
-
     def add_error_handler(self, eh: ErrorHandler) -> None:
         """
         Register `spangle.error_handler.ErrorHandler` to the api.
@@ -445,7 +429,9 @@ class Api:
         """
         self.error_handlers.update(eh.handlers)
 
-    def handle(self, e: Type[Exception]) -> Callable[[Type], Type]:
+    def handle(
+        self, e: type[Exception]
+    ) -> Callable[[type[ErrorHandlerProtocol]], type[ErrorHandlerProtocol]]:
         """
         Bind `Exception` to the decorated view.
 
@@ -456,7 +442,7 @@ class Api:
         """
         eh = ErrorHandler()
 
-        def _inner(cls: Type) -> Type:
+        def _inner(cls: type) -> type:
             eh.handle(e)(cls)
             self.add_error_handler(eh)
             return cls

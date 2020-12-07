@@ -42,7 +42,7 @@ Do not use manually.
 
 * [`TooLargeRequestError `](../../exceptions-py#TooLargeRequestError) : when request body is too large.
 
-* **cookies**{: #Request.cookies } (`Dict[str, str]`): The cookies sent in the request, as a dictionary.
+* **cookies**{: #Request.cookies } (`dict[str, str]`): The cookies sent in the request, as a dictionary.
 
 * **full_url**{: #Request.full_url } (`str`): The full URL of the request.
 
@@ -67,7 +67,7 @@ Do not use manually.
 [**accept**](#Request.accept){: #Request.accept }
 
 ```python
-def accept(self, content_type: str) -> Optional[Tuple[str, float]]
+def accept(self, content_type: str) -> Optional[tuple[str, float]]
 ```
 
 Test given type is acceptable or not.
@@ -78,7 +78,7 @@ Test given type is acceptable or not.
 
 **Returns**
 
-* Optional[`Tuple[str, float]`]: The first accepted type and its priority in
+* Optional[`tuple[str, float]`]: The first accepted type and its priority in
     the range: `0.0<=q<=1.0` , or `None` .
 
 ------

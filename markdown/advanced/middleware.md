@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # ASGI Middleware
 
 `spangle` uses only one middleware: [`starlette.ServerErrorMiddleware`](https://github.com/encode/starlette/blob/master/starlette/middleware/errors.py) . You can use other ASGI middlewares with `spangle` .
@@ -35,8 +39,8 @@ call m3(scope, receive, send):
         *m2 preprocess*
         call m1(scope, receive, send):
             *m1 preprocess*
-            call api(scope, receive, send) 
-            *m1 postprosess*  
+            call api(scope, receive, send)
+            *m1 postprosess*
         *m2 postprosess*
     *m3 postprosess*
 ```

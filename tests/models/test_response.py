@@ -27,7 +27,7 @@ def cookie_view(api: Api = api):
 @test("Response can set cookies")
 async def _(api: Api = api, view=cookie_view):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path)
         assert response.status_code == HTTPStatus.OK
         assert response.cookies["foo"] == "bar"
@@ -51,7 +51,7 @@ def headers_view(api: Api = api):
 @test("Response can set headers")  # type: ignore
 async def _(api: Api = api, view=headers_view):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path)
         assert response.status_code == HTTPStatus.OK
         headers = response.headers
@@ -72,7 +72,7 @@ def byte_view(api: Api = api):
 @test("Response can send bytes")  # type: ignore
 async def _(api: Api = api, view=byte_view):
     path = api.url_for(view)
-    async with api.async_client() as cilent:
+    async with api.client() as cilent:
         response = await cilent.get(path)
         assert response.status_code == HTTPStatus.OK
         assert response.content == b"send some bytes"
@@ -95,7 +95,7 @@ def template_view(api: Api = api):
 @test("Response can render Jinja2 template")  # type: ignore
 async def _(api: Api = api, view=template_view, name=each(*template_names)):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.post(path, content=name.encode("utf8"))
         assert response.status_code == HTTPStatus.OK
         assert escape(name) in response.text
@@ -124,7 +124,7 @@ def start_view(api: Api = api, goal=goal_view):
 @test("Response can set redirection to view class")  # type: ignore
 async def _(api: Api = api, view=start_view):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path)
         assert response.status_code == 418
         response = await client.get(path, allow_redirects=False)
@@ -149,7 +149,7 @@ def json_view(api: Api = api, data=json_data):
 @test("Response can send JSON")  # type: ignore
 async def _(api: Api = api, view=json_view, data=json_data):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path)
         assert response.status_code == HTTPStatus.OK
         assert dict(**response.json) == data
@@ -174,7 +174,7 @@ def streaming_view(api: Api = api):
 @test("Response can send stream data")  # type: ignore
 async def _(api: Api = api, view=streaming_view):
     path = api.url_for(view)
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path, timeout=2)
         assert response.status_code == HTTPStatus.OK
         expected_str = "".join([f"count {i}\n" for i in range(10)])

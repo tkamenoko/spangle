@@ -3,7 +3,6 @@
   "python.linting.flake8Args": ["--max-line-length", "88"],
   "python.formatting.provider": "black",
   "python.pythonPath": ".venv/bin/python",
-  "typescript.tsdk": ".vscode/pnpify/typescript/lib",
   "python.linting.mypyEnabled": true,
   "python.languageServer": "Pylance"
 }

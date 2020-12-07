@@ -69,18 +69,18 @@ Close the connection with status code.
 [**receive**](#Connection.receive){: #Connection.receive }
 
 ```python
-async def receive(self, mode: Type[AnyStr]) -> AnyStr
+async def receive(self, mode: Union[type[str], type[bytes]]) -> Union[str, bytes]
 ```
 
 Receive data from the client.
 
 **Args**
 
-* **mode** (`Type[AnyStr]`): Receiving type, `str` or `bytes` .
+* **mode** (`Union[type[str], type[bytes]]`): Receiving type, `str` or `bytes` .
 
 **Returns**
 
-* `AnyStr`: Data with specified type.
+* `Union[str, bytes]`: Data with specified type.
 
 ------
 

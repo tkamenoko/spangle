@@ -1,3 +1,7 @@
+---
+version: v0.8.0
+---
+
 # HTTP Methods
 
 `on_request` accepts only safe methods:`GET, HEAD, OPTIONS` by default. There are 2 ways to allow unsafe methods.
@@ -12,7 +16,7 @@ class User:
     async def on_request(self, req, resp):
         # called before any methods.
         pass
-    
+
     async def on_get(self, req, resp):
         # process only `GET` method.
         pass
@@ -31,7 +35,7 @@ Another way is to set `allowed_methods` in a view class.
 @api.route("/new-comment")
 class Comment:
     allowed_methods = ["post"]
-    
+
     async def on_request(self, req, resp):
         # able to response against `POST`!
         pass

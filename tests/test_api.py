@@ -6,6 +6,7 @@ from ward.expect import raises
 
 from spangle import Api
 from spangle.exceptions import NotFoundError
+from spangle.component import use_api, use_component
 
 
 @fixture
@@ -18,11 +19,11 @@ class StoreSync:
         self._startup = MagicMock()
         self._shutdown = MagicMock()
 
-    def startup(self, comp):
-        self._startup(comp)
+    def startup(self):
+        self._startup()
 
-    def shutdown(self, comp):
-        self._shutdown(comp)
+    def shutdown(self):
+        self._shutdown()
 
 
 class StoreAsync:
@@ -30,22 +31,22 @@ class StoreAsync:
         self._startup = MagicMock()
         self._shutdown = MagicMock()
 
-    async def startup(self, comp):
-        self._startup(comp)
+    async def startup(self):
+        self._startup()
 
-    async def shutdown(self, comp):
-        self._shutdown(comp)
+    async def shutdown(self):
+        self._shutdown()
 
 
 @fixture
 def store_sync(api: Api = api):
-    api.add_component(StoreSync)
+    api.register_component(StoreSync)
     return StoreSync
 
 
 @fixture
 def store_async(api: Api = api):
-    api.add_component(StoreAsync)
+    api.register_component(StoreAsync)
     return StoreAsync
 
 
@@ -85,13 +86,13 @@ def stop_async(api: Api = api):
 
 @test("`{store.__name__}` lifespan methods are called once")
 async def _(api: Api = api, store=each(store_sync, store_async)):
-    async with api.async_client():
-        store_instance = api.components.get(store)
+    async with api.client():
+        store_instance = use_component(store)
         assert isinstance(store_instance, store)
-        store_instance._startup.assert_called_once_with(api.components)
+        store_instance._startup.assert_called_once()
         store_instance._shutdown.assert_not_called()
 
-    store_instance._shutdown.assert_called_once_with(api.components)
+    store_instance._shutdown.assert_called_once()
 
 
 @test("Lifespan function `{before.__name__}` and `{after.__name__}` are called once")  # type: ignore
@@ -100,10 +101,10 @@ async def _(
     before=each(start_sync, start_async),
     after=each(stop_sync, stop_async),
 ):
-    async with api.async_client():
-        before.assert_called_once_with(api.components)
+    async with api.client():
+        before.assert_called_once()
         after.assert_not_called()
-    after.assert_called_once_with(api.components)
+    after.assert_called_once()
 
 
 class BeforeRequest:
@@ -140,8 +141,8 @@ def after_request(api: Api = api):
 def index(api: Api = api, before=before_request, after=after_request):
     @api.route("/")
     class Index:
-        def __init__(_, api: Api):
-            _.api = api
+        def __init__(_):
+            _.api = use_api()
 
         async def on_get(_, req, resp):
             before_instance: BeforeRequest = _.api._view_cache[before]
@@ -152,7 +153,7 @@ def index(api: Api = api, before=before_request, after=after_request):
 
 @test("Methods are called before and after request")  # type: ignore
 async def _(api: Api = api, after=after_request, index=index):
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get("/")
         assert response.status_code == HTTPStatus.OK
         after_instance = api._view_cache[after]
@@ -212,7 +213,7 @@ async def _(
     code=each(*static_codes),
     _=static_fake,
 ):
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get(path)
         assert response.status_code == code
 
@@ -230,7 +231,7 @@ def not_found(api: Api = api):
 
 @test("Api returns a specified status code on error")  # type: ignore
 async def _(api: Api = api, _=not_found):
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.get("/not/defined")
         assert response.status_code == 418
 
@@ -241,7 +242,7 @@ async def _(api: Api = api):
     class Index:
         allowed_methods = ["post"]
 
-    async with api.async_client() as client:
+    async with api.client() as client:
         response = await client.post("/")
         assert response.status_code == HTTPStatus.OK
         response = await client.put("/")
@@ -263,6 +264,6 @@ def reraise_handler(api: Api = api):
 
 @test("Error handler reraise exceptions after response")  # type: ignore
 async def _(api: Api = api, reraise=reraise_handler):
-    async with api.async_client() as client:
+    async with api.client() as client:
         with raises(NotFoundError):
             await client.get("/not/defined")
