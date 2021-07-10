@@ -1,29 +1,35 @@
 from __future__ import annotations
 
 from http import HTTPStatus
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Union
 
 from starlette.responses import Response as StarletteResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from spangle.blueprint import AnyRequestHandlerProtocol
-
 from .exceptions import MethodNotAllowedError, NotFoundError, SpangleError
+from .handler_protocols import AnyRequestHandlerProtocol, ErrorHandlerProtocol
 from .models import http, websocket
 
 if TYPE_CHECKING:
     from spangle.api import Api  # pragma: no cover
 
+ViewType = Union[
+    AnyRequestHandlerProtocol,
+    ErrorHandlerProtocol,
+]
+
 
 def _init_view(
-    cls: type[AnyRequestHandlerProtocol],
-    view_cache: dict[type[AnyRequestHandlerProtocol], AnyRequestHandlerProtocol],
-) -> Any:
+    cls: type[ViewType],
+    view_cache: dict[
+        type[ViewType],
+        ViewType,
+    ],
+) -> ViewType:
     try:
         return view_cache[cls]
     except KeyError:
         view = cls()
-
         allowed_methods = {"get", "head", "options"}
         additional_methods = getattr(view, "allowed_methods", [])
         allowed_methods.update([m.lower() for m in additional_methods])
@@ -157,7 +163,12 @@ async def _execute_http_error(
 
 
 class _BuiltinErrorResponse:
-    async def on_error(self, req: http.Request, resp: http.Response, e: SpangleError):
+    def __init__(self) -> None:
+        pass
+
+    async def on_error(
+        self, req: http.Request, resp: http.Response, e: SpangleError
+    ) -> http.Response:
         resp.status_code = e.status_code
         resp.text = e.message
         resp.headers.update(e.headers)
@@ -168,7 +179,10 @@ async def _execute_http_builtin_error(
     req: http.Request,
     resp: http.Response,
     e: SpangleError,
-    view_cache: dict[type, Any],
+    view_cache: dict[
+        type[Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol]],
+        Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol],
+    ],
 ) -> ASGIApp:
 
     view = _init_view(_BuiltinErrorResponse, view_cache)

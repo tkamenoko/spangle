@@ -1,87 +1,30 @@
 """
 Application blueprint and router.
 """
+
 from __future__ import annotations
 
 import re
-
-# bug: using `collections.abc` causes `TypeError: unhashable type: 'list'`
-# from collections.abc import Callable
+from collections.abc import Callable
 from functools import lru_cache
 from http import HTTPStatus
-from typing import Any, Callable, Optional, Protocol, Union
+from typing import Any, Optional
 
 from parse import compile
 
-from spangle._utils import _normalize_path
-from spangle.error_handler import ErrorHandler, ErrorHandlerProtocol
-from spangle.models import Request, Response
-from spangle.models.websocket import Connection
+from ._utils import _normalize_path
+from .error_handler import ErrorHandler
+from .handler_protocols import (
+    AnyRequestHandlerProtocol,
+    ErrorHandlerProtocol,
+    RequestHandlerProtocol,
+)
+from .models import Request, Response
+
+__all__ = ["Converters", "Blueprint", "Router"]
+
 
 Converters = dict[str, Callable[[str], Any]]
-
-
-class BaseHandlerProtocol(Protocol):
-    def __init__(self) -> None:
-        ...
-
-
-class RequestHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_request(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class GetHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_get(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class PostHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_post(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class PutHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_put(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class DeleteHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_delete(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class PatchHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_patch(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class WebsocketHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_ws(self, conn: Connection, **kw: Any) -> None:
-        ...
-
-
-AnyRequestHandlerProtocol = Union[
-    RequestHandlerProtocol,
-    GetHandlerProtocol,
-    PostHandlerProtocol,
-    PutHandlerProtocol,
-    DeleteHandlerProtocol,
-    PatchHandlerProtocol,
-    WebsocketHandlerProtocol,
-]
 
 
 class Blueprint:

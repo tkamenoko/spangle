@@ -11,6 +11,8 @@ from starlette.datastructures import URL
 from starlette.types import Receive, Scope, Send
 from starlette.websockets import WebSocket
 
+__all__ = ["Connection"]
+
 
 class Connection:
     """
@@ -31,9 +33,9 @@ class Connection:
     state: addict.Dict
     reraise: bool
     closed: bool
-    headers: CIMultiDictProxy
+    headers: CIMultiDictProxy[str]
 
-    _params: Optional[MultiDictProxy]
+    _params: Optional[MultiDictProxy[str]]
     _connection: WebSocket
 
     def __init__(self, scope: Scope, receive: Receive, send: Send):
@@ -114,7 +116,7 @@ class Connection:
         return self._connection.url
 
     @property
-    def params(self) -> MultiDictProxy:
+    def params(self) -> MultiDictProxy[str]:
         """(`MultiDictProxy`): The parsed query parameters used for the request."""
         if self._params is None:
             params = parse_qsl(self.url.query)

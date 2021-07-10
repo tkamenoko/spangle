@@ -1,4 +1,12 @@
-from typing import Awaitable, Union, Callable
+from collections.abc import Awaitable, Callable
+from typing import TypedDict, Union
+
+from starlette.types import ASGIApp
+
+
+class _AppRef(TypedDict):
+    # Workaround for type error
+    app: ASGIApp
 
 
 async def execute(f: Union[Callable[[], None], Callable[[], Awaitable[None]]]):
