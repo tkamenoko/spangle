@@ -7,7 +7,7 @@ from collections.abc import Mapping
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from json import JSONDecodeError
-from typing import AnyStr, Optional, TypeVar, Union
+from typing import AnyStr, Optional, TypedDict, TypeVar, Union
 from urllib.parse import quote_plus
 
 import addict
@@ -19,8 +19,8 @@ from starlette.types import ASGIApp
 from urllib3.filepost import RequestField, encode_multipart_formdata
 
 T = TypeVar("T")
-Headers = Union[Mapping, list[tuple[str, str]]]
-Params = Union[Mapping, list[tuple[str, str]]]
+Headers = Union[Mapping[str, str], list[tuple[str, str]]]
+Params = Union[Mapping[str, str], list[tuple[str, str]]]
 
 
 __all__ = [
@@ -41,7 +41,7 @@ class HttpTestResponse:
 
     status_code: Union[HTTPStatus, int]
     _resp: Response
-    _headers: Optional[CIMultiDict] = None
+    _headers: Optional[CIMultiDict[str]] = None
     _json: Optional[addict.Dict] = None
 
     def __init__(self, resp: Response):
@@ -88,8 +88,13 @@ class HttpTestResponse:
         return self._resp.cookies
 
 
+class _AppRef(TypedDict):
+    # Workaround for type error
+    app: ASGIApp
+
+
 class _BaseWebSocket:
-    _app: ASGIApp
+    _app_ref: _AppRef
     host: str
     path: str
     headers: CIMultiDict
@@ -105,7 +110,7 @@ class _BaseWebSocket:
         cookies: Optional[Mapping] = None,
         timeout: Optional[float] = None,
     ):
-        self._app = http._app
+        self._app_ref = _AppRef(app=http._app_ref["app"])
         self.host = http.host
         self._client = http._client
         self.path = path
@@ -146,7 +151,7 @@ class _BaseWebSocket:
             ],
         }
 
-        self._connection = ApplicationCommunicator(self._app, scope)
+        self._connection = ApplicationCommunicator(self._app_ref["app"], scope)
         await self._connection.send_input({"type": "websocket.connect"})
         message = await (self._connection.receive_output(self.timeout))
         if message["type"] != "websocket.accept":
@@ -209,7 +214,7 @@ class AsyncWebsocketClient(_BaseWebSocket):
 
     """
 
-    _app: ASGIApp
+    _app_ref: _AppRef
     host: str
     path: str
     headers: CIMultiDict
@@ -280,14 +285,20 @@ class AsyncWebsocketClient(_BaseWebSocket):
 
 
 class _BaseClient:
+    _app_ref: _AppRef
+    _transport: ASGITransport
+    host: str
+    _client: AsyncClient
+    timeout: Union[float, None]
+
     def __init__(
         self,
         app: ASGIApp,
-        timeout: Union[int, float, None] = 1,
+        timeout: Union[float, None] = 1,
         host="www.example.com",
         client=("127.0.0.1", 123),
     ):
-        self._app = app
+        self._app_ref = _AppRef(app=app)
         self._transport = ASGITransport(app, client=client)
         self.host = host
         self._client = AsyncClient(
@@ -297,7 +308,7 @@ class _BaseClient:
 
     async def __aenter__(self):
         app = ApplicationCommunicator(
-            self._app,
+            self._app_ref["app"],
             {"type": "lifespan", "asgi": {"version": "3.0", "spec_version": "2.0"}},
         )
         await app.send_input({"type": "lifespan.startup"})
@@ -309,7 +320,7 @@ class _BaseClient:
 
     async def __aexit__(self, exc_type, exc, tb):
         app = ApplicationCommunicator(
-            self._app,
+            self._app_ref["app"],
             {"type": "lifespan", "asgi": {"version": "3.0", "spec_version": "2.0"}},
         )
         await app.send_input({"type": "lifespan.shutdown"})
@@ -334,15 +345,17 @@ class _BaseClient:
     ) -> HttpTestResponse:
         # TODO: max_redirects?
         if isinstance(headers, list):
-            headers = CIMultiDict(headers)
+            ci_headers = CIMultiDict(headers)
         elif headers is None:
-            headers = CIMultiDict()
+            ci_headers = CIMultiDict()
+        else:
+            ci_headers = CIMultiDict(headers)
         if files:
             file_list = [
                 RequestField.from_tuples(key, value) for key, value in files.items()
             ]
             data, content_type = encode_multipart_formdata(file_list)
-            headers["content-type"] = content_type
+            ci_headers["content-type"] = content_type
         elif form:
             data = form
         else:
@@ -351,7 +364,7 @@ class _BaseClient:
         if cookies is not None:
             self._client.cookies = {}
         if timeout is not None:
-            _headers = [(k, v) for k, v in headers.items()]
+            _headers = [(k, v) for k, v in ci_headers.items()]
             async with timeout_ctx(timeout):
                 response = await self._client.request(
                     method.upper(),
@@ -379,7 +392,7 @@ class _BaseClient:
                     )
 
         else:
-            _headers = [(k, v) for k, v in headers.items()]
+            _headers = [(k, v) for k, v in ci_headers.items()]
             response = await self._client.request(
                 method.upper(),
                 path,
