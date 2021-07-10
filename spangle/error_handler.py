@@ -1,11 +1,14 @@
 """
 Application blueprint for `Exception`.
 """
+
 from __future__ import annotations
 
 from collections.abc import Callable
 
 from .handler_protocols import ErrorHandlerProtocol
+
+__all__ = ["ErrorHandler"]
 
 
 class ErrorHandler:
