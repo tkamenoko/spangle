@@ -1,10 +1,9 @@
 """Main Api class."""
-# bug: using `collections.abc` causes `TypeError: unhashable type: 'list'`
-# from collections.abc import Callable
 
 import asyncio
 import re
-from typing import Any, Callable, Optional, Union
+from collections.abc import Callable
+from typing import Any, Optional, Union
 
 import jinja2
 from starlette.middleware.errors import ServerErrorMiddleware
@@ -13,7 +12,7 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import models
 from ._dispatcher import _dispatch_http, _dispatch_websocket
-from ._utils import _normalize_path, execute
+from ._utils import _AppRef, _normalize_path, execute
 from .blueprint import Blueprint, Router
 from .component import AnyComponentProtocol, cache
 from .error_handler import ErrorHandler
@@ -23,6 +22,8 @@ from .handler_protocols import (
     RequestHandlerProtocol,
 )
 from .testing import AsyncHttpTestClient
+
+__all__ = ["Api"]
 
 
 class Api:
@@ -45,7 +46,7 @@ class Api:
 
     """
 
-    _app: ASGIApp
+    _app_ref: _AppRef
     _view_cache: dict[
         type[Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol]],
         Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol],
@@ -106,7 +107,8 @@ class Api:
             of returning 404.
         * middlewares (`Optional[list[tuple[Callable, dict]]]`): Your custom list of
             asgi middlewares. Add later, called faster.
-        * components (`Optional[list[type[AnyComponentProtocol]]]`): list of class used in your views.
+        * components (`Optional[list[type[AnyComponentProtocol]]]`):
+            list of class used in your views.
         * max_upload_bytes (`int`): Limit of user upload size. Defaults to 10MB.
 
         """
@@ -151,13 +153,13 @@ class Api:
         self.request_hooks = {"before": [], "after": []}
 
         # init middlewares.
-        self._app: ASGIApp = self._dispatch
+        self._app_ref = _AppRef(app=self._dispatch)
         for middleware in middlewares or []:
             self.add_middleware(middleware[0], **middleware[1])
         self.add_middleware(ServerErrorMiddleware, debug=self.debug)
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        await self._app(scope, receive, send)
+        await self._app_ref["app"](scope, receive, send)
 
     async def _dispatch(self, scope: Scope, receive: Receive, send: Send) -> None:
         # check request type
@@ -418,7 +420,7 @@ class Api:
         * **config: params for the middleware.
 
         """
-        self._app = middleware(self._app, **config)  # type: ignore
+        self._app_ref = _AppRef(app=middleware(self._app_ref["app"], **config))
 
     def add_error_handler(self, eh: ErrorHandler) -> None:
         """
