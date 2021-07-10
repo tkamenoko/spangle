@@ -58,8 +58,14 @@ spangle = "spangle.cli.run:main"
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
+
+[tool.ward]
+path = ["tests"]
+order = "random"
+show-diff-symbols = true
+
 [tool.poe.tasks]
-test = "coverage run --source spangle -m ward --path tests"
+test = "coverage run --source spangle -m ward"
 types = "mypy ./spangle/"
 report = "coverage report"
 "doc:build" = "mkdocs build"
