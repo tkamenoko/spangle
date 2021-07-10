@@ -4,25 +4,25 @@
 
 import asyncio
 import re
-from typing import Any, Callable, Optional
+from typing import Any, Callable, Optional, Union
 
 import jinja2
 from starlette.middleware.errors import ServerErrorMiddleware
 from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from spangle import models
-from spangle._dispatcher import _dispatch_http, _dispatch_websocket
-from spangle._utils import _normalize_path, execute
-from spangle.blueprint import (
+from . import models
+from ._dispatcher import _dispatch_http, _dispatch_websocket
+from ._utils import _normalize_path, execute
+from .blueprint import Blueprint, Router
+from .component import AnyComponentProtocol, cache
+from .error_handler import ErrorHandler
+from .handler_protocols import (
     AnyRequestHandlerProtocol,
-    Blueprint,
+    ErrorHandlerProtocol,
     RequestHandlerProtocol,
-    Router,
 )
-from spangle.component import AnyComponentProtocol, cache
-from spangle.error_handler import ErrorHandler, ErrorHandlerProtocol
-from spangle.testing import AsyncHttpTestClient
+from .testing import AsyncHttpTestClient
 
 
 class Api:
@@ -46,7 +46,10 @@ class Api:
     """
 
     _app: ASGIApp
-    _view_cache: dict[type[AnyRequestHandlerProtocol], AnyRequestHandlerProtocol]
+    _view_cache: dict[
+        type[Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol]],
+        Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol],
+    ]
     _reverse_views: dict[type[AnyRequestHandlerProtocol], str]
     _jinja_env: jinja2.Environment
 
