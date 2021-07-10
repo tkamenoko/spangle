@@ -1,7 +1,11 @@
+---
+title: spangle.blueprint
+module_digest: fbd27e1baf7e4eba22a35390a1bda32a
+---
+
 # Module spangle.blueprint
 
 Application blueprint and router.
-
 
 ## Classes
 
@@ -40,13 +44,11 @@ Protocol classes can be generic, they are defined as::
         def meth(self) -> T:
             ...
 
-
 ------
 
 #### Base classes {: #BaseHandlerProtocol-bases }
 
 * `typing.Protocol`
-
 
 ------
 
@@ -60,12 +62,11 @@ Application component contains child paths with views.
 
 **Attributes**
 
-* **views** (`dict[str, tuple[type, Converters]]`): Collected view classes.
-* **events** (`dict[str, list[Callable]]`): Registered lifespan handlers.
-* **request_hooks** (`dict[str, list[type]]`): Called against every request.
+- **views** (`dict[str, tuple[type, Converters]]`): Collected view classes.
+- **events** (`dict[str, list[Callable]]`): Registered lifespan handlers.
+- **request_hooks** (`dict[str, list[type]]`): Called against every request.
 
 Initialize self.
-
 
 ------
 
@@ -81,8 +82,8 @@ Nest a `Blueprint` in another one.
 
 **Args**
 
-* **path** (`str`): Prefix for the blueprint.
-* **bp** ([`Blueprint `](./#Blueprint)): Another instance to mount.
+- **path** (`str`): Prefix for the blueprint.
+- **bp** ([`Blueprint `](#Blueprint)): Another instance to mount.
 
 ------
 
@@ -122,7 +123,7 @@ Bind `Exception` to the decorated view.
 
 **Args**
 
-* **e** (`Exception`): Subclass of `Exception` you want to handle.
+- **e** (`Exception`): Subclass of `Exception` you want to handle.
 
 ------
 
@@ -162,10 +163,10 @@ Bind a path to the decorated view. The path will be fixed by routing mode.
 
 **Args**
 
-* **path** (`str`): The location of your view.
-* **converters** (`Optional[dict[str,Callable]]`): Params converters
+- **path** (`str`): The location of your view.
+- **converters** (`Optional[dict[str,Callable]]`): Params converters
     for dynamic routing.
-* **routing** (`Optional[str]`): Routing strategy.
+- **routing** (`Optional[str]`): Routing strategy.
 
 ------
 
@@ -204,13 +205,11 @@ Protocol classes can be generic, they are defined as::
         def meth(self) -> T:
             ...
 
-
 ------
 
 #### Base classes {: #DeleteHandlerProtocol-bases }
 
-* [`BaseHandlerProtocol `](./#BaseHandlerProtocol)
-
+* [`BaseHandlerProtocol `](#BaseHandlerProtocol)
 
 ------
 
@@ -223,7 +222,6 @@ async def on_delete(
     self, req: Request, resp: Response, **kw: Any
     ) -> Optional[Response]
 ```
-
 
 ------
 
@@ -262,13 +260,11 @@ Protocol classes can be generic, they are defined as::
         def meth(self) -> T:
             ...
 
-
 ------
 
 #### Base classes {: #GetHandlerProtocol-bases }
 
-* [`BaseHandlerProtocol `](./#BaseHandlerProtocol)
-
+* [`BaseHandlerProtocol `](#BaseHandlerProtocol)
 
 ------
 
@@ -281,7 +277,6 @@ async def on_get(
     self, req: Request, resp: Response, **kw: Any
     ) -> Optional[Response]
 ```
-
 
 ------
 
@@ -320,13 +315,11 @@ Protocol classes can be generic, they are defined as::
         def meth(self) -> T:
             ...
 
-
 ------
 
 #### Base classes {: #PatchHandlerProtocol-bases }
 
-* [`BaseHandlerProtocol `](./#BaseHandlerProtocol)
-
+* [`BaseHandlerProtocol `](#BaseHandlerProtocol)
 
 ------
 
@@ -339,7 +332,6 @@ async def on_patch(
     self, req: Request, resp: Response, **kw: Any
     ) -> Optional[Response]
 ```
-
 
 ------
 
@@ -378,13 +370,11 @@ Protocol classes can be generic, they are defined as::
         def meth(self) -> T:
             ...
 
-
 ------
 
 #### Base classes {: #PostHandlerProtocol-bases }
 
-* [`BaseHandlerProtocol `](./#BaseHandlerProtocol)
-
+* [`BaseHandlerProtocol `](#BaseHandlerProtocol)
 
 ------
 
@@ -397,7 +387,6 @@ async def on_post(
     self, req: Request, resp: Response, **kw: Any
     ) -> Optional[Response]
 ```
-
 
 ------
 
@@ -436,13 +425,11 @@ Protocol classes can be generic, they are defined as::
         def meth(self) -> T:
             ...
 
-
 ------
 
 #### Base classes {: #PutHandlerProtocol-bases }
 
-* [`BaseHandlerProtocol `](./#BaseHandlerProtocol)
-
+* [`BaseHandlerProtocol `](#BaseHandlerProtocol)
 
 ------
 
@@ -455,7 +442,6 @@ async def on_put(
     self, req: Request, resp: Response, **kw: Any
     ) -> Optional[Response]
 ```
-
 
 ------
 
@@ -494,13 +480,11 @@ Protocol classes can be generic, they are defined as::
         def meth(self) -> T:
             ...
 
-
 ------
 
 #### Base classes {: #RequestHandlerProtocol-bases }
 
-* [`BaseHandlerProtocol `](./#BaseHandlerProtocol)
-
+* [`BaseHandlerProtocol `](#BaseHandlerProtocol)
 
 ------
 
@@ -514,7 +498,6 @@ async def on_request(
     ) -> Optional[Response]
 ```
 
-
 ------
 
 ### Router {: #Router }
@@ -526,7 +509,6 @@ class Router(self, routing: str)
 Manage URLs and views. Do not use this manually.
 
 Initialize self.
-
 
 ------
 
@@ -544,11 +526,11 @@ Find a view matching to `path`, or return `None` .
 
 **Args**
 
-* **path** (`str`): Requested location.
+- **path** (`str`): Requested location.
 
 **Returns**
 
-* `Optional[tuple[type[AnyRequestHandlerProtocol], dict[str, Any]]]`: View
+- `Optional[tuple[type[AnyRequestHandlerProtocol], dict[str, Any]]]`: View
     class and params parsed from `path` .
 
 ------
@@ -588,13 +570,11 @@ Protocol classes can be generic, they are defined as::
         def meth(self) -> T:
             ...
 
-
 ------
 
 #### Base classes {: #WebsocketHandlerProtocol-bases }
 
-* [`BaseHandlerProtocol `](./#BaseHandlerProtocol)
-
+* [`BaseHandlerProtocol `](#BaseHandlerProtocol)
 
 ------
 

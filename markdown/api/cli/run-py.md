@@ -1,5 +1,9 @@
-# Module spangle.cli.run
+---
+title: spangle.cli.run
+module_digest: 192e848ce1b9f9a9d6cec8bb17da4edf
+---
 
+# Module spangle.cli.run
 
 ## Functions
 
@@ -8,7 +12,6 @@
 ```python
 def main()
 ```
-
 
 ------
 

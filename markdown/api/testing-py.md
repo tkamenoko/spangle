@@ -1,7 +1,11 @@
+---
+title: spangle.testing
+module_digest: 9345b7f90ee813b3072759c117c77bf4
+---
+
 # Module spangle.testing
 
 Test client for ASGI app without ASGI server.
-
 
 ## Classes
 
@@ -21,18 +25,16 @@ Mock HTTP client without running server. Lifespan-event is supported by
 
 **Args**
 
-* **app** (`ASGIApp`): Application instance.
-* **timeout** (`Optional[int]`): Timeout seconds.
-* **host** (`str`): Temporary host name.
-* **client** (`tuple[str, int]`): Client address.
-
+- **app** (`ASGIApp`): Application instance.
+- **timeout** (`Optional[int]`): Timeout seconds.
+- **host** (`str`): Temporary host name.
+- **client** (`tuple[str, int]`): Client address.
 
 ------
 
 #### Base classes {: #AsyncHttpTestClient-bases }
 
 * `spangle.testing._BaseClient`
-
 
 ------
 
@@ -53,7 +55,7 @@ async def delete(
 ```
 
 Send `DELETE` request to `app` . See
-    [`AsyncHttpTestClient.request `](./#AsyncHttpTestClient.request) .
+    `spangle.testing.AsyncHttpTestClient.request` .
 
 ------
 
@@ -72,7 +74,7 @@ async def get(
 ```
 
 Send `GET` request to `app` . See
-    [`AsyncHttpTestClient.request `](./#AsyncHttpTestClient.request) .
+    `spangle.testing.AsyncHttpTestClient.request` .
 
 ------
 
@@ -95,7 +97,7 @@ async def patch(
 ```
 
 Send `PATCH` request to `app` . See
-    [`AsyncHttpTestClient.request `](./#AsyncHttpTestClient.request) .
+    `spangle.testing.AsyncHttpTestClient.request` .
 
 ------
 
@@ -118,7 +120,7 @@ async def post(
 ```
 
 Send `POST` request to `app` . See
-    [`AsyncHttpTestClient.request `](./#AsyncHttpTestClient.request) .
+    `spangle.testing.AsyncHttpTestClient.request` .
 
 ------
 
@@ -141,7 +143,7 @@ async def put(
 ```
 
 Send `PUT` request to `app` . See
-    [`AsyncHttpTestClient.request `](./#AsyncHttpTestClient.request) .
+    `spangle.testing.AsyncHttpTestClient.request` .
 
 ------
 
@@ -168,22 +170,22 @@ Send request to `app`.
 
 **Args**
 
-* **method** (`str`): HTTP request method.
-* **path** (`str`): Requesting location.
-* **params** (`Params`): Querystring as `dict` or `list` of `(name, value)`.
-* **headers** (`Headers`): HTTP headers.
-* **cookies** (`Mapping`): Sending HTTP cookies.
-* **json** (`Mapping`): Request body as json.
-* **files** (`Mapping`): Multipart form.
-* **form** (`Mapping`): URL encoded form.
-* **content** (`bytes`): Request body as bytes.
-* **timeout** (`int`): Wait limits.
-* **allow_redirects** (`bool`): If `False` , a client gets `30X` response
+- **method** (`str`): HTTP request method.
+- **path** (`str`): Requesting location.
+- **params** (`Params`): Querystring as `dict` or `list` of `(name, value)`.
+- **headers** (`Headers`): HTTP headers.
+- **cookies** (`Mapping`): Sending HTTP cookies.
+- **json** (`Mapping`): Request body as json.
+- **files** (`Mapping`): Multipart form.
+- **form** (`Mapping`): URL encoded form.
+- **content** (`bytes`): Request body as bytes.
+- **timeout** (`int`): Wait limits.
+- **allow_redirects** (`bool`): If `False` , a client gets `30X` response
     instead of redirection.
 
 **Returns**
 
-* [`HttpTestResponse `](./#HttpTestResponse)
+- [`HttpTestResponse `](#HttpTestResponse)
 
 ------
 
@@ -219,25 +221,23 @@ class AsyncWebsocketClient(
 ```
 
 Asynchronous WebSocket test client. It is expected to be called from
-    [`AsyncHttpTestClient `](./#AsyncHttpTestClient) .
+    [`AsyncHttpTestClient `](#AsyncHttpTestClient) .
 
 **Attributes**
 
-* **host** (`str`): Dummy domain.
-* **path** (`str`): WebSocket endpoint.
-* **headers** (`CIMultiDict`): Headers used to connect.
-* **params** (`Params`): Parsed querystrings.
-* **timeout** (`Optional[int]`): How long test client waits for.
+- **host** (`str`): Dummy domain.
+- **path** (`str`): WebSocket endpoint.
+- **headers** (`CIMultiDict`): Headers used to connect.
+- **params** (`Params`): Parsed querystrings.
+- **timeout** (`Optional[int]`): How long test client waits for.
 
 Do not use manually.
-
 
 ------
 
 #### Base classes {: #AsyncWebsocketClient-bases }
 
 * `spangle.testing._BaseWebSocket`
-
 
 ------
 
@@ -253,7 +253,7 @@ Close the connection.
 
 **Args**
 
-* **status_code** (`int`): WebSocket status code.
+- **status_code** (`int`): WebSocket status code.
 
 ------
 
@@ -267,7 +267,7 @@ Emulate WebSocket Connection.
 
 **Args**
 
-* **path** (`Optional[str]`): Overwrite `self.path` .
+- **path** (`Optional[str]`): Overwrite `self.path` .
 
 ------
 
@@ -281,11 +281,11 @@ Receive data from the endpoint.
 
 **Args**
 
-* **mode** (`type[AnyStr]`): Receiving type, `str` or `bytes` .
+- **mode** (`type[AnyStr]`): Receiving type, `str` or `bytes` .
 
 **Returns**
 
-* `AnyStr`: Data with specified type.
+- `AnyStr`: Data with specified type.
 
 ------
 
@@ -299,7 +299,7 @@ Send data to the endpoint.
 
 **Args**
 
-* **data** (`AnyStr`): Data sent to the endpoint, must be `str` or `bytes` .
+- **data** (`AnyStr`): Data sent to the endpoint, must be `str` or `bytes` .
 
 ------
 
@@ -313,22 +313,21 @@ Response for testing.
 
 **Attributes**
 
-* **status_code** (`int`): `HTTPStatus` if available, or just `int` .
+- **status_code** (`int`): `HTTPStatus` if available, or just `int` .
 
 Do not use manually.
-
 
 ------
 
 #### Instance attributes {: #HttpTestResponse-attrs }
 
-* **content**{: #HttpTestResponse.content } (`Optional[bytes]`): Response body, as `bytes` .
+- **content**{: #HttpTestResponse.content } (`Optional[bytes]`): Response body, as `bytes` .
 
-* **cookies**{: #HttpTestResponse.cookies } (`Cookies`): Dict-like response cookies.
+- **cookies**{: #HttpTestResponse.cookies } (`Cookies`): Dict-like response cookies.
 
-* **headers**{: #HttpTestResponse.headers } (`CIMultiDict`): Response header, as `dict` .
+- **headers**{: #HttpTestResponse.headers } (`CIMultiDict`): Response header, as `dict` .
 
-* **json**{: #HttpTestResponse.json } (`addict.Dict`): Json response. Dot access available, like
+- **json**{: #HttpTestResponse.json } (`addict.Dict`): Json response. Dot access available, like
     `resp.json.what.you.want` .
 
-* **text**{: #HttpTestResponse.text } (`Optional[str]`): Response body, as UTF-8 text.
+- **text**{: #HttpTestResponse.text } (`Optional[str]`): Response body, as UTF-8 text.
