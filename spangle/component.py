@@ -4,13 +4,15 @@ Component tools.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol, Union
-from spangle._utils import execute
+from typing import TYPE_CHECKING, Protocol, Union, runtime_checkable
+
+from ._utils import execute
 
 if TYPE_CHECKING:
     from spangle.api import Api
 
 
+@runtime_checkable
 class ComponentProtocol(Protocol):
     """
     Component must be initialized without arguments.
@@ -20,6 +22,7 @@ class ComponentProtocol(Protocol):
         ...
 
 
+@runtime_checkable
 class AsyncStartupComponentProtocol(ComponentProtocol, Protocol):
     async def startup(self) -> None:
         """
@@ -29,6 +32,7 @@ class AsyncStartupComponentProtocol(ComponentProtocol, Protocol):
         ...
 
 
+@runtime_checkable
 class SyncStartupComponentProtocol(ComponentProtocol, Protocol):
     def startup(self) -> None:
         """
@@ -38,6 +42,7 @@ class SyncStartupComponentProtocol(ComponentProtocol, Protocol):
         ...
 
 
+@runtime_checkable
 class AsyncShutdownComponentProtocol(ComponentProtocol, Protocol):
     async def shutdown(self) -> None:
         """
@@ -47,6 +52,7 @@ class AsyncShutdownComponentProtocol(ComponentProtocol, Protocol):
         ...
 
 
+@runtime_checkable
 class SyncShutdownComponentProtocol(ComponentProtocol, Protocol):
     def shutdown(self) -> None:
         """
@@ -65,7 +71,7 @@ AnyComponentProtocol = Union[
 ]
 
 
-class ComponentsCache:
+class _ComponentsCache:
     components: dict[type[AnyComponentProtocol], AnyComponentProtocol] = {}
     api: Api
 
@@ -89,7 +95,9 @@ class ComponentsCache:
         ]
 
 
-cache = ComponentsCache()
+cache = _ComponentsCache()
+
+# TODO: use context var?
 
 
 def use_component(component: type[AnyComponentProtocol]) -> AnyComponentProtocol:
