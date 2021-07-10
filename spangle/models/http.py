@@ -352,7 +352,7 @@ class Response:
     _content: Optional[bytes]
     _json: Union[addict.Dict, list, None]
 
-    headers: CIMultiDict
+    headers: CIMultiDict[str]
     cookies: SimpleCookie
     status_code: int
     streaming: Optional[AsyncGenerator]
