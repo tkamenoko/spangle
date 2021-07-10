@@ -7,7 +7,7 @@ from collections.abc import Mapping
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from json import JSONDecodeError
-from typing import AnyStr, Optional, TypedDict, TypeVar, Union
+from typing import AnyStr, Optional, TypeVar, Union
 from urllib.parse import quote_plus
 
 import addict
@@ -17,6 +17,8 @@ from httpx import ASGITransport, AsyncClient, Response
 from multidict import CIMultiDict
 from starlette.types import ASGIApp
 from urllib3.filepost import RequestField, encode_multipart_formdata
+
+from ._utils import _AppRef
 
 T = TypeVar("T")
 Headers = Union[Mapping[str, str], list[tuple[str, str]]]
@@ -86,11 +88,6 @@ class HttpTestResponse:
     def cookies(self):
         """(`Cookies`): Dict-like response cookies."""
         return self._resp.cookies
-
-
-class _AppRef(TypedDict):
-    # Workaround for type error
-    app: ASGIApp
 
 
 class _BaseWebSocket:
