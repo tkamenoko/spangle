@@ -309,7 +309,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 
 [[package]]
 name = "inari"
-version = "0.2.0"
+version = "0.2.1"
 description = "Write docstrings in Markdown!"
 category = "dev"
 optional = false
@@ -389,6 +389,17 @@ watchdog = ">=2.0"
 
 [package.extras]
 i18n = ["babel (>=2.9.0)"]
+
+[[package]]
+name = "mkdocs-literate-nav"
+version = "0.4.0"
+description = "MkDocs plugin to specify the navigation in Markdown instead of YAML"
+category = "dev"
+optional = false
+python-versions = ">=3.6,<4.0"
+
+[package.dependencies]
+mkdocs = ">=1.0.3,<2.0.0"
 
 [[package]]
 name = "mkdocs-material"
@@ -804,7 +815,7 @@ testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytes
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "4f6791caca4e8c00fe54ebe170c216faddd5f678be540a3a4e294c24128ca614"
+content-hash = "090acecd154d92d9d009fbe54a486313a1a8fac884c7d36f6361d2ed16d8440a"
 
 [metadata.files]
 addict = [
@@ -958,8 +969,8 @@ importlib-metadata = [
     {file = "importlib_metadata-4.6.1.tar.gz", hash = "sha256:079ada16b7fc30dfbb5d13399a5113110dab1aa7c2bc62f66af75f0b717c8cac"},
 ]
 inari = [
-    {file = "inari-0.2.0-py3-none-any.whl", hash = "sha256:6a01fa0c98eeb1335c674bcb2b11d0e874be35623779d7f3d6866760eab5d74b"},
-    {file = "inari-0.2.0.tar.gz", hash = "sha256:ac170a9059daf843363be87d73996a1720f41f5e4cdcd34b077e5c00277f1f2e"},
+    {file = "inari-0.2.1-py3-none-any.whl", hash = "sha256:edda3334e07125c38221f53a5fb0a6ab6e98948f9c6c156a7e2f7bc4907c5d5d"},
+    {file = "inari-0.2.1.tar.gz", hash = "sha256:2f0974db2fe64403f2a2d43a4484c194db48f4b76b366c70324b604f309f9eed"},
 ]
 jinja2 = [
     {file = "Jinja2-3.0.1-py3-none-any.whl", hash = "sha256:1f06f2da51e7b56b8f238affdd6b4e2c61e39598a378cc49345bc1bd42a978a4"},
@@ -1016,6 +1027,10 @@ mergedeep = [
 mkdocs = [
     {file = "mkdocs-1.2.1-py3-none-any.whl", hash = "sha256:11141126e5896dd9d279b3e4814eb488e409a0990fb638856255020406a8e2e7"},
     {file = "mkdocs-1.2.1.tar.gz", hash = "sha256:6e0ea175366e3a50d334597b0bc042b8cebd512398cdd3f6f34842d0ef524905"},
+]
+mkdocs-literate-nav = [
+    {file = "mkdocs-literate-nav-0.4.0.tar.gz", hash = "sha256:29bf383170b80200d16f0d8528f4925ae96982677c8a98f84af70343a3b38bcf"},
+    {file = "mkdocs_literate_nav-0.4.0-py3-none-any.whl", hash = "sha256:2012ac97bc2316890ac35deabd653fd3c6a7434923d572de965c5b6c80f09537"},
 ]
 mkdocs-material = [
     {file = "mkdocs-material-7.1.9.tar.gz", hash = "sha256:5a2fd487f769f382a7c979e869e4eab1372af58d7dec44c4365dd97ef5268cb5"},

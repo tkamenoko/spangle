@@ -1,7 +1,11 @@
+---
+title: spangle.error_handler
+module_digest: 4f4b7b3605c73effb33fa1569518376d
+---
+
 # Module spangle.error_handler
 
 Application blueprint for `Exception`.
-
 
 ## Classes
 
@@ -11,10 +15,9 @@ Application blueprint for `Exception`.
 class ErrorHandler(self)
 ```
 
-When exceptions are raised, [`Api `](../api-py#Api) calls registered view.
+When exceptions are raised, [`Api `](api-py.md#Api) calls registered view.
 
 Initialize self.
-
 
 ------
 
@@ -32,7 +35,7 @@ Bind `Exception` to the decolated view.
 
 **Args**
 
-* **e** (`type[Exception]`): Subclass of `Exception` you want to handle.
+- **e** (`type[Exception]`): Subclass of `Exception` you want to handle.
 
 ------
 
@@ -44,13 +47,11 @@ class HttpErrorHandlerProtocol(*args, **kwargs)
 
 Error handler must implement `on_error` .
 
-
 ------
 
 #### Base classes {: #HttpErrorHandlerProtocol-bases }
 
 * `typing.Protocol`
-
 
 ------
 
@@ -64,7 +65,6 @@ async def on_error(
     ) -> Optional[Response]
 ```
 
-
 ------
 
 ### WebSocketErrorHandlerProtocol {: #WebSocketErrorHandlerProtocol }
@@ -75,13 +75,11 @@ class WebSocketErrorHandlerProtocol(*args, **kwargs)
 
 Error handler must implement `on_ws_error` .
 
-
 ------
 
 #### Base classes {: #WebSocketErrorHandlerProtocol-bases }
 
 * `typing.Protocol`
-
 
 ------
 
