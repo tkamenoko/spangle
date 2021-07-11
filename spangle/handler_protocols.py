@@ -34,7 +34,7 @@ class BaseHandlerProtocol(Protocol):
 @runtime_checkable
 class RequestHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_request(
-        self, req: Request, resp: Response, **kw: Any
+        self, req: Request, resp: Response, /, **kw: Any
     ) -> Optional[Response]:
         ...
 
@@ -42,7 +42,7 @@ class RequestHandlerProtocol(BaseHandlerProtocol, Protocol):
 @runtime_checkable
 class GetHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_get(
-        self, req: Request, resp: Response, **kw: Any
+        self, req: Request, resp: Response, /, **kw: Any
     ) -> Optional[Response]:
         ...
 
@@ -50,7 +50,7 @@ class GetHandlerProtocol(BaseHandlerProtocol, Protocol):
 @runtime_checkable
 class PostHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_post(
-        self, req: Request, resp: Response, **kw: Any
+        self, req: Request, resp: Response, /, **kw: Any
     ) -> Optional[Response]:
         ...
 
@@ -58,7 +58,7 @@ class PostHandlerProtocol(BaseHandlerProtocol, Protocol):
 @runtime_checkable
 class PutHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_put(
-        self, req: Request, resp: Response, **kw: Any
+        self, req: Request, resp: Response, /, **kw: Any
     ) -> Optional[Response]:
         ...
 
@@ -66,7 +66,7 @@ class PutHandlerProtocol(BaseHandlerProtocol, Protocol):
 @runtime_checkable
 class DeleteHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_delete(
-        self, req: Request, resp: Response, **kw: Any
+        self, req: Request, resp: Response, /, **kw: Any
     ) -> Optional[Response]:
         ...
 
@@ -74,14 +74,14 @@ class DeleteHandlerProtocol(BaseHandlerProtocol, Protocol):
 @runtime_checkable
 class PatchHandlerProtocol(BaseHandlerProtocol, Protocol):
     async def on_patch(
-        self, req: Request, resp: Response, **kw: Any
+        self, req: Request, resp: Response, /, **kw: Any
     ) -> Optional[Response]:
         ...
 
 
 @runtime_checkable
 class WebsocketHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_ws(self, conn: Connection, **kw: Any) -> None:
+    async def on_ws(self, conn: Connection, /, **kw: Any) -> None:
         ...
 
 
@@ -105,7 +105,9 @@ class HttpErrorHandlerProtocol(BaseHandlerProtocol, Protocol[E]):
     Error handler must implement `on_error` .
     """
 
-    async def on_error(self, req: Request, resp: Response, e: E) -> Optional[Response]:
+    async def on_error(
+        self, req: Request, resp: Response, e: E, /
+    ) -> Optional[Response]:
         ...
 
 
@@ -115,7 +117,7 @@ class WebSocketErrorHandlerProtocol(BaseHandlerProtocol, Protocol[E]):
     Error handler must implement `on_ws_error` .
     """
 
-    async def on_ws_error(self, conn: Connection, e: E) -> None:
+    async def on_ws_error(self, conn: Connection, e: E, /) -> None:
         ...
 
 

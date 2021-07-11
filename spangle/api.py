@@ -3,6 +3,7 @@
 import asyncio
 import re
 from collections.abc import Callable
+from contextvars import Context, copy_context
 from typing import Any, Optional, Union
 
 import jinja2
@@ -14,7 +15,7 @@ from . import models
 from ._dispatcher import _dispatch_http, _dispatch_websocket
 from ._utils import _AppRef, _normalize_path, execute
 from .blueprint import Blueprint, Router
-from .component import AnyComponentProtocol, cache
+from .component import AnyComponentProtocol, _ComponentsCache, api_ctx, component_ctx
 from .error_handler import ErrorHandler
 from .handler_protocols import (
     AnyRequestHandlerProtocol,
@@ -53,6 +54,7 @@ class Api:
     ]
     _reverse_views: dict[type[AnyRequestHandlerProtocol], str]
     _jinja_env: jinja2.Environment
+    _context: Context
 
     router: Router
     mounted_app: dict[str, Callable]
@@ -120,6 +122,9 @@ class Api:
         self.debug = debug
         self.favicon = None
         self.max_upload_bytes = max_upload_bytes
+        self._context = copy_context()
+        self._context.run(component_ctx.set, _ComponentsCache())
+        self._context.run(api_ctx.set, self)
 
         # static files.
         if static_dir is not None and static_root is not None:
@@ -129,7 +134,6 @@ class Api:
         # init components
         for component in components or []:
             self.register_component(component)
-        cache.api = self
         # init lifespan handlers
         self.lifespan_handlers = {"startup": [], "shutdown": []}
         # Jinja environment
@@ -159,7 +163,9 @@ class Api:
         self.add_middleware(ServerErrorMiddleware, debug=self.debug)
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        await self._app_ref["app"](scope, receive, send)
+        await self._context.run(
+            asyncio.create_task, self._app_ref["app"](scope, receive, send)
+        )
 
     async def _dispatch(self, scope: Scope, receive: Receive, send: Send) -> None:
         # check request type
@@ -252,20 +258,24 @@ class Api:
         return f
 
     async def _startup(self) -> None:
+        async def _in_context():
+            cache_instance = component_ctx.get()
+            # call `startup` of components first.
+            await cache_instance.startup()
+            # call startup handlers.
+            [await execute(handler) for handler in self.lifespan_handlers["startup"]]
 
-        # call `startup` of components first.
-        await cache.startup()
-
-        # call startup handlers.
-        [await execute(handler) for handler in self.lifespan_handlers["startup"]]
+        await self._context.run(asyncio.create_task, _in_context())
 
     async def _shutdown(self) -> None:
+        async def _in_context():
+            cache_instance = component_ctx.get()
+            # call shutdown handlers.
+            [await execute(handler) for handler in self.lifespan_handlers["shutdown"]]
+            # call `shutdown` of components at last.
+            await cache_instance.shutdown()
 
-        # call shutdown handlers.
-        [await execute(handler) for handler in self.lifespan_handlers["shutdown"]]
-
-        # call `shutdown` of components at last.
-        await cache.shutdown()
+        await self._context.run(asyncio.create_task, _in_context())
 
     def client(self, timeout: Optional[float] = 1) -> AsyncHttpTestClient:
         """
@@ -314,7 +324,13 @@ class Api:
         * Component class itself.
 
         """
-        cache.components[component] = component()
+
+        def _in_context():
+            cache_instance = component_ctx.get()
+            cache_instance.components.update({component: component()})
+
+        self._context.run(_in_context)
+
         return component
 
     def add_blueprint(self, path: str, blueprint: Blueprint) -> None:

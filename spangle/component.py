@@ -4,7 +4,16 @@ Component tools.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol, Union, runtime_checkable
+from contextvars import ContextVar
+from typing import (
+    TYPE_CHECKING,
+    Optional,
+    Protocol,
+    TypeVar,
+    Union,
+    cast,
+    runtime_checkable,
+)
 
 from ._utils import execute
 
@@ -70,18 +79,34 @@ AnyComponentProtocol = Union[
     SyncShutdownComponentProtocol,
 ]
 
+T = TypeVar(
+    "T",
+    ComponentProtocol,
+    AsyncStartupComponentProtocol,
+    SyncStartupComponentProtocol,
+    AsyncShutdownComponentProtocol,
+    SyncShutdownComponentProtocol,
+    contravariant=True,
+)
+
 
 class _ComponentsCache:
-    components: dict[type[AnyComponentProtocol], AnyComponentProtocol] = {}
-    api: Api
+    components: dict[type[AnyComponentProtocol], AnyComponentProtocol]
 
-    def __call__(self, component: type[AnyComponentProtocol]) -> AnyComponentProtocol:
-        return self.components[component]
+    def __init__(self) -> None:
+        self.components = {}
+
+    def __call__(self, component: type[T]) -> Optional[T]:
+        try:
+            instance: Optional[T] = cast(T, self.components[component])
+        except KeyError:
+            instance = None
+        return instance
 
     async def startup(self) -> None:
 
         [
-            await execute(getattr(c, "startup", lambda _: None))
+            await execute(getattr(c, "startup", lambda: None))
             for c in self.components.values()
             if c is not self
         ]
@@ -89,18 +114,16 @@ class _ComponentsCache:
     async def shutdown(self) -> None:
 
         [
-            await execute(getattr(c, "shutdown", lambda _: None))
+            await execute(getattr(c, "shutdown", lambda: None))
             for c in self.components.values()
             if c is not self
         ]
 
 
-cache = _ComponentsCache()
-
-# TODO: use context var?
+component_ctx = ContextVar("component_ctx", default=_ComponentsCache())
 
 
-def use_component(component: type[AnyComponentProtocol]) -> AnyComponentProtocol:
+def use_component(component: type[T]) -> Optional[T]:
     """
     Return registered component instance.
 
@@ -110,14 +133,13 @@ def use_component(component: type[AnyComponentProtocol]) -> AnyComponentProtocol
 
     **Returns**
 
-    * Component instance.
-
-    **Raises**
-
-    * `KeyError`: Given component is not registered.
+    * Component instance if registered, else `None`.
 
     """
-    return cache(component)
+    return component_ctx.get()(component)
+
+
+api_ctx: ContextVar[Api] = ContextVar("api_ctx")
 
 
 def use_api() -> Api:
@@ -130,7 +152,8 @@ def use_api() -> Api:
 
     **Raises**
 
-    * `AttributeError`: Instance is not initialized.
+    * `KeyError`: Called out of api context.
 
     """
-    return cache.api
+
+    return api_ctx.get()
