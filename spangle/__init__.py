@@ -1,3 +1,7 @@
+"""
+Spangle - A small and flexible ASGI application framework for modern web.
+"""
+
 from .api import Api
 from .blueprint import Blueprint
 from .component import use_api, use_component
