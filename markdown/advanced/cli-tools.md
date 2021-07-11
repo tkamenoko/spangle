@@ -20,6 +20,15 @@ Generated file looks like this:
 
 ```ts
 // urls.ts
+type ViewName = "path.to.app.Index" | "path.to.app.Store" | "path.to.app.Get";
+type Params = {
+  "path.to.app.Index": {};
+  "path.to.app.Store": {};
+  "path.to.app.Get": {
+    key: string;
+  };
+};
+
 const tag = (strings: TemplateStringsArray, ...keys: string[]) => {
   const call = (p: { [key: string]: string }) => {
     if (keys.length === 0) {
@@ -37,18 +46,18 @@ const tag = (strings: TemplateStringsArray, ...keys: string[]) => {
   return call;
 };
 
-const reverse_views = {
-  Index: tag`/`,
-  Store: tag`/store/`,
-  Get: tag`/dynamic/${"key"}/`,
+const taggedViews = {
+  "path.to.app.Index": tag`/`,
+  "path.to.app.Store": tag`/store`,
+  "path.to.app.Get": tag`/dynamic/${"key"}`,
 };
 
-export const url_for = (
-  name: string,
-  params: { [key: string]: string } = {}
-) => {
-  const path_func = reverse_views[name];
-  return path_func ? path_func(params) : null;
+export const urlFor = <T extends ViewName>(
+  name: T,
+  params: Params[T]
+): string => {
+  const tagged = taggedViews[name];
+  return tagged(params) as T;
 };
 ```
 
