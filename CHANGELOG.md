@@ -5,6 +5,7 @@
 - Update dependencies
 - Use `ContextVar` to find correct components in `use_component`
 - Use `ContextVar` to find correct api instance in `use_api`
+- Fix cli to give better type information
 
 ## v0.8.0(2020-12-07)
 
