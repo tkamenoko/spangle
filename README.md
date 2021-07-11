@@ -1,5 +1,5 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # spangle
@@ -82,5 +82,5 @@ poetry run poe test
 ### Update API docs
 
 ```shell
-poetry run poe doc-build
+poetry run poe doc:build
 ```

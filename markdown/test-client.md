@@ -1,10 +1,10 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # Test Client
 
-[`Api.client`](/api/api-py#Api.client) is useful for unittest. The client is based on [`httpx`](https://github.com/encode/httpx) .
+[`Api.client`](api/api-py.md#Api.client) is useful for unittest. The client is based on [`httpx`](https://github.com/encode/httpx) .
 
 ## Usage
 

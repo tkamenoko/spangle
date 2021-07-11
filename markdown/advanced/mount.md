@@ -1,10 +1,10 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # Mount Other ASGI App
 
-If you want to use existing ASGI app in your app, you can nest the app in yours by using [`Api.mount`](/api/api-py#Api.mount).
+If you want to use existing ASGI app in your app, you can nest the app in yours by using [`Api.mount`](../api/api-py.md#Api.mount).
 
 ## `ariadne` example
 

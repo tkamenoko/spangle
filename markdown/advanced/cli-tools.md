@@ -1,5 +1,5 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # CLI Tools
@@ -8,7 +8,7 @@ version: v0.8.0
 
 ## `spangle urls-ts`
 
-This command generates a small script to map view names to paths like [`Api.url_for`](/api/api-py#Api.url_for) . Parameters of dynamic paths are supported.
+This command generates a small script to map view names to paths like [`Api.url_for`](../api/api-py.md#Api.url_for) . Parameters of dynamic paths are supported.
 
 ### Usage
 

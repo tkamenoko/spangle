@@ -1,5 +1,5 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # Component
@@ -22,7 +22,7 @@ Now, you are ready to use that component in your `api` .
 
 ## Use components in view-classes
 
-To use components in view classes, call [`use_component`](/api/component-py#use_component).
+To use components in view classes, call [`use_component`](api/component-py.md#use_component).
 
 ```python
 from spangle import use_component
@@ -55,7 +55,7 @@ There is no way to define the order of startup hooks. Do not expect that `startu
 
 ## Use `Api` instance as a component
 
-You can use `Api` instance in view classes or components by calling [`use_api`](/api/component-py#use_api).
+You can use `Api` instance in view classes or components by calling [`use_api`](api/component-py.md#use_api).
 
 ```python
 class Comp:

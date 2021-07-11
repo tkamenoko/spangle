@@ -1,5 +1,5 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # spangle
@@ -57,7 +57,7 @@ hypercorn hello:api
 - Uniformed API
 - Single page application friendly
 
-...and more features. Take [tutorials](/introduction) and see [features](/advanced/index) !
+...and more features. Take [tutorials](introduction.md) and see [features](advanced/index.md) !
 
 ## Contribute
 
@@ -91,5 +91,5 @@ poetry run poe test
 ### Update API docs
 
 ```shell
-poetry run poe doc-build
+poetry run poe doc:build
 ```
