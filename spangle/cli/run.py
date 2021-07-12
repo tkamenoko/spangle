@@ -8,7 +8,7 @@ from parse import compile
 from spangle.api import Api
 
 
-def urls_ts(args):
+def urls_ts(args: argparse.Namespace) -> None:
     """
     Print `url_for` function written in TypeScript.
 
