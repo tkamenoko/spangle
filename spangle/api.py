@@ -25,7 +25,7 @@ from .handler_protocols import (
     RequestHandlerProtocol,
 )
 from .testing import AsyncHttpTestClient
-from .types import LifespanFunction, LifespanHandlers, RoutingStrategy
+from .types import Converters, LifespanFunction, LifespanHandlers, RoutingStrategy
 
 __all__ = ["Api"]
 
@@ -377,8 +377,8 @@ class Api:
         self,
         path: str,
         *,
-        converters: Optional[dict[str, Callable[[str], Any]]] = None,
-        routing: Optional[str] = None,
+        converters: Optional[Converters] = None,
+        routing: Optional[RoutingStrategy] = None,
     ) -> Callable[[type[AnyRequestHandlerProtocol]], type[AnyRequestHandlerProtocol]]:
         """
         Mount the decorated view to the given path directly.
@@ -386,9 +386,9 @@ class Api:
         **Args**
 
         * path (`str`): The location for the view.
-        * converters (`Optional[dict[str, Callable[[str], Any]]]`): Params converters
+        * converters (`Optional[Converters]`): Params converters
             for dynamic routing.
-        * routing (`Optional[str]`): Routing strategy.
+        * routing (`Optional[RoutingStrategy]`): Routing strategy.
 
         """
 
@@ -464,7 +464,7 @@ class Api:
 
         **Args**
 
-        * e (`Exception`): Subclass of `Exception` you want to handle.
+        * e (`type[Exception]`): Subclass of `Exception` you want to handle.
 
         """
         eh = ErrorHandler()

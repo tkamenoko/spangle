@@ -3,8 +3,7 @@ Utility types for `spangle` .
 """
 
 from collections.abc import Awaitable, Callable
-from typing import Literal, TypedDict, Union
-
+from typing import Any, Literal, TypedDict, Union
 
 __all__ = ["LifespanFunction", "LifespanHandlers", "RoutingStrategy"]
 
@@ -35,3 +34,5 @@ Define api routing strategy.
 * `"clone"` : return same view between `/route` and `/route/` .
 
 """
+
+Converters = dict[str, Callable[[str], Any]]
