@@ -1,7 +1,11 @@
+---
+title: spangle.component
+module_digest: 715f0dd79166dd2ef75f5342b0c4535f
+---
+
 # Module spangle.component
 
 Component tools.
-
 
 ## Classes
 
@@ -13,13 +17,11 @@ class AsyncShutdownComponentProtocol(*args, **kwargs)
 
 Component must be initialized without arguments.
 
-
 ------
 
 #### Base classes {: #AsyncShutdownComponentProtocol-bases }
 
-* [`ComponentProtocol `](./#ComponentProtocol)
-
+* [`ComponentProtocol `](#ComponentProtocol)
 
 ------
 
@@ -32,7 +34,7 @@ async def shutdown(self) -> None
 ```
 
 Called on server shutdown. To access other components, use
-    [`use_component `](./#use_component) .
+    [`use_component `](#use_component) .
 
 ------
 
@@ -44,13 +46,11 @@ class AsyncStartupComponentProtocol(*args, **kwargs)
 
 Component must be initialized without arguments.
 
-
 ------
 
 #### Base classes {: #AsyncStartupComponentProtocol-bases }
 
-* [`ComponentProtocol `](./#ComponentProtocol)
-
+* [`ComponentProtocol `](#ComponentProtocol)
 
 ------
 
@@ -63,7 +63,7 @@ async def startup(self) -> None
 ```
 
 Called on server startup. To access other components, use
-    [`use_component `](./#use_component) .
+    [`use_component `](#use_component) .
 
 ------
 
@@ -75,42 +75,11 @@ class ComponentProtocol(self)
 
 Component must be initialized without arguments.
 
-
 ------
 
 #### Base classes {: #ComponentProtocol-bases }
 
 * `typing.Protocol`
-
-
-------
-
-### ComponentsCache {: #ComponentsCache }
-
-```python
-class ComponentsCache()
-```
-
-
-------
-
-#### Methods {: #ComponentsCache-methods }
-
-[**shutdown**](#ComponentsCache.shutdown){: #ComponentsCache.shutdown }
-
-```python
-async def shutdown(self) -> None
-```
-
-
-------
-
-[**startup**](#ComponentsCache.startup){: #ComponentsCache.startup }
-
-```python
-async def startup(self) -> None
-```
-
 
 ------
 
@@ -122,13 +91,11 @@ class SyncShutdownComponentProtocol(*args, **kwargs)
 
 Component must be initialized without arguments.
 
-
 ------
 
 #### Base classes {: #SyncShutdownComponentProtocol-bases }
 
-* [`ComponentProtocol `](./#ComponentProtocol)
-
+* [`ComponentProtocol `](#ComponentProtocol)
 
 ------
 
@@ -141,7 +108,7 @@ def shutdown(self) -> None
 ```
 
 Called on server shutdown. To access other components, use
-    [`use_component `](./#use_component) .
+    [`use_component `](#use_component) .
 
 ------
 
@@ -153,13 +120,11 @@ class SyncStartupComponentProtocol(*args, **kwargs)
 
 Component must be initialized without arguments.
 
-
 ------
 
 #### Base classes {: #SyncStartupComponentProtocol-bases }
 
-* [`ComponentProtocol `](./#ComponentProtocol)
-
+* [`ComponentProtocol `](#ComponentProtocol)
 
 ------
 
@@ -172,7 +137,7 @@ def startup(self) -> None
 ```
 
 Called on server startup. To access other components, use
-    [`use_component `](./#use_component) .
+    [`use_component `](#use_component) .
 
 ## Functions
 
@@ -182,34 +147,29 @@ Called on server startup. To access other components, use
 def use_api() -> Api
 ```
 
-Return [`Api `](../api-py#Api) instance.
+Return [`Api `](api-py.md#Api) instance.
 
 **Returns**
 
-* [`Api `](../api-py#Api)
-
+- [`Api `](api-py.md#Api)
 **Raises**
 
-* `AttributeError`: Instance is not initialized.
+- `KeyError`: Called out of api context.
 
 ------
 
 ### use_component {: #use_component }
 
 ```python
-def use_component(component: type[AnyComponentProtocol]) -> AnyComponentProtocol
+def use_component(component: type[T]) -> Optional[T]
 ```
 
 Return registered component instance.
 
 **Args**
 
-* **component** (`type[spangle.component.AnyComponentProtocol]`): Component class.
+- **component** (`type[spangle.component.AnyComponentProtocol]`): Component class.
 
 **Returns**
 
-* Component instance.
-
-**Raises**
-
-* `KeyError`: Given component is not registered.
+* Component instance if registered, else `None`.

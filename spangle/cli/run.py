@@ -4,10 +4,11 @@ import inspect
 import os
 import sys
 
+from parse import compile
 from spangle.api import Api
 
 
-def urls_ts(args):
+def urls_ts(args: argparse.Namespace) -> None:
     """
     Print `url_for` function written in TypeScript.
 
@@ -23,34 +24,64 @@ def urls_ts(args):
         sys.exit(f"`{api}` is invalid form.")
     module = importlib.import_module(modulename)
     api_instance: Api = getattr(module, api_name)
-    http = api_instance._reverse_views
-    views = [cls.__name__ for cls in http]
-    paths = [path.replace("{", "${'").replace("}", "'}") for path in http.values()]
-    reverse_views = [f"{cls}: tag`{path}`" for cls, path in zip(views, paths)]
-    js = f"""
-    const tag = (strings: TemplateStringsArray, ...keys: string[]) => {{
-        const call = (p: {{ [key: string]: string }}) => {{
-            if(keys.length === 0 ){{
+    reverse_views = {
+        f"'{view.__module__}.{view.__name__}'": path
+        for view, path in api_instance._reverse_views.items()
+    }
+    tagged_views = {
+        view: "tag`" + path.replace("{", "${'").replace("}", "'}") + "`"
+        for view, path in reverse_views.items()
+    }
+    view_to_tags = (
+        "{\n    "
+        + ",\n    ".join([f"    {view}: {path}" for view, path in tagged_views.items()])
+        + "\n    }"
+    )
+    view_to_params = {
+        view: "{\n"
+        + "\n".join(
+            [f"         {name}: string;" for name in compile(path).named_fields]
+        )
+        + "\n        }"
+        for view, path in reverse_views.items()
+    }
+    view_name = " | ".join([f"{name}" for name in reverse_views.keys()])
+    params = ";\n    ".join(
+        [f"    {view}: {params}" for view, params in view_to_params.items()]
+    )
+    tag = """
+    const tag = (strings: TemplateStringsArray, ...keys: string[]) => {
+        const call = (p: { [key: string]: string }) => {
+            if(keys.length === 0 ){
                 return strings.join();
-            }}
+            }
             const parsed = keys.map(x=>p[x]).filter(x=>typeof x !=="undefined")
-            if(Object.keys(parsed).length === 0){{
+            if(Object.keys(parsed).length === 0){
                 return null;
-            }}
+            }
             parsed.push("");
             return strings.map((x,index)=>x+parsed[index]).join("");
-        }}
+        }
         return call;
+    }
+    """
+    ts = f"""
+    type ViewName = {view_name};
+    type Params = {{
+    {params}
+    }}
+    {tag}
+
+    const taggedViews = {view_to_tags};
+
+    export const urlFor = <T extends ViewName>(name: T, params: Params[T]): string => {{
+        const tagged = taggedViews[name];
+        return tagged(params) as T;
     }}
 
-    const reverse_views = {{{", ".join(reverse_views)}}}
-
-    export const url_for = (name: string, params: {{ [key: string]: string }} = {{}}) => {{
-        const path_func = reverse_views[name];
-        return path_func?path_func(params):null;
-    }}"""
-    js = inspect.cleandoc(js)
-    print(js)
+    """
+    ts = inspect.cleandoc(ts)
+    print(ts)
 
 
 parser = argparse.ArgumentParser(description="spangle utility commands.")

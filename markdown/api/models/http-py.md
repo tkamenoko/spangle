@@ -1,7 +1,11 @@
+---
+title: spangle.models.http
+module_digest: dbf00fa5611a6b839463ea504f32e9b8
+---
+
 # Module spangle.models.http
 
 HTTP Request & Response.
-
 
 ## Classes
 
@@ -15,50 +19,48 @@ Incoming HTTP request class.
 
 **Attributes**
 
-* **headers** (`CIMultiDictProxy`): The request headers, case-insensitive dictionary.
-* **state** (`addict.Dict`): Any object you want to store while the response.
-* **max_upload_bytes** (`int`): Limit upload size against each request.
+- **headers** (`CIMultiDictProxy`): The request headers, case-insensitive dictionary.
+- **state** (`addict.Dict`): Any object you want to store while the response.
+- **max_upload_bytes** (`int`): Limit upload size against each request.
 
 Do not use manually.
-
 
 ------
 
 #### Instance attributes {: #Request-attrs }
 
-* **apparent_encoding**{: #Request.apparent_encoding } (`Dict[str, Union[str, float]]`): Guess the content encoding, provided by the
+- **apparent_encoding**{: #Request.apparent_encoding } (`Dict[str, Union[str, float]]`): Guess the content encoding, provided by the
     `chardet` library. Must be awaited.
 
-* **client**{: #Request.client } (`Address`): The client address.
+- **client**{: #Request.client } (`Address`): The client address.
 
     **Attributes**
 
     * host (`Optional[str]`): The client address, like `"127.0.0.1"` .
     * port (`Optional[int]`): The client port, like `1234` .
 
-* **content**{: #Request.content } (`bytes`): The request body, as bytes. Must be awaited.
+- **content**{: #Request.content } (`bytes`): The request body, as bytes. Must be awaited.
 
 **Raises**
 
-* [`TooLargeRequestError `](../../exceptions-py#TooLargeRequestError) : when request body is too large.
+- [`TooLargeRequestError `](../exceptions-py.md#TooLargeRequestError): when request body is too large.
 
-* **cookies**{: #Request.cookies } (`dict[str, str]`): The cookies sent in the request, as a dictionary.
+- **cookies**{: #Request.cookies } (`dict[str, str]`): The cookies sent in the request, as a dictionary.
 
-* **full_url**{: #Request.full_url } (`str`): The full URL of the request.
+- **full_url**{: #Request.full_url } (`str`): The full URL of the request.
 
-* **method**{: #Request.method } (`str`): The request method, lower-cased.
+- **method**{: #Request.method } (`str`): The request method, lower-cased.
 
-* **mimetype**{: #Request.mimetype } (`str`): Mimetype of the request’s body, or `""` .
+- **mimetype**{: #Request.mimetype } (`str`): Mimetype of the request’s body, or `""` .
 
-* **params**{: #Request.params } (`MultiDictProxy`): The parsed query parameters used for the request.
+- **params**{: #Request.params } (`MultiDictProxy`): The parsed query parameters used for the request.
 
-* **text**{: #Request.text } (`str`): The request body, as unicode-decoded. Must be awaited.
+- **text**{: #Request.text } (`str`): The request body, as unicode-decoded. Must be awaited.
 
-* **url**{: #Request.url } (`URL`): The parsed URL of the request. For more details, see
+- **url**{: #Request.url } (`URL`): The parsed URL of the request. For more details, see
     [Starlette docs](https://www.starlette.io/requests/#url) .
 
-* **version**{: #Request.version } (`str`): The HTTP version, like `"1.1"` , `"2"` .
-
+- **version**{: #Request.version } (`str`): The HTTP version, like `"1.1"` , `"2"` .
 
 ------
 
@@ -74,7 +76,7 @@ Test given type is acceptable or not.
 
 **Args**
 
-* **content_type** (`str`): Testing `"mime/type"` .
+- **content_type** (`str`): Testing `"mime/type"` .
 
 **Returns**
 
@@ -99,14 +101,14 @@ You can use custom parser by setting your function.
 
 **Args**
 
-* **parser** (`Optional[Callable[[Request], Awaitable[Any]]]`): Custom parser,
-    must be async function. If not given, [`spangle `](../../) uses builtin parser.
-* **parse_as** (`Optional[str]`): Select parser to decode the body. Accept
+- **parser** (`Optional[Callable[[Request], Awaitable[Any]]]`): Custom parser,
+    must be async function. If not given, [`spangle `](../index.md) uses builtin parser.
+- **parse_as** (`Optional[str]`): Select parser to decode the body. Accept
     `"json"` , `"form"` , or `"multipart"` .
 
 **Returns**
 
-* `MultiDictProxy`: May be overridden by custom parser.
+- `MultiDictProxy`: May be overridden by custom parser.
 
 ------
 
@@ -120,7 +122,7 @@ HTTP2 push-promise.
 
 **Args**
 
-* **path** (`str`): A content location in the app.
+- **path** (`str`): A content location in the app.
 
 ------
 
@@ -134,32 +136,30 @@ Outgoing HTTP response class. `Response` instance is ASGI3 application.
 
 **Attributes**
 
-* **headers** (`CIMultiDict`): The response headers, case-insensitive dictionary. To set
+- **headers** (`CIMultiDict`): The response headers, case-insensitive dictionary. To set
     values having same key, use `headers.add()` .
-* **cookies** (`SimpleCookie`): Dict-like http cookies. `Set-Cookie` header refers this.
+- **cookies** (`SimpleCookie`): Dict-like http cookies. `Set-Cookie` header refers this.
     You can set cookie-attributes.
-* **status** (`int`): The response's status code.
-* **streaming** (`Optional[AsyncGenerator]`): Async generator for streaming. If set,
+- **status** (`int`): The response's status code.
+- **streaming** (`Optional[AsyncGenerator]`): Async generator for streaming. If set,
     other response body attrs like `media` are ignored.
-* **mimetype** (`str`): The mediatype of the response body.
-* **reraise** (`bool`): In ErrorHandler, if set true, reraise the exception after
+- **mimetype** (`str`): The mediatype of the response body.
+- **reraise** (`bool`): In ErrorHandler, if set true, reraise the exception after
     sending data.
 
 Do not use manually.
-
 
 ------
 
 #### Instance attributes {: #Response-attrs }
 
-* **content**{: #Response.content } (`bytes`): Bytes of the response body. Default-type:
+- **content**{: #Response.content } (`bytes`): Bytes of the response body. Default-type:
     `"application/octet-stream"` .
 
-* **json**{: #Response.json } (`Any`): A dict sent to the client. Default-type: `"application/json"` .
+- **json**{: #Response.json } (`Any`): A dict sent to the client. Default-type: `"application/json"` .
     You can set values like `resp.json.keyName.you = "want"` .
 
-* **text**{: #Response.text } (`str`): A unicode string of the response body. Default-type: `"text/plain"` .
-
+- **text**{: #Response.text } (`str`): A unicode string of the response body. Default-type: `"text/plain"` .
 
 ------
 
@@ -171,16 +171,16 @@ Do not use manually.
 def add_header(self, key: str, value: str) -> "Response"
 ```
 
-Append new header. To overwrite, use [`Response.set_header `](./#Response.set_header) .
+Append new header. To overwrite, use `spangle.models.http.Response.set_header` .
 
 **Args**
 
-* **key** (`str`): Header's key.
-* **value** (`str`): Header's value.
+- **key** (`str`): Header's key.
+- **value** (`str`): Header's value.
 
 **Returns**
 
-* [`Response `](./#Response): Return self.
+- [`Response `](#Response): Return self.
 
 ------
 
@@ -196,14 +196,14 @@ Remove cookie value from client.
 
 **Args**
 
-* **key** (`str`)
+- **key** (`str`)
 Cookie options:
 
-* **path** (`str`)
-* **domain** (`str`)
+- **path** (`str`)
+- **domain** (`str`)
 **Returns**
 
-* [`Response `](./#Response): Return self.
+- [`Response `](#Response): Return self.
 
 ------
 
@@ -219,19 +219,19 @@ Load `jinja2` template, render, set headers & text.
 
 **Args**
 
-* **template_name** (`str`): The template `"path/name"` .
-* **content_type** (`str`): `"text/html"` .
-* ****params** : Variables used in the template. `api` is reserved by
-    [`Api `](../../api-py#Api) instance by default.
+- **template_name** (`str`): The template `"path/name"` .
+- **content_type** (`str`): `"text/html"` .
+- ****params**: Variables used in the template. `api` is reserved by
+    [`Api `](../api-py.md#Api) instance by default.
 
 **Returns**
 
-* [`Response `](./#Response): Return self.
+- [`Response `](#Response): Return self.
 
 **Raises**
 
-* `ValueError`: Missing `jinja2` env in [`Api `](../../api-py#Api) instance.
-* `NotFoundError`: Missing requested template.
+- `ValueError`: Missing `jinja2` env in [`Api `](../api-py.md#Api) instance.
+- `NotFoundError`: Missing requested template.
 
 ------
 
@@ -255,14 +255,14 @@ If both `view` and `url` are set, `url` is ignored.
 
 **Args**
 
-* **view** (`Type`): View class that the client redirect to.
-* **params** (`dict`): Dynamic URL params passed to the view.
-* **url** (`str`): The location out of the app.
-* **status** (`int`): HTTP status code. Must be `300<=status<400` .
+- **view** (`Type`): View class that the client redirect to.
+- **params** (`dict`): Dynamic URL params passed to the view.
+- **url** (`str`): The location out of the app.
+- **status** (`int`): HTTP status code. Must be `300<=status<400` .
 
 **Returns**
 
-* [`Response `](./#Response): Return self.
+- [`Response `](#Response): Return self.
 
 ------
 
@@ -278,12 +278,12 @@ Set bytes to response body with content type.
 
 **Args**
 
-* **content** (`bytes`): Response body as bytes.
-* **content_type** (`str`): Response content type.
+- **content** (`bytes`): Response body as bytes.
+- **content_type** (`str`): Response content type.
 
 **Returns**
 
-* [`Response `](./#Response): Return self.
+- [`Response `](#Response): Return self.
 
 ------
 
@@ -310,22 +310,22 @@ Set cookie value to given key with params.
 
 **Args**
 
-* **key** (`str`)
-* **value** (`str`)
+- **key** (`str`)
+- **value** (`str`)
 Cookie options:
 
-* **max_age** (`Optional[int]`)
-* **expires** (`Optional[int]`)
-* **path** (`Optional[str]`)
-* **comment** (`Optional[str]`)
-* **domain** (`Optional[str]`)
-* **secure** (`bool`)
-* **httponly** (`bool`)
-* **version** (`Optional[int]`)
-* **samesite** (`Optional[str]`)
+- **max_age** (`Optional[int]`)
+- **expires** (`Optional[int]`)
+- **path** (`Optional[str]`)
+- **comment** (`Optional[str]`)
+- **domain** (`Optional[str]`)
+- **secure** (`bool`)
+- **httponly** (`bool`)
+- **version** (`Optional[int]`)
+- **samesite** (`Optional[str]`)
 **Returns**
 
-* [`Response `](./#Response): Return self.
+- [`Response `](#Response): Return self.
 
 ------
 
@@ -339,12 +339,12 @@ Set HTTP header value to given key. It overwrites value if exists.
 
 **Args**
 
-* **key** (`str`): Header's key.
-* **value** (`str`): Header's value.
+- **key** (`str`): Header's key.
+- **value** (`str`): Header's value.
 
 **Returns**
 
-* [`Response `](./#Response): Return self.
+- [`Response `](#Response): Return self.
 
 ------
 
@@ -358,11 +358,11 @@ Set HTTP status code.
 
 **Args**
 
-* **status** (`int`): HTTP status code.
+- **status** (`int`): HTTP status code.
 
 **Returns**
 
-* [`Response `](./#Response) : Return self.
+- [`Response `](#Response): Return self.
 
 ------
 
@@ -376,9 +376,9 @@ Set given text to response body with content type.
 
 **Args**
 
-* **text** (`str`): Response body as UTF-8 string.
-* **content_type** (`str`): Response content type.
+- **text** (`str`): Response body as UTF-8 string.
+- **content_type** (`str`): Response content type.
 
 **Returns**
 
-* [`Response `](./#Response): Return self.
+- [`Response `](#Response): Return self.

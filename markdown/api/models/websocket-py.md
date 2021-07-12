@@ -1,7 +1,11 @@
+---
+title: spangle.models.websocket
+module_digest: 8b3ac50a57d64af0c3506d4f8c41fc08
+---
+
 # Module spangle.models.websocket
 
 WebSocket connection.
-
 
 ## Classes
 
@@ -15,24 +19,22 @@ WebSocket connection to communicate with a client.
 
 **Attributes**
 
-* **state** (`addict.Dict`): Any object you want to store while the connection.
-* **closed** (`bool`): Whether connection is closed or not.
-* **reraise** (`bool`): In ErrorHandler, if set true, reraise the exception after
+- **state** (`addict.Dict`): Any object you want to store while the connection.
+- **closed** (`bool`): Whether connection is closed or not.
+- **reraise** (`bool`): In ErrorHandler, if set true, reraise the exception after
     closing connection.
-* **headers** (`CIMultiDictProxy`): The connection headers, case-insensitive dictionary.
+- **headers** (`CIMultiDictProxy`): The connection headers, case-insensitive dictionary.
 
 Do not use manually.
-
 
 ------
 
 #### Instance attributes {: #Connection-attrs }
 
-* **params**{: #Connection.params } (`MultiDictProxy`): The parsed query parameters used for the request.
+- **params**{: #Connection.params } (`MultiDictProxy`): The parsed query parameters used for the request.
 
-* **url**{: #Connection.url } (`URL`): The parsed URL of the request. For more details, see
+- **url**{: #Connection.url } (`URL`): The parsed URL of the request. For more details, see
     [Starlette docs](https://www.starlette.io/requests/#url) .
-
 
 ------
 
@@ -48,7 +50,7 @@ Allow client connection with subprotocol.
 
 **Args**
 
-* **subprotocol** (`Optional[str]`): Subprotocol used for communication.
+- **subprotocol** (`Optional[str]`): Subprotocol used for communication.
 
 ------
 
@@ -62,7 +64,7 @@ Close the connection with status code.
 
 **Args**
 
-* **status_code** (`int`): WebSocket status code. Default: `1000` .
+- **status_code** (`int`): WebSocket status code. Default: `1000` .
 
 ------
 
@@ -76,11 +78,11 @@ Receive data from the client.
 
 **Args**
 
-* **mode** (`Union[type[str], type[bytes]]`): Receiving type, `str` or `bytes` .
+- **mode** (`Union[type[str], type[bytes]]`): Receiving type, `str` or `bytes` .
 
 **Returns**
 
-* `Union[str, bytes]`: Data with specified type.
+- `Union[str, bytes]`: Data with specified type.
 
 ------
 
@@ -94,4 +96,4 @@ Send data to the client.
 
 **Args**
 
-* **data** (`AnyStr`): Data sent to the client, must be `str` or `bytes` .
+- **data** (`AnyStr`): Data sent to the client, must be `str` or `bytes` .

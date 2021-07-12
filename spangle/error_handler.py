@@ -2,33 +2,13 @@
 Application blueprint for `Exception`.
 """
 
+from __future__ import annotations
+
 from collections.abc import Callable
-from typing import Optional, Protocol, Union
 
-from .models import Connection, Request, Response
+from .handler_protocols import ErrorHandlerProtocol
 
-
-class HttpErrorHandlerProtocol(Protocol):
-    """
-    Error handler must implement `on_error` .
-    """
-
-    async def on_error(
-        self, req: Request, resp: Response, e: Exception
-    ) -> Optional[Response]:
-        ...
-
-
-class WebSocketErrorHandlerProtocol(Protocol):
-    """
-    Error handler must implement `on_ws_error` .
-    """
-
-    async def on_ws_error(self, conn: Connection, e: Exception) -> None:
-        ...
-
-
-ErrorHandlerProtocol = Union[HttpErrorHandlerProtocol, WebSocketErrorHandlerProtocol]
+__all__ = ["ErrorHandler"]
 
 
 class ErrorHandler:

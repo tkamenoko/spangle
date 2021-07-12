@@ -1,48 +1,11 @@
 site_name: spangle - ASGI framework for modern web application
+site_url: "https://tkamenoko.github.io/spangle/"
 
 docs_dir: "markdown"
 site_dir: "docs"
 repo_url: "https://github.com/tkamenoko/spangle/"
 edit_uri: ""
 
-nav:
-  - Home: index.md
-  - Introduction: introduction.md
-  - Routing: routing.md
-  - HTTP Methods: methods.md
-  - Request: request.md
-  - Response: response.md
-  - Component: component.md
-  - Lifespan Events: lifespan.md
-  - Request Hooks: request-hooks.md
-  - Error Handling: error-handling.md
-  - Static Files: statics.md
-  - Test Client: test-client.md
-  - Advanced Features:
-      - Advanced Features: advanced/index.md
-      - Application Blueprint: advanced/blueprint.md
-      - WebSocket: advanced/websocket.md
-      - Use Decorator: advanced/decorator.md
-      - ASGI Middleware: advanced/middleware.md
-      - Mount Other ASGI App: advanced/mount.md
-      - Default Routing: advanced/default-route.md
-      - CLI Tools: advanced/cli-tools.md
-  - API:
-      - spangle: api/index.md
-      - Module api: api/api-py.md
-      - Module blueprint: api/blueprint-py.md
-      - Module component: api/component-py.md
-      - Module error_handler: api/error_handler-py.md
-      - Module exceptions: api/exceptions-py.md
-      - Module parser: api/parser-py.md
-      - Module testing: api/testing-py.md
-      - Models:
-          - Module models: api/models/index.md
-          - Module http: api/models/http-py.md
-          - Module websocket: api/models/websocket-py.md
-      - CLI:
-          - Module cli: api/cli/index.md
-          - Module run: api/cli/run-py.md
 
 theme:
   name: "material"
@@ -74,6 +37,9 @@ markdown_extensions:
 
 plugins:
   - search
+  - literate-nav:
+      nav_file: SUMMARY.md
+      implicit_index: true
   - inari:
       module: spangle
       out-name: api

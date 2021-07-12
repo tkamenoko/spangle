@@ -1,87 +1,28 @@
 """
 Application blueprint and router.
 """
+
 from __future__ import annotations
 
 import re
-
-# bug: using `collections.abc` causes `TypeError: unhashable type: 'list'`
-# from collections.abc import Callable
+from collections.abc import Callable
 from functools import lru_cache
 from http import HTTPStatus
-from typing import Any, Callable, Optional, Protocol, Union
+from typing import Any, Optional, TypedDict, Literal
 
-from parse import compile
+from parse import Parser, compile
 
-from spangle._utils import _normalize_path
-from spangle.error_handler import ErrorHandler, ErrorHandlerProtocol
-from spangle.models import Request, Response
-from spangle.models.websocket import Connection
-
-Converters = dict[str, Callable[[str], Any]]
-
-
-class BaseHandlerProtocol(Protocol):
-    def __init__(self) -> None:
-        ...
-
-
-class RequestHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_request(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class GetHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_get(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class PostHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_post(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class PutHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_put(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class DeleteHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_delete(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class PatchHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_patch(
-        self, req: Request, resp: Response, **kw: Any
-    ) -> Optional[Response]:
-        ...
-
-
-class WebsocketHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_ws(self, conn: Connection, **kw: Any) -> None:
-        ...
-
-
-AnyRequestHandlerProtocol = Union[
+from ._utils import _normalize_path
+from .error_handler import ErrorHandler
+from .handler_protocols import (
+    AnyRequestHandlerProtocol,
+    ErrorHandlerProtocol,
     RequestHandlerProtocol,
-    GetHandlerProtocol,
-    PostHandlerProtocol,
-    PutHandlerProtocol,
-    DeleteHandlerProtocol,
-    PatchHandlerProtocol,
-    WebsocketHandlerProtocol,
-]
+)
+from .models import Request, Response
+from .types import Converters, LifespanFunction, LifespanHandlers, RoutingStrategy
+
+__all__ = ["Blueprint", "Router"]
 
 
 class Blueprint:
@@ -90,9 +31,10 @@ class Blueprint:
 
     **Attributes**
 
-    * views(`dict[str, tuple[type, Converters]]`): Collected view classes.
-    * events(`dict[str, list[Callable]]`): Registered lifespan handlers.
-    * request_hooks(`dict[str, list[type]]`): Called against every request.
+    * views(`dict[str, tuple[type[AnyRequestHandlerProtocol], Converters, Optional[RoutingStrategy]]]`): Collected view classes.
+    * events(`LifespanHandlers`): Registered lifespan handlers.
+    * request_hooks(`dict["before" | "after", list[type[RequestHandlerProtocol]]]`):
+        Called against every request.
 
     """
 
@@ -100,9 +42,12 @@ class Blueprint:
 
     _handler: ErrorHandler
 
-    views: dict[str, tuple[type[AnyRequestHandlerProtocol], Converters, Optional[str]]]
-    events: dict[str, list[Callable]]
-    request_hooks: dict[str, list[type[RequestHandlerProtocol]]]
+    views: dict[
+        str,
+        tuple[type[AnyRequestHandlerProtocol], Converters, Optional[RoutingStrategy]],
+    ]
+    events: LifespanHandlers
+    request_hooks: dict[Literal["before", "after"], list[type[RequestHandlerProtocol]]]
 
     def __init__(self) -> None:
         """Initialize self."""
@@ -116,7 +61,7 @@ class Blueprint:
         path: str,
         *,
         converters: Optional[Converters] = None,
-        routing: Optional[str] = None,
+        routing: Optional[RoutingStrategy] = None,
     ) -> Callable[[type[AnyRequestHandlerProtocol]], type[AnyRequestHandlerProtocol]]:
         """
         Bind a path to the decorated view. The path will be fixed by routing mode.
@@ -124,9 +69,9 @@ class Blueprint:
         **Args**
 
         * path (`str`): The location of your view.
-        * converters (`Optional[dict[str,Callable]]`): Params converters
+        * converters (`Optional[Converters]`): Params converters
             for dynamic routing.
-        * routing (`Optional[str]`): Routing strategy.
+        * routing (`Optional[RoutingStrategy]`): Routing strategy.
 
         """
 
@@ -146,18 +91,22 @@ class Blueprint:
 
         **Args**
 
-        * e (`Exception`): Subclass of `Exception` you want to handle.
+        * e (`type[Exception]`): Subclass of `Exception` you want to handle.
 
         """
         return self._handler.handle(e)
 
-    def on_start(self, f: Callable) -> Callable:
-        """Decorator for startup events"""
+    def on_start(self, f: LifespanFunction) -> LifespanFunction:
+        """
+        Decorator for startup events.
+        """
         self.events["startup"].append(f)
         return f
 
-    def on_stop(self, f: Callable) -> Callable:
-        """Decorator for shutdown events."""
+    def on_stop(self, f: LifespanFunction) -> LifespanFunction:
+        """
+        Decorator for shutdown events.
+        """
         self.events["shutdown"].append(f)
         return f
 
@@ -200,6 +149,15 @@ class Blueprint:
         self.request_hooks["after"].extend(bp.request_hooks["after"])
 
 
+class RoutesMapping(TypedDict):
+    """
+    Store collected pattern-view mapping.
+    """
+
+    static: dict[str, type[AnyRequestHandlerProtocol]]
+    dynamic: dict[Parser, type[AnyRequestHandlerProtocol]]
+
+
 class Router:
     """
     Manage URLs and views. Do not use this manually.
@@ -207,11 +165,11 @@ class Router:
 
     __slots__ = ("routes", "routing", "default_route")
 
-    routes: dict
-    routing: str
+    routes: RoutesMapping
+    routing: RoutingStrategy
     default_route: Optional[str]
 
-    def __init__(self, routing: str) -> None:
+    def __init__(self, routing: RoutingStrategy) -> None:
         """Initialize self."""
         self.routing = routing
         self.routes = {"static": {}, "dynamic": {}}
@@ -221,7 +179,7 @@ class Router:
         path: str,
         view: type[AnyRequestHandlerProtocol],
         converters: Converters,
-        routing: str,
+        routing: RoutingStrategy,
     ) -> str:
         # normalize path, add route, return the path.
         if not re.match(r".*{([^/:]+)(:[^/:]+)?}.*", path):
@@ -233,7 +191,7 @@ class Router:
         path: str,
         view: type[AnyRequestHandlerProtocol],
         converters: Converters,
-        routing: str,
+        routing: RoutingStrategy,
     ):
         splitted_path = path.split("/")
         fixed = []

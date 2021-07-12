@@ -4,13 +4,24 @@ Component tools.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Protocol, Union
-from spangle._utils import execute
+from contextvars import ContextVar
+from typing import (
+    TYPE_CHECKING,
+    Optional,
+    Protocol,
+    TypeVar,
+    Union,
+    cast,
+    runtime_checkable,
+)
+
+from ._utils import execute
 
 if TYPE_CHECKING:
     from spangle.api import Api
 
 
+@runtime_checkable
 class ComponentProtocol(Protocol):
     """
     Component must be initialized without arguments.
@@ -20,6 +31,7 @@ class ComponentProtocol(Protocol):
         ...
 
 
+@runtime_checkable
 class AsyncStartupComponentProtocol(ComponentProtocol, Protocol):
     async def startup(self) -> None:
         """
@@ -29,6 +41,7 @@ class AsyncStartupComponentProtocol(ComponentProtocol, Protocol):
         ...
 
 
+@runtime_checkable
 class SyncStartupComponentProtocol(ComponentProtocol, Protocol):
     def startup(self) -> None:
         """
@@ -38,6 +51,7 @@ class SyncStartupComponentProtocol(ComponentProtocol, Protocol):
         ...
 
 
+@runtime_checkable
 class AsyncShutdownComponentProtocol(ComponentProtocol, Protocol):
     async def shutdown(self) -> None:
         """
@@ -47,6 +61,7 @@ class AsyncShutdownComponentProtocol(ComponentProtocol, Protocol):
         ...
 
 
+@runtime_checkable
 class SyncShutdownComponentProtocol(ComponentProtocol, Protocol):
     def shutdown(self) -> None:
         """
@@ -64,18 +79,34 @@ AnyComponentProtocol = Union[
     SyncShutdownComponentProtocol,
 ]
 
+T = TypeVar(
+    "T",
+    ComponentProtocol,
+    AsyncStartupComponentProtocol,
+    SyncStartupComponentProtocol,
+    AsyncShutdownComponentProtocol,
+    SyncShutdownComponentProtocol,
+    contravariant=True,
+)
 
-class ComponentsCache:
-    components: dict[type[AnyComponentProtocol], AnyComponentProtocol] = {}
-    api: Api
 
-    def __call__(self, component: type[AnyComponentProtocol]) -> AnyComponentProtocol:
-        return self.components[component]
+class _ComponentsCache:
+    components: dict[type[AnyComponentProtocol], AnyComponentProtocol]
+
+    def __init__(self) -> None:
+        self.components = {}
+
+    def __call__(self, component: type[T]) -> Optional[T]:
+        try:
+            instance: Optional[T] = cast(T, self.components[component])
+        except KeyError:
+            instance = None
+        return instance
 
     async def startup(self) -> None:
 
         [
-            await execute(getattr(c, "startup", lambda _: None))
+            await execute(getattr(c, "startup", lambda: None))
             for c in self.components.values()
             if c is not self
         ]
@@ -83,16 +114,16 @@ class ComponentsCache:
     async def shutdown(self) -> None:
 
         [
-            await execute(getattr(c, "shutdown", lambda _: None))
+            await execute(getattr(c, "shutdown", lambda: None))
             for c in self.components.values()
             if c is not self
         ]
 
 
-cache = ComponentsCache()
+component_ctx = ContextVar("component_ctx", default=_ComponentsCache())
 
 
-def use_component(component: type[AnyComponentProtocol]) -> AnyComponentProtocol:
+def use_component(component: type[T]) -> Optional[T]:
     """
     Return registered component instance.
 
@@ -102,14 +133,13 @@ def use_component(component: type[AnyComponentProtocol]) -> AnyComponentProtocol
 
     **Returns**
 
-    * Component instance.
-
-    **Raises**
-
-    * `KeyError`: Given component is not registered.
+    * Component instance if registered, else `None`.
 
     """
-    return cache(component)
+    return component_ctx.get()(component)
+
+
+api_ctx: ContextVar[Api] = ContextVar("api_ctx")
 
 
 def use_api() -> Api:
@@ -122,7 +152,8 @@ def use_api() -> Api:
 
     **Raises**
 
-    * `AttributeError`: Instance is not initialized.
+    * `KeyError`: Called out of api context.
 
     """
-    return cache.api
+
+    return api_ctx.get()

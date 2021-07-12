@@ -1,7 +1,11 @@
+---
+title: spangle.exceptions
+module_digest: ee750a30fe7c6f4e3a17ca1e0acec60e
+---
+
 # Module spangle.exceptions
 
-[`spangle `](../) exceptions.
-
+[`spangle `](index.md) exceptions.
 
 ## Classes
 
@@ -19,17 +23,15 @@ class MethodNotAllowedError(
 
 **Args**
 
-* **message** (`str`): Print on error page.
-* **status** (`int`): HTTP status code.
-* **headers** (`dict[str, str]`): HTTP headers.
-
+- **message** (`str`): Print on error page.
+- **status** (`int`): HTTP status code.
+- **headers** (`dict[str, str]`): HTTP headers.
 
 ------
 
 #### Base classes {: #MethodNotAllowedError-bases }
 
-* [`SpangleError `](./#SpangleError)
-
+* [`SpangleError `](#SpangleError)
 
 ------
 
@@ -43,17 +45,15 @@ class NotFoundError(self, message="Content not found.", status=HTTPStatus.NOT_FO
 
 **Args**
 
-* **message** (`str`): Print on error page.
-* **status** (`int`): HTTP status code.
-* **headers** (`dict[str, str]`): HTTP headers.
-
+- **message** (`str`): Print on error page.
+- **status** (`int`): HTTP status code.
+- **headers** (`dict[str, str]`): HTTP headers.
 
 ------
 
 #### Base classes {: #NotFoundError-bases }
 
-* [`SpangleError `](./#SpangleError)
-
+* [`SpangleError `](#SpangleError)
 
 ------
 
@@ -67,18 +67,16 @@ class ParseError(self, message="Unsupported format.", status=HTTPStatus.BAD_REQU
 
 **Args**
 
-* **message** (`str`): Print on error page.
-* **status** (`int`): HTTP status code.
-* **headers** (`dict[str, str]`): HTTP headers.
-
+- **message** (`str`): Print on error page.
+- **status** (`int`): HTTP status code.
+- **headers** (`dict[str, str]`): HTTP headers.
 
 ------
 
 #### Base classes {: #ParseError-bases }
 
 * `builtins.ValueError`
-* [`SpangleError `](./#SpangleError)
-
+* [`SpangleError `](#SpangleError)
 
 ------
 
@@ -96,17 +94,15 @@ class SpangleError(
 
 **Args**
 
-* **message** (`str`): Print on error page.
-* **status** (`int`): HTTP status code.
-* **headers** (`dict[str, str]`): HTTP headers.
-
+- **message** (`str`): Print on error page.
+- **status** (`int`): HTTP status code.
+- **headers** (`dict[str, str]`): HTTP headers.
 
 ------
 
 #### Base classes {: #SpangleError-bases }
 
 * `builtins.Exception`
-
 
 ------
 
@@ -120,13 +116,12 @@ class TooLargeRequestError(self, message="Payload too large.", status=HTTPStatus
 
 **Args**
 
-* **message** (`str`): Print on error page.
-* **status** (`int`): HTTP status code.
-* **headers** (`dict[str, str]`): HTTP headers.
-
+- **message** (`str`): Print on error page.
+- **status** (`int`): HTTP status code.
+- **headers** (`dict[str, str]`): HTTP headers.
 
 ------
 
 #### Base classes {: #TooLargeRequestError-bases }
 
-* [`SpangleError `](./#SpangleError)
+* [`SpangleError `](#SpangleError)

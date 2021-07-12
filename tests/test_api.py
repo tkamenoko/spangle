@@ -87,7 +87,7 @@ def stop_async(api: Api = api):
 @test("`{store.__name__}` lifespan methods are called once")
 async def _(api: Api = api, store=each(store_sync, store_async)):
     async with api.client():
-        store_instance = use_component(store)
+        store_instance = api._context.run(use_component, store)
         assert isinstance(store_instance, store)
         store_instance._startup.assert_called_once()
         store_instance._shutdown.assert_not_called()

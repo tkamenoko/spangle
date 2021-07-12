@@ -1,28 +1,33 @@
-"""Main Api class."""
-# bug: using `collections.abc` causes `TypeError: unhashable type: 'list'`
-# from collections.abc import Callable
+"""
+Main Api class.
+"""
 
 import asyncio
 import re
-from typing import Any, Callable, Optional
+from collections.abc import Callable
+from contextvars import Context, copy_context
+from typing import Any, Literal, Optional, Union
 
 import jinja2
 from starlette.middleware.errors import ServerErrorMiddleware
 from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from spangle import models
-from spangle._dispatcher import _dispatch_http, _dispatch_websocket
-from spangle._utils import _normalize_path, execute
-from spangle.blueprint import (
+from . import models
+from ._dispatcher import _dispatch_http, _dispatch_websocket
+from ._utils import _AppRef, _normalize_path, execute
+from .blueprint import Blueprint, Router
+from .component import AnyComponentProtocol, _ComponentsCache, api_ctx, component_ctx
+from .error_handler import ErrorHandler
+from .handler_protocols import (
     AnyRequestHandlerProtocol,
-    Blueprint,
+    ErrorHandlerProtocol,
     RequestHandlerProtocol,
-    Router,
 )
-from spangle.component import AnyComponentProtocol, cache
-from spangle.error_handler import ErrorHandler, ErrorHandlerProtocol
-from spangle.testing import AsyncHttpTestClient
+from .testing import AsyncHttpTestClient
+from .types import Converters, LifespanFunction, LifespanHandlers, RoutingStrategy
+
+__all__ = ["Api"]
 
 
 class Api:
@@ -32,47 +37,51 @@ class Api:
     **Attributes**
 
     * router (`spangle.blueprint.Router`): Manage URLs and views.
-    * mounted_app (`dict[str, Callable]`): ASGI apps mounted under `Api` .
+    * mounted_app (`dict[str, ASGIApp]`): ASGI apps mounted under `Api` .
     * error_handlers (`dict[type[Exception], type[ErrorHandlerProtocol]]`): Called when
         `Exception` is raised.
     * request_hooks (`dict[str, list[type]]`): Called against every request.
-    * lifespan_handlers (`dict[str, list[Callable]]`): Registered lifespan hooks.
+    * lifespan_handlers (`spangle.types.LifespanHandlers`): Registered lifespan hooks.
     * favicon (`Optional[str]`): Place of `favicon.ico ` in `static_dir`.
     * debug (`bool`): Server running mode.
-    * routing (`str`): Routing strategy about trailing slash.
+    * routing (`spangle.types.RoutingStrategy`): Routing strategy about trailing slash.
     * templates_dir (`str`): Path to `Jinja2` templates.
     * max_upload_bytes (`int`): Allowed user uploads size.
 
     """
 
-    _app: ASGIApp
-    _view_cache: dict[type[AnyRequestHandlerProtocol], AnyRequestHandlerProtocol]
+    _app_ref: _AppRef
+    _view_cache: dict[
+        type[Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol]],
+        Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol],
+    ]
     _reverse_views: dict[type[AnyRequestHandlerProtocol], str]
-    _jinja_env: jinja2.Environment
+    _jinja_env: Optional[jinja2.Environment]
+    _context: Context
 
     router: Router
-    mounted_app: dict[str, Callable]
+    mounted_app: dict[str, ASGIApp]
     error_handlers: dict[type[Exception], type[ErrorHandlerProtocol]]
     request_hooks: dict[str, list[type[RequestHandlerProtocol]]]
-    lifespan_handlers: dict[str, list[Callable]]
+    lifespan_handlers: LifespanHandlers
     favicon: Optional[str]
     debug: bool
-    routing: str
-    templates_dir: str
+    routing: RoutingStrategy
+    templates_dir: Optional[str]
     max_upload_bytes: int
 
     def __init__(
         self,
-        debug=False,
+        debug: bool = False,
         static_root: Optional[str] = "/static",
         static_dir: Optional[str] = "static",
         favicon: Optional[str] = None,
-        auto_escape=True,
-        templates_dir="templates",
-        routing="no_slash",
+        auto_escape: bool = True,
+        templates_dir: Optional[str] = "templates",
+        routing: RoutingStrategy = "no_slash",
         default_route: Optional[str] = None,
-        middlewares: Optional[list[tuple[Callable, dict]]] = None,
-        components: list[type[AnyComponentProtocol]] = None,
+        middleware: Optional[list[tuple[Callable, dict]]] = None,
+        components: Optional[list[type[AnyComponentProtocol]]] = None,
         max_upload_bytes: int = 10 * (2 ** 10) ** 2,
     ) -> None:
         """
@@ -90,20 +99,14 @@ class Api:
             escaping.
         * templates_dir (`Optional[str]`): The root directory that contains `Jinja2`
             templates. If you want to disable rendering templates, set `None`.
-        * routing (`str`): Set routing mode:
-
-            * `"no_slash"` (default): always redirect from `/route/` to `/route` with
-                `308 PERMANENT_REDIRECT` .
-            * `"slash"` : always redirect from `/route` to `/route/` with
-                `308 PERMANENT_REDIRECT` .
-            * `"strict"` : distinct `/route` from `/route/` .
-            * `"clone"` : return same view between `/route` and `/route/` .
-
+        * routing (`spangle.types.RoutingStrategy`): Set routing strategy.
+            Default: `"no_slash"`
         * default_route (`Optional[str]`): Use the view bound with given path instead
             of returning 404.
-        * middlewares (`Optional[list[tuple[Callable, dict]]]`): Your custom list of
-            asgi middlewares. Add later, called faster.
-        * components (`Optional[list[type[AnyComponentProtocol]]]`): list of class used in your views.
+        * middleware (`Optional[list[tuple[Callable, dict]]]`): Your custom list of
+            asgi middleware. Add later, called faster.
+        * components (`Optional[list[type[AnyComponentProtocol]]]`):
+            list of class used in your views.
         * max_upload_bytes (`int`): Limit of user upload size. Defaults to 10MB.
 
         """
@@ -115,6 +118,9 @@ class Api:
         self.debug = debug
         self.favicon = None
         self.max_upload_bytes = max_upload_bytes
+        self._context = copy_context()
+        self._context.run(component_ctx.set, _ComponentsCache())
+        self._context.run(api_ctx.set, self)
 
         # static files.
         if static_dir is not None and static_root is not None:
@@ -124,19 +130,21 @@ class Api:
         # init components
         for component in components or []:
             self.register_component(component)
-        cache.api = self
         # init lifespan handlers
         self.lifespan_handlers = {"startup": [], "shutdown": []}
         # Jinja environment
         self.templates_dir = templates_dir
-        self._jinja_env = jinja2.Environment(
-            loader=jinja2.FileSystemLoader([self.templates_dir], followlinks=True),
-            autoescape=jinja2.select_autoescape(
-                ["html", "xml", "j2"] if auto_escape else []
-            ),
-            enable_async=True,
-        )
-        self._jinja_env.globals.update({"api": self})  # Give reference to self.
+        if self.templates_dir is None:
+            self._jinja_env = None
+        else:
+            self._jinja_env = jinja2.Environment(
+                loader=jinja2.FileSystemLoader([self.templates_dir], followlinks=True),
+                autoescape=jinja2.select_autoescape(
+                    ["html", "xml", "j2"] if auto_escape else []
+                ),
+                enable_async=True,
+            )
+            self._jinja_env.globals.update({"api": self})  # Give reference to self.
 
         # routing mode.
         self.routing = routing
@@ -148,13 +156,15 @@ class Api:
         self.request_hooks = {"before": [], "after": []}
 
         # init middlewares.
-        self._app: ASGIApp = self._dispatch
-        for middleware in middlewares or []:
-            self.add_middleware(middleware[0], **middleware[1])
+        self._app_ref = _AppRef(app=self._dispatch)
+        for md in middleware or []:
+            self.add_middleware(md[0], **md[1])
         self.add_middleware(ServerErrorMiddleware, debug=self.debug)
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        await self._app(scope, receive, send)
+        await self._context.run(
+            asyncio.create_task, self._app_ref["app"](scope, receive, send)
+        )
 
     async def _dispatch(self, scope: Scope, receive: Receive, send: Send) -> None:
         # check request type
@@ -218,49 +228,56 @@ class Api:
             raise ValueError("Invalid scheme.")
         await t
 
-    def add_lifespan_handler(self, event_type: str, handler: Callable) -> None:
+    def add_lifespan_handler(
+        self,
+        event_type: Literal["startup", "shutdown"],
+        handler: LifespanFunction,
+    ) -> None:
         """
         Register functions called at startup/shutdown.
 
         **Args**
 
-        * event_type (`str`): The event type, `"startup"` or `"shutdown"` .
-        * handler (`Callable`): The function called at the event.
-
-        **Raises**
-
-        * `ValueError`: If `event_type` is invalid event name.
+        * event_type (`"startup" | "shutdown"`): The event type.
+        * handler (`spangle.api.LifespanFunction`): The function called at the event.
 
         """
-        if event_type not in ("startup", "shutdown"):
-            raise ValueError(f"{event_type} is invalid event type.")
+
         self.lifespan_handlers[event_type].append(handler)
 
-    def on_start(self, f: Callable) -> Callable:
-        """Decorator for startup events."""
+    def on_start(self, f: LifespanFunction) -> LifespanFunction:
+        """
+        Decorator for startup events.
+        """
         self.add_lifespan_handler("startup", f)
         return f
 
-    def on_stop(self, f: Callable) -> Callable:
-        """Decorator for shutdown events."""
+    def on_stop(self, f: LifespanFunction) -> LifespanFunction:
+        """
+        Decorator for shutdown events.
+        """
         self.add_lifespan_handler("shutdown", f)
         return f
 
     async def _startup(self) -> None:
+        async def _in_context():
+            cache_instance = component_ctx.get()
+            # call `startup` of components first.
+            await cache_instance.startup()
+            # call startup handlers.
+            [await execute(handler) for handler in self.lifespan_handlers["startup"]]
 
-        # call `startup` of components first.
-        await cache.startup()
-
-        # call startup handlers.
-        [await execute(handler) for handler in self.lifespan_handlers["startup"]]
+        await self._context.run(asyncio.create_task, _in_context())
 
     async def _shutdown(self) -> None:
+        async def _in_context():
+            cache_instance = component_ctx.get()
+            # call shutdown handlers.
+            [await execute(handler) for handler in self.lifespan_handlers["shutdown"]]
+            # call `shutdown` of components at last.
+            await cache_instance.shutdown()
 
-        # call shutdown handlers.
-        [await execute(handler) for handler in self.lifespan_handlers["shutdown"]]
-
-        # call `shutdown` of components at last.
-        await cache.shutdown()
+        await self._context.run(asyncio.create_task, _in_context())
 
     def client(self, timeout: Optional[float] = 1) -> AsyncHttpTestClient:
         """
@@ -283,14 +300,18 @@ class Api:
     def before_request(
         self, handler: type[RequestHandlerProtocol]
     ) -> type[RequestHandlerProtocol]:
-        """Decorator to add a class called before each request processed."""
+        """
+        Decorator to add a class called before each request processed.
+        """
         self.request_hooks["before"].append(handler)
         return handler
 
     def after_request(
         self, handler: type[RequestHandlerProtocol]
     ) -> type[RequestHandlerProtocol]:
-        """Decorator to add a class called after each request processed."""
+        """
+        Decorator to add a class called after each request processed.
+        """
         self.request_hooks["after"].append(handler)
         return handler
 
@@ -309,7 +330,13 @@ class Api:
         * Component class itself.
 
         """
-        cache.components[component] = component()
+
+        def _in_context():
+            cache_instance = component_ctx.get()
+            cache_instance.components.update({component: component()})
+
+        self._context.run(_in_context)
+
         return component
 
     def add_blueprint(self, path: str, blueprint: Blueprint) -> None:
@@ -350,8 +377,8 @@ class Api:
         self,
         path: str,
         *,
-        converters: Optional[dict[str, Callable[[str], Any]]] = None,
-        routing: Optional[str] = None,
+        converters: Optional[Converters] = None,
+        routing: Optional[RoutingStrategy] = None,
     ) -> Callable[[type[AnyRequestHandlerProtocol]], type[AnyRequestHandlerProtocol]]:
         """
         Mount the decorated view to the given path directly.
@@ -359,9 +386,9 @@ class Api:
         **Args**
 
         * path (`str`): The location for the view.
-        * converters (`Optional[dict[str, Callable[[str], Any]]]`): Params converters
+        * converters (`Optional[Converters]`): Params converters
             for dynamic routing.
-        * routing (`Optional[str]`): Routing strategy.
+        * routing (`Optional[RoutingStrategy]`): Routing strategy.
 
         """
 
@@ -415,7 +442,7 @@ class Api:
         * **config: params for the middleware.
 
         """
-        self._app = middleware(self._app, **config)  # type: ignore
+        self._app_ref = _AppRef(app=middleware(self._app_ref["app"], **config))
 
     def add_error_handler(self, eh: ErrorHandler) -> None:
         """
@@ -437,7 +464,7 @@ class Api:
 
         **Args**
 
-        * e (`Exception`): Subclass of `Exception` you want to handle.
+        * e (`type[Exception]`): Subclass of `Exception` you want to handle.
 
         """
         eh = ErrorHandler()

@@ -1,7 +1,11 @@
+---
+title: spangle.parser
+module_digest: 7ee4ac6b3dc2ea81bca4a26d104c541f
+---
+
 # Module spangle.parser
 
 Types to parse user uploads.
-
 
 ## Classes
 
@@ -15,10 +19,9 @@ Named tuple to accept client's uploads via `multipart/form-data` .
 
 **Attributes**
 
-* **filename** (`str`): Filename, includes `.ext` .
-* **file** (`SpooledTemporaryFile`): File-like object.
-* **mimetype** (`str`): File's `"mime/type"` .
-
+- **filename** (`str`): Filename, includes `.ext` .
+- **file** (`SpooledTemporaryFile`): File-like object.
+- **mimetype** (`str`): File's `"mime/type"` .
 
 ------
 
