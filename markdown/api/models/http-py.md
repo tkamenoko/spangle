@@ -1,6 +1,6 @@
 ---
 title: spangle.models.http
-module_digest: 6dd2b333b4aab2157fda4f88268ea6f2
+module_digest: dbf00fa5611a6b839463ea504f32e9b8
 ---
 
 # Module spangle.models.http

@@ -1,5 +1,5 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # Lifespan Event
@@ -8,7 +8,7 @@ version: v0.8.0
 
 ## Define events in components
 
-As you read [this](/component) , components have lifecycle event hooks.
+As you read [this](component.md) , components have lifecycle event hooks.
 
 ```python
 class Life:

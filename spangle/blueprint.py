@@ -8,9 +8,9 @@ import re
 from collections.abc import Callable
 from functools import lru_cache
 from http import HTTPStatus
-from typing import Any, Optional
+from typing import Any, Optional, TypedDict, Literal
 
-from parse import compile
+from parse import Parser, compile
 
 from ._utils import _normalize_path
 from .error_handler import ErrorHandler
@@ -20,11 +20,9 @@ from .handler_protocols import (
     RequestHandlerProtocol,
 )
 from .models import Request, Response
+from .types import Converters, LifespanFunction, LifespanHandlers, RoutingStrategy
 
-__all__ = ["Converters", "Blueprint", "Router"]
-
-
-Converters = dict[str, Callable[[str], Any]]
+__all__ = ["Blueprint", "Router"]
 
 
 class Blueprint:
@@ -33,9 +31,10 @@ class Blueprint:
 
     **Attributes**
 
-    * views(`dict[str, tuple[type, Converters]]`): Collected view classes.
-    * events(`dict[str, list[Callable]]`): Registered lifespan handlers.
-    * request_hooks(`dict[str, list[type]]`): Called against every request.
+    * views(`dict[str, tuple[type[AnyRequestHandlerProtocol], Converters, Optional[RoutingStrategy]]]`): Collected view classes.
+    * events(`LifespanHandlers`): Registered lifespan handlers.
+    * request_hooks(`dict["before" | "after", list[type[RequestHandlerProtocol]]]`):
+        Called against every request.
 
     """
 
@@ -43,9 +42,12 @@ class Blueprint:
 
     _handler: ErrorHandler
 
-    views: dict[str, tuple[type[AnyRequestHandlerProtocol], Converters, Optional[str]]]
-    events: dict[str, list[Callable]]
-    request_hooks: dict[str, list[type[RequestHandlerProtocol]]]
+    views: dict[
+        str,
+        tuple[type[AnyRequestHandlerProtocol], Converters, Optional[RoutingStrategy]],
+    ]
+    events: LifespanHandlers
+    request_hooks: dict[Literal["before", "after"], list[type[RequestHandlerProtocol]]]
 
     def __init__(self) -> None:
         """Initialize self."""
@@ -59,7 +61,7 @@ class Blueprint:
         path: str,
         *,
         converters: Optional[Converters] = None,
-        routing: Optional[str] = None,
+        routing: Optional[RoutingStrategy] = None,
     ) -> Callable[[type[AnyRequestHandlerProtocol]], type[AnyRequestHandlerProtocol]]:
         """
         Bind a path to the decorated view. The path will be fixed by routing mode.
@@ -67,9 +69,9 @@ class Blueprint:
         **Args**
 
         * path (`str`): The location of your view.
-        * converters (`Optional[dict[str,Callable]]`): Params converters
+        * converters (`Optional[Converters]`): Params converters
             for dynamic routing.
-        * routing (`Optional[str]`): Routing strategy.
+        * routing (`Optional[RoutingStrategy]`): Routing strategy.
 
         """
 
@@ -89,18 +91,22 @@ class Blueprint:
 
         **Args**
 
-        * e (`Exception`): Subclass of `Exception` you want to handle.
+        * e (`type[Exception]`): Subclass of `Exception` you want to handle.
 
         """
         return self._handler.handle(e)
 
-    def on_start(self, f: Callable) -> Callable:
-        """Decorator for startup events"""
+    def on_start(self, f: LifespanFunction) -> LifespanFunction:
+        """
+        Decorator for startup events.
+        """
         self.events["startup"].append(f)
         return f
 
-    def on_stop(self, f: Callable) -> Callable:
-        """Decorator for shutdown events."""
+    def on_stop(self, f: LifespanFunction) -> LifespanFunction:
+        """
+        Decorator for shutdown events.
+        """
         self.events["shutdown"].append(f)
         return f
 
@@ -143,6 +149,15 @@ class Blueprint:
         self.request_hooks["after"].extend(bp.request_hooks["after"])
 
 
+class RoutesMapping(TypedDict):
+    """
+    Store collected pattern-view mapping.
+    """
+
+    static: dict[str, type[AnyRequestHandlerProtocol]]
+    dynamic: dict[Parser, type[AnyRequestHandlerProtocol]]
+
+
 class Router:
     """
     Manage URLs and views. Do not use this manually.
@@ -150,11 +165,11 @@ class Router:
 
     __slots__ = ("routes", "routing", "default_route")
 
-    routes: dict
-    routing: str
+    routes: RoutesMapping
+    routing: RoutingStrategy
     default_route: Optional[str]
 
-    def __init__(self, routing: str) -> None:
+    def __init__(self, routing: RoutingStrategy) -> None:
         """Initialize self."""
         self.routing = routing
         self.routes = {"static": {}, "dynamic": {}}
@@ -164,7 +179,7 @@ class Router:
         path: str,
         view: type[AnyRequestHandlerProtocol],
         converters: Converters,
-        routing: str,
+        routing: RoutingStrategy,
     ) -> str:
         # normalize path, add route, return the path.
         if not re.match(r".*{([^/:]+)(:[^/:]+)?}.*", path):
@@ -176,7 +191,7 @@ class Router:
         path: str,
         view: type[AnyRequestHandlerProtocol],
         converters: Converters,
-        routing: str,
+        routing: RoutingStrategy,
     ):
         splitted_path = path.split("/")
         fixed = []

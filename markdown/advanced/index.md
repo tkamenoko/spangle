@@ -1,5 +1,5 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # Advanced features
@@ -8,10 +8,10 @@ version: v0.8.0
 
 ## Feature list
 
-- [Application Blueprint](./blueprint)
-- [WebSocket](./websocket)
-- [Use Decorator](./decorator)
-- [ASGI Middleware](./middleware)
-- [Mount Other ASGI App](./mount)
-- [Default Routing](./default-route)
-- [CLI Tools](./cli-tools)
+- [Application Blueprint](blueprint.md)
+- [WebSocket](websocket.md)
+- [Use Decorator](decorator.md)
+- [ASGI Middleware](middleware.md)
+- [Mount Other ASGI App](mount.md)
+- [Default Routing](default-route.md)
+- [CLI Tools](cli-tools.md)

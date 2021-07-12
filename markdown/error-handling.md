@@ -1,5 +1,5 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # Error Handling
@@ -22,7 +22,7 @@ class Handle:
 
 ```
 
-You can also use [`ErrorHandler`](/api/error_handler-py#ErrorHandler) instance.
+You can also use [`ErrorHandler`](api/error_handler-py.md#ErrorHandler) instance.
 
 ```python
 from spangle import Api, ErrorHandler

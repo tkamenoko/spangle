@@ -1,5 +1,5 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # Introduction
@@ -40,6 +40,6 @@ class Hello:
 hypercorn hello:api
 ```
 
-Now your first `spangle` app is running on your machine! Let's access `127.0.0.1:8000` .
+Now your first `spangle` app is running on your machine! Let's open `127.0.0.1:8000` in your browser.
 
 To config ASGI server, visit [hypercorn's repository](https://gitlab.com/pgjones/hypercorn) .

@@ -1,5 +1,5 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # WebSocket
@@ -31,7 +31,7 @@ HTTP Upgrade Request is processed in an ASGI server, so you don't need to send `
 
 ## Error handling for WebSocket
 
-You can process WebSocket errors with [`ErrorHandler`](../error-handling).
+You can process WebSocket errors with [`ErrorHandler`](../error-handling.md).
 
 ```python
 @api.handle(TypeError)

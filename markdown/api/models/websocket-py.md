@@ -1,6 +1,6 @@
 ---
 title: spangle.models.websocket
-module_digest: 34e6f2db9377984538024e7fd9b18e21
+module_digest: 8b3ac50a57d64af0c3506d4f8c41fc08
 ---
 
 # Module spangle.models.websocket

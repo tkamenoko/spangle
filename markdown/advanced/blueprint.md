@@ -1,14 +1,14 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # Application Blueprint
 
-Want to split an application? Or put views together under the same route? Use [`Blueprint`](/api/blueprint-py#Blueprint) .
+Want to split an application? Or put views together under the same route? Use [`Blueprint`](../api/blueprint-py.md#Blueprint) .
 
 ## Usage
 
-`Blueprint` has similar methods to [`Api`](/api/api-py#Api) , so you can use `Blueprint` to define views, hooks, and handlers.
+`Blueprint` has similar methods to [`Api`](../api/api-py.md#Api) , so you can use `Blueprint` to define views, hooks, and handlers.
 
 ```python
 from spangle import Api, Blueprint

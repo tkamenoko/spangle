@@ -1,10 +1,10 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # Request Hooks
 
-If you want to do something against all requests, use [`before_request`](/api/api-py#Api.before_request) and [`after_request`](/api/api-py#Api.after_request).
+If you want to do something against all requests, use [`before_request`](api/api-py.md#Api.before_request) and [`after_request`](api/api-py.md#Api.after_request).
 
 ## Usage
 

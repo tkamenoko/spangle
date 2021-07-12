@@ -1,4 +1,5 @@
 """Types to parse user uploads."""
+
 from __future__ import annotations
 
 import asyncio

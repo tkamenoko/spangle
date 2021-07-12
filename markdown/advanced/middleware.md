@@ -1,5 +1,5 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # ASGI Middleware
@@ -8,7 +8,7 @@ version: v0.8.0
 
 ## Append middlewares
 
-To use middlewares, call [`Api.add_middleware`](/api/api-py#Api.add_middleware) with callable and its config.
+To use middlewares, call [`Api.add_middleware`](../api/api-py.md#Api.add_middleware) with callable and its config.
 
 ```python
 from spangle import Api

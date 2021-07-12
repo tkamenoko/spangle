@@ -1,10 +1,10 @@
 ---
-version: v0.8.0
+version: v0.9.0
 ---
 
 # Request
 
-[`Request`](/api/models/http-py#Request) contains data sent by client. Most attributes are read-only, but you can use `state` to store objects like user ID.
+[`Request`](api/models/http-py.md#Request) contains data sent by client. Most attributes are read-only, but you can use `state` to store objects like user ID.
 
 ## Get request headers
 
@@ -66,7 +66,7 @@ class Cookies:
 
 ### Acceptable types
 
-To test what types are allowed by a client, use [`accept`](/api/models/http-py#Request.accept) .
+To test what types are allowed by a client, use [`accept`](api/models/http-py.md#Request.accept) .
 
 ```python
 @api.route("/accepts")
@@ -106,7 +106,7 @@ class Strings:
 
 ### Receive form data
 
-In many cases, the request body has a structure. [`media`](/api/models/http-py#Request.media) parses the body to `MultiDict` . `application/x-www-form-urlencoded` (`form`) , `multipart/form-data` (`multipart`) , and `application/json` (`json`) are supported.
+In many cases, the request body has a structure. [`media`](api/models/http-py.md#Request.media) parses the body to `MultiDict` . `application/x-www-form-urlencoded` (`form`) , `multipart/form-data` (`multipart`) , and `application/json` (`json`) are supported.
 
 ```python
 @api.route("/form")
@@ -134,7 +134,7 @@ class Custom:
 
 ### Limit upload size
 
-You can limit upload size. [`Api`](/api/api-py#Api) accepts application default, and you can set the limit against each request.
+You can limit upload size. [`Api`](api/api-py.md#Api) accepts application default, and you can set the limit against each request.
 
 ```python
 @api.route("limit-upload")

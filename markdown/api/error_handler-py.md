@@ -1,6 +1,6 @@
 ---
 title: spangle.error_handler
-module_digest: 4f4b7b3605c73effb33fa1569518376d
+module_digest: 42dc45d7ba8f656139296ec2daa912a7
 ---
 
 # Module spangle.error_handler
@@ -36,57 +36,3 @@ Bind `Exception` to the decolated view.
 **Args**
 
 - **e** (`type[Exception]`): Subclass of `Exception` you want to handle.
-
-------
-
-### HttpErrorHandlerProtocol {: #HttpErrorHandlerProtocol }
-
-```python
-class HttpErrorHandlerProtocol(*args, **kwargs)
-```
-
-Error handler must implement `on_error` .
-
-------
-
-#### Base classes {: #HttpErrorHandlerProtocol-bases }
-
-* `typing.Protocol`
-
-------
-
-#### Methods {: #HttpErrorHandlerProtocol-methods }
-
-[**on_error**](#HttpErrorHandlerProtocol.on_error){: #HttpErrorHandlerProtocol.on_error }
-
-```python
-async def on_error(
-    self, req: Request, resp: Response, e: Exception
-    ) -> Optional[Response]
-```
-
-------
-
-### WebSocketErrorHandlerProtocol {: #WebSocketErrorHandlerProtocol }
-
-```python
-class WebSocketErrorHandlerProtocol(*args, **kwargs)
-```
-
-Error handler must implement `on_ws_error` .
-
-------
-
-#### Base classes {: #WebSocketErrorHandlerProtocol-bases }
-
-* `typing.Protocol`
-
-------
-
-#### Methods {: #WebSocketErrorHandlerProtocol-methods }
-
-[**on_ws_error**](#WebSocketErrorHandlerProtocol.on_ws_error){: #WebSocketErrorHandlerProtocol.on_ws_error }
-
-```python
-async def on_ws_error(self, conn: Connection, e: Exception) -> None
-```
