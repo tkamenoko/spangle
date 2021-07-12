@@ -4,7 +4,7 @@ version: v0.9.0
 
 # Application Blueprint
 
-Want to split an application? Or put views together under the same route? Use [`Blueprint`](api/blueprint-py.md#Blueprint) .
+Want to split an application? Or put views together under the same route? Use [`Blueprint`](../api/blueprint-py.md#Blueprint) .
 
 ## Usage
 

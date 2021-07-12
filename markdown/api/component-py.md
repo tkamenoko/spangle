@@ -1,6 +1,6 @@
 ---
 title: spangle.component
-module_digest: 8f34ecdc4c26eb3122eafea20d49edea
+module_digest: 715f0dd79166dd2ef75f5342b0c4535f
 ---
 
 # Module spangle.component
@@ -83,32 +83,6 @@ Component must be initialized without arguments.
 
 ------
 
-### ComponentsCache {: #ComponentsCache }
-
-```python
-class ComponentsCache()
-```
-
-------
-
-#### Methods {: #ComponentsCache-methods }
-
-[**shutdown**](#ComponentsCache.shutdown){: #ComponentsCache.shutdown }
-
-```python
-async def shutdown(self) -> None
-```
-
-------
-
-[**startup**](#ComponentsCache.startup){: #ComponentsCache.startup }
-
-```python
-async def startup(self) -> None
-```
-
-------
-
 ### SyncShutdownComponentProtocol {: #SyncShutdownComponentProtocol }
 
 ```python
@@ -180,14 +154,14 @@ Return [`Api `](api-py.md#Api) instance.
 - [`Api `](api-py.md#Api)
 **Raises**
 
-- `AttributeError`: Instance is not initialized.
+- `KeyError`: Called out of api context.
 
 ------
 
 ### use_component {: #use_component }
 
 ```python
-def use_component(component: type[AnyComponentProtocol]) -> AnyComponentProtocol
+def use_component(component: type[T]) -> Optional[T]
 ```
 
 Return registered component instance.
@@ -198,8 +172,4 @@ Return registered component instance.
 
 **Returns**
 
-* Component instance.
-
-**Raises**
-
-- `KeyError`: Given component is not registered.
+* Component instance if registered, else `None`.

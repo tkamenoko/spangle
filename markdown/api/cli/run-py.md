@@ -1,6 +1,6 @@
 ---
 title: spangle.cli.run
-module_digest: 192e848ce1b9f9a9d6cec8bb17da4edf
+module_digest: 2d537990a255a85c30eaa1d1f51bf47e
 ---
 
 # Module spangle.cli.run
@@ -18,7 +18,7 @@ def main()
 ### urls_ts {: #urls_ts }
 
 ```python
-def urls_ts(args)
+def urls_ts(args: argparse.Namespace) -> None
 ```
 
 Print `url_for` function written in TypeScript.

@@ -1,9 +1,11 @@
 ---
 title: spangle
-module_digest: 678c7b6b311de29cff37b41c8b94a5ca
+module_digest: 4cc68b87deddb3f599457935eb428014
 ---
 
 # Module spangle
+
+spangle - A small and flexible ASGI application framework for modern web.
 
 ## Submodules
 
@@ -19,8 +21,12 @@ module_digest: 678c7b6b311de29cff37b41c8b94a5ca
 
 [spangle.exceptions](exceptions-py.md)
 
+[spangle.handler_protocols](handler_protocols-py.md)
+
 [spangle.models](models/index.md)
 
 [spangle.parser](parser-py.md)
 
 [spangle.testing](testing-py.md)
+
+[spangle.types](types-py.md)

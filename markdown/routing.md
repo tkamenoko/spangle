@@ -92,7 +92,7 @@ See [`parse`](https://github.com/r1chardj0n3s/parse) for more details.
 
 ## Routing Strategies
 
-`spangle` has 3 strategies about trailing slash.
+`spangle` has 4 strategies about trailing slash.
 
 - `"no_slash"` (default): always redirect from `/route/` to `/route` with `308 PERMANENT_REDIRECT` .
 - `"slash"` : always redirect from `/route` to `/route/` with `308 PERMANENT_REDIRECT` .

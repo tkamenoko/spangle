@@ -1,6 +1,6 @@
 ---
 title: spangle.parser
-module_digest: 052e3d49892e44532702031a303fdad0
+module_digest: 7ee4ac6b3dc2ea81bca4a26d104c541f
 ---
 
 # Module spangle.parser

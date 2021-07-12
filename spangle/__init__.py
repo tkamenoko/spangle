@@ -1,5 +1,5 @@
 """
-Spangle - A small and flexible ASGI application framework for modern web.
+spangle - A small and flexible ASGI application framework for modern web.
 """
 
 from .api import Api

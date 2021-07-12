@@ -1,6 +1,6 @@
 ---
 title: spangle.api
-module_digest: d5ec34a780d93eb0119ffde914f7c9c6
+module_digest: e3625fc4cc5833e604d1d43321d75a58
 ---
 
 # Module spangle.api
@@ -14,16 +14,16 @@ Main Api class.
 ```python
 class Api(
     self,
-    debug=False,
+    debug: bool = False,
     static_root: Optional[str] = "/static",
     static_dir: Optional[str] = "static",
     favicon: Optional[str] = None,
-    auto_escape=True,
-    templates_dir="templates",
-    routing="no_slash",
+    auto_escape: bool = True,
+    templates_dir: Optional[str] = "templates",
+    routing: RoutingStrategy = "no_slash",
     default_route: Optional[str] = None,
-    middlewares: Optional[list[tuple[Callable, dict]]] = None,
-    components: list[type[AnyComponentProtocol]] = None,
+    middleware: Optional[list[tuple[Callable, dict]]] = None,
+    components: Optional[list[type[AnyComponentProtocol]]] = None,
     max_upload_bytes: int = 10 * (2 ** 10) ** 2,)
 ```
 
@@ -32,14 +32,14 @@ The main application class.
 **Attributes**
 
 - **router** (`spangle.blueprint.Router`): Manage URLs and views.
-- **mounted_app** (`dict[str, Callable]`): ASGI apps mounted under `Api` .
+- **mounted_app** (`dict[str, ASGIApp]`): ASGI apps mounted under `Api` .
 - **error_handlers** (`dict[type[Exception], type[ErrorHandlerProtocol]]`): Called when
     `Exception` is raised.
 - **request_hooks** (`dict[str, list[type]]`): Called against every request.
-- **lifespan_handlers** (`dict[str, list[Callable]]`): Registered lifespan hooks.
+- **lifespan_handlers** (`spangle.types.LifespanHandlers`): Registered lifespan hooks.
 - **favicon** (`Optional[str]`): Place of `favicon.ico ` in `static_dir`.
 - **debug** (`bool`): Server running mode.
-- **routing** (`str`): Routing strategy about trailing slash.
+- **routing** (`spangle.types.RoutingStrategy`): Routing strategy about trailing slash.
 - **templates_dir** (`str`): Path to `Jinja2` templates.
 - **max_upload_bytes** (`int`): Allowed user uploads size.
 
@@ -57,19 +57,12 @@ The main application class.
     escaping.
 - **templates_dir** (`Optional[str]`): The root directory that contains `Jinja2`
     templates. If you want to disable rendering templates, set `None`.
-- **routing** (`str`): Set routing mode:
-
-    * `"no_slash"` (default): always redirect from `/route/` to `/route` with
-        `308 PERMANENT_REDIRECT` .
-    * `"slash"` : always redirect from `/route` to `/route/` with
-        `308 PERMANENT_REDIRECT` .
-    * `"strict"` : distinct `/route` from `/route/` .
-    * `"clone"` : return same view between `/route` and `/route/` .
-
+- **routing** (`spangle.types.RoutingStrategy`): Set routing strategy.
+    Default: `"no_slash"`
 - **default_route** (`Optional[str]`): Use the view bound with given path instead
     of returning 404.
-- **middlewares** (`Optional[list[tuple[Callable, dict]]]`): Your custom list of
-    asgi middlewares. Add later, called faster.
+- **middleware** (`Optional[list[tuple[Callable, dict]]]`): Your custom list of
+    asgi middleware. Add later, called faster.
 - **components** (`Optional[list[type[AnyComponentProtocol]]]`): list of class used in your views.
 - **max_upload_bytes** (`int`): Limit of user upload size. Defaults to 10MB.
 
@@ -111,19 +104,19 @@ Register `spangle.error_handler.ErrorHandler` to the api.
 [**add_lifespan_handler**](#Api.add_lifespan_handler){: #Api.add_lifespan_handler }
 
 ```python
-def add_lifespan_handler(self, event_type: str, handler: Callable) -> None
+def add_lifespan_handler(
+    self,
+    event_type: Literal["startup", "shutdown"],
+    handler: LifespanFunction,
+    ) -> None
 ```
 
 Register functions called at startup/shutdown.
 
 **Args**
 
-- **event_type** (`str`): The event type, `"startup"` or `"shutdown"` .
-- **handler** (`Callable`): The function called at the event.
-
-**Raises**
-
-- `ValueError`: If `event_type` is invalid event name.
+- **event_type** (`"startup" | "shutdown"`): The event type.
+- **handler** (`spangle.api.LifespanFunction`): The function called at the event.
 
 ------
 
@@ -199,7 +192,7 @@ Bind `Exception` to the decorated view.
 
 **Args**
 
-- **e** (`Exception`): Subclass of `Exception` you want to handle.
+- **e** (`type[Exception]`): Subclass of `Exception` you want to handle.
 
 ------
 
@@ -221,7 +214,7 @@ Mount any ASGI3 app under the `path`.
 [**on_start**](#Api.on_start){: #Api.on_start }
 
 ```python
-def on_start(self, f: Callable) -> Callable
+def on_start(self, f: LifespanFunction) -> LifespanFunction
 ```
 
 Decorator for startup events.
@@ -231,7 +224,7 @@ Decorator for startup events.
 [**on_stop**](#Api.on_stop){: #Api.on_stop }
 
 ```python
-def on_stop(self, f: Callable) -> Callable
+def on_stop(self, f: LifespanFunction) -> LifespanFunction
 ```
 
 Decorator for shutdown events.
@@ -265,8 +258,8 @@ def route(
     self,
     path: str,
     *,
-    converters: Optional[dict[str, Callable[[str], Any]]] = None,
-    routing: Optional[str] = None,
+    converters: Optional[Converters] = None,
+    routing: Optional[RoutingStrategy] = None,
     ) -> Callable[[type[AnyRequestHandlerProtocol]], type[AnyRequestHandlerProtocol]]
 ```
 
@@ -275,9 +268,9 @@ Mount the decorated view to the given path directly.
 **Args**
 
 - **path** (`str`): The location for the view.
-- **converters** (`Optional[dict[str, Callable[[str], Any]]]`): Params converters
+- **converters** (`Optional[Converters]`): Params converters
     for dynamic routing.
-- **routing** (`Optional[str]`): Routing strategy.
+- **routing** (`Optional[RoutingStrategy]`): Routing strategy.
 
 ------
 
