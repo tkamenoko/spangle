@@ -79,15 +79,7 @@ AnyComponentProtocol = Union[
     SyncShutdownComponentProtocol,
 ]
 
-T = TypeVar(
-    "T",
-    ComponentProtocol,
-    AsyncStartupComponentProtocol,
-    SyncStartupComponentProtocol,
-    AsyncShutdownComponentProtocol,
-    SyncShutdownComponentProtocol,
-    contravariant=True,
-)
+T = TypeVar("T", bound=AnyComponentProtocol)
 
 
 class _ComponentsCache:
