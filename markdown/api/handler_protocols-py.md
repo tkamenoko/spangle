@@ -1,6 +1,6 @@
 ---
 title: spangle.handler_protocols
-module_digest: 7370ee46008384754d44368f76634d65
+module_digest: a351d0a3590a4cf6c97ad1c185a31b10
 ---
 
 # Module spangle.handler_protocols

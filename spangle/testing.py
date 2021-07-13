@@ -20,7 +20,7 @@ from urllib3.filepost import RequestField, encode_multipart_formdata
 
 from ._utils import _AppRef
 
-T = TypeVar("T")
+
 Headers = Union[Mapping[str, str], list[tuple[str, str]]]
 Params = Union[Mapping[str, str], list[tuple[str, str]]]
 

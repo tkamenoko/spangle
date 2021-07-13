@@ -95,8 +95,7 @@ AnyRequestHandlerProtocol = Union[
     WebsocketHandlerProtocol,
 ]
 
-# WORKAROUND: typing does not allow to set single TypeVar.
-E = TypeVar("E", Exception, Exception, contravariant=True)
+E = TypeVar("E", bound=Exception, contravariant=True)
 
 
 @runtime_checkable

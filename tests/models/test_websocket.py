@@ -1,6 +1,6 @@
-from ward import fixture, raises, test
-
-from spangle import Api
+from spangle.api import Api
+from spangle.handler_protocols import ErrorHandlerProtocol, RequestHandlerProtocol
+from ward import fixture, raises, test, using
 
 
 @fixture
@@ -9,7 +9,8 @@ def api():
 
 
 @fixture
-def text_ws(api: Api = api):
+@using(api=api)
+def text_ws(api: Api):
     @api.route("/text")
     class TextWs:
         async def on_ws(self, conn):
@@ -26,7 +27,8 @@ def text_ws(api: Api = api):
 
 
 @test("WebSocket can send and receive text data")
-async def _(api: Api = api, ws=text_ws):
+@using(api=api, ws=text_ws)
+async def _(api: Api, ws: type[RequestHandlerProtocol]):
     path = api.url_for(ws)
     async with api.client() as client:
         async with client.ws_connect(path) as conn:
@@ -45,7 +47,8 @@ async def _(api: Api = api, ws=text_ws):
 
 
 @fixture
-def bytes_ws(api: Api = api):
+@using(api=api)
+def bytes_ws(api: Api):
     @api.route("/bytes")
     class BytesWs:
         async def on_ws(self, conn):
@@ -61,8 +64,9 @@ def bytes_ws(api: Api = api):
     return BytesWs
 
 
-@test("WebSocket can send and receive bytes data")  # type: ignore
-async def _(api: Api = api, ws=bytes_ws):
+@test("WebSocket can send and receive bytes data")
+@using(api=api, ws=bytes_ws)
+async def _(api: Api, ws: type[RequestHandlerProtocol]):
     path = api.url_for(ws)
     async with api.client() as client:
         async with client.ws_connect(path) as conn:
@@ -81,6 +85,7 @@ async def _(api: Api = api, ws=bytes_ws):
 
 
 @fixture
+@using(api=api)
 def error_ws(api: Api = api):
     @api.route("/error")
     class ErrorWs:
@@ -98,6 +103,7 @@ def error_ws(api: Api = api):
 
 
 @fixture
+@using(api=api)
 def handler(api: Api = api):
     @api.handle(ValueError)
     class Handler:
@@ -108,8 +114,11 @@ def handler(api: Api = api):
     return Handler
 
 
-@test("Error handler catches websocket errors")  # type: ignore
-async def _(api: Api = api, ws=error_ws, handler=handler):
+@test("Error handler catches websocket errors")
+@using(api=api, ws=error_ws, handler=handler)
+async def _(
+    api: Api, ws: type[RequestHandlerProtocol], handler: type[ErrorHandlerProtocol]
+):
     path = api.url_for(ws)
     async with api.client() as client:
         async with client.ws_connect(path) as conn:
@@ -127,7 +136,8 @@ params = {"foo": "bar"}
 
 
 @fixture
-def qs_ws(api: Api = api):
+@using(api=api)
+def qs_ws(api: Api):
     @api.route("/qs")
     class QsWs:
         async def on_ws(self, conn):
@@ -140,8 +150,9 @@ def qs_ws(api: Api = api):
     return QsWs
 
 
-@test("WebSocket can accept querystring")  # type: ignore
-async def _(api: Api = api, ws=qs_ws):
+@test("WebSocket can accept querystring")
+@using(api=api, ws=qs_ws)
+async def _(api: Api, ws: type[RequestHandlerProtocol]):
     path = api.url_for(ws)
     async with api.client() as client:
         async with client.ws_connect(path, params=params) as connection:

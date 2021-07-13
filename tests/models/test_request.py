@@ -1,9 +1,9 @@
 from http import HTTPStatus
 from json import loads
 
-from ward import each, fixture, test
-
-from spangle import Api
+from spangle.api import Api
+from spangle.handler_protocols import RequestHandlerProtocol
+from ward import each, fixture, test, using
 
 
 @fixture
@@ -19,7 +19,8 @@ queries = {
 
 
 @fixture
-def param_view(api: Api = api):
+@using(api=api)
+def param_view(api: Api):
     @api.route("/{path}")
     class ParamView:
         async def on_get(self, req, resp, path):
@@ -34,7 +35,8 @@ def param_view(api: Api = api):
 
 
 @test("Url params and qs values `{query}` are passed to the view")
-async def _(api: Api = api, view=param_view, query=each(*queries.items())):
+@using(api=api, view=param_view, query=each(*queries.items()))
+async def _(api: Api, view: type[RequestHandlerProtocol], query: tuple[str, dict]):
     path = api.url_for(view, {"path": query[0]})
     async with api.client() as client:
         response = await client.get(path, params=query[1])
@@ -42,7 +44,8 @@ async def _(api: Api = api, view=param_view, query=each(*queries.items())):
 
 
 @fixture
-def client_info(api: Api = api):
+@using(api=api)
+def client_info(api: Api):
     @api.route("/info")
     class ClientInfo:
         async def on_get(_, req, resp):
@@ -53,8 +56,9 @@ def client_info(api: Api = api):
     return ClientInfo
 
 
-@test("Request has client info")  # type: ignore
-async def _(api: Api = api, view=client_info):
+@test("Request has client info")
+@using(api=api, view=client_info)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.get(path)
@@ -67,7 +71,8 @@ def cookies():
 
 
 @fixture
-def cookie_view(api: Api = api, cookies=cookies):
+@using(api=api, cookies=cookies)
+def cookie_view(api: Api, cookies: dict[str, str]):
     @api.route("/cookie")
     class Cookie:
         async def on_get(self, req, resp):
@@ -78,8 +83,9 @@ def cookie_view(api: Api = api, cookies=cookies):
     return Cookie
 
 
-@test("Request has cookies")  # type: ignore
-async def _(api: Api = api, view=cookie_view, cookies=cookies):
+@test("Request has cookies")
+@using(api=api, view=cookie_view, cookies=cookies)
+async def _(api: Api, view: type[RequestHandlerProtocol], cookies: dict[str, str]):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.get(path, cookies=cookies)
@@ -99,7 +105,8 @@ mime_q = [
 
 
 @fixture
-def accept_view(api: Api = api):
+@using(api=api)
+def accept_view(api: Api):
     @api.route("/accept")
     class Accept:
         async def on_get(self, req, resp):
@@ -109,8 +116,9 @@ def accept_view(api: Api = api):
     return Accept
 
 
-@test("Request can parse and test Accept header")  # type: ignore
-async def _(api: Api = api, view=accept_view):
+@test("Request can parse and test Accept header")
+@using(api=api, view=accept_view)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.get(path, headers=accept_headers)
@@ -130,7 +138,8 @@ wildcard_mimes = [
 
 
 @fixture
-def wildcard_view(api: Api = api):
+@using(api=api)
+def wildcard_view(api: Api):
     @api.route("/wild")
     class WildcardView:
         async def on_get(self, req, resp):
@@ -140,8 +149,9 @@ def wildcard_view(api: Api = api):
     return WildcardView
 
 
-@test("Wildcard accepts any mimetypes")  # type: ignore
-async def _(api: Api = api, view=wildcard_view):
+@test("Wildcard accepts any mimetypes")
+@using(api=api, view=wildcard_view)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.get(path, headers=wildcard_headers)
@@ -152,7 +162,8 @@ json_data = {"foo": "bar", "num": 42, "array": [1, 2, 3]}
 
 
 @fixture
-def json_view(api: Api = api):
+@using(api=api)
+def json_view(api: Api):
     @api.route("/json")
     class JsonView:
         async def on_post(self, req, resp):
@@ -164,8 +175,9 @@ def json_view(api: Api = api):
     return JsonView
 
 
-@test("Request can parse JSON request")  # type: ignore
-async def _(api: Api = api, view=json_view):
+@test("Request can parse JSON request")
+@using(api=api, view=json_view)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.post(path, json=json_data)
@@ -180,10 +192,11 @@ multipart_data = {
 
 
 @fixture
-def multipart_view(api: Api = api):
+@using(api=api)
+def multipart_view(api: Api):
     @api.route("/multipart")
     class Multipart:
-        async def on_post(_, req, resp):
+        async def on_post(self, req, resp):
             given_files = await req.media()
             assert given_files["foo"] == multipart_data["foo"]
             assert given_files["num"] == multipart_data["num"]
@@ -196,8 +209,9 @@ def multipart_view(api: Api = api):
     return Multipart
 
 
-@test("Request can parse multipart request")  # type: ignore
-async def _(api: Api = api, view=multipart_view):
+@test("Request can parse multipart request")
+@using(api=api, view=multipart_view)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.post(path, files=multipart_data)
@@ -208,7 +222,8 @@ form_data = {"foo": "bar", "num": "42"}
 
 
 @fixture
-def form_view(api: Api = api):
+@using(api=api)
+def form_view(api: Api):
     @api.route("/form")
     class Form:
         async def on_post(self, req, resp):
@@ -218,8 +233,9 @@ def form_view(api: Api = api):
     return Form
 
 
-@test("Request can parse url-encoded form")  # type: ignore
-async def _(api: Api = api, view=form_view):
+@test("Request can parse url-encoded form")
+@using(api=api, view=form_view)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.post(path, form=form_data)
@@ -227,7 +243,8 @@ async def _(api: Api = api, view=form_view):
 
 
 @fixture
-def large_request_view(api: Api = api):
+@using(api=api)
+def large_request_view(api: Api):
     @api.route("/large")
     class LargeView:
         async def on_post(self, req, resp):
@@ -236,8 +253,9 @@ def large_request_view(api: Api = api):
     return LargeView
 
 
-@test("Sending too large data is refused")  # type: ignore
-async def _(api: Api = api, view=large_request_view):
+@test("Sending too large data is refused")
+@using(api=api, view=large_request_view)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     data = {
         "foo": "bar",
