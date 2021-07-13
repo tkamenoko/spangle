@@ -1,10 +1,12 @@
 from http import HTTPStatus
 from unittest.mock import MagicMock
 
-from ward import each, fixture, raises, test
-
-from spangle import Api, Blueprint
+from spangle.api import Api
+from spangle.blueprint import Blueprint
 from spangle.exceptions import NotFoundError
+from spangle.handler_protocols import RequestHandlerProtocol
+from ward import each, fixture, raises, test
+from ward.fixtures import using
 
 
 @fixture
@@ -18,7 +20,8 @@ def blueprint():
 
 
 @fixture
-def routes(bp: Blueprint = blueprint):
+@using(bp=blueprint)
+def routes(bp: Blueprint):
     @bp.route("/patterns/here/")
     @bp.route("/allowed")
     @bp.route("/")
@@ -66,7 +69,8 @@ clone_paths = [
 @test(
     "A blueprint returns same response against paths with or without a trailing slash"
 )
-async def _(api: Api = api, bp: Blueprint = routes, path_code=each(*clone_paths)):
+@using(api=api, bp=routes, path_code=each(*clone_paths))
+async def _(api: Api, bp: Blueprint, path_code: tuple[str, int]):
     api.routing = "clone"
     api.add_blueprint("/", bp)
     api.add_blueprint("start", bp)
@@ -103,8 +107,9 @@ strict_paths = [
 ]
 
 
-@test("A blueprint strictly distinguishes paths")  # type: ignore
-async def _(api: Api = api, bp: Blueprint = routes, path_code=each(*strict_paths)):
+@test("A blueprint strictly distinguishes paths")
+@using(api=api, bp=routes, path_code=each(*strict_paths))
+async def _(api: Api, bp: Blueprint, path_code: tuple[str, int]):
     api.routing = "strict"
     api.add_blueprint("/", bp)
     api.add_blueprint("start", bp)
@@ -139,8 +144,9 @@ slash_paths = [
 ]
 
 
-@test("A path always includes a trailing slash")  # type: ignore
-async def _(api: Api = api, bp: Blueprint = routes, path_code=each(*slash_paths)):
+@test("A path always includes a trailing slash")
+@using(api=api, bp=routes, path_code=each(*slash_paths))
+async def _(api: Api, bp: Blueprint, path_code: tuple[str, int]):
     api.routing = "slash"
     api.add_blueprint("/", bp)
     api.add_blueprint("start", bp)
@@ -180,8 +186,9 @@ no_slash_paths = [
 ]
 
 
-@test("A path always excludes a trailing slash")  # type: ignore
-async def _(api: Api = api, bp: Blueprint = routes, path_code=each(*no_slash_paths)):
+@test("A path always excludes a trailing slash")
+@using(api=api, bp=routes, path_code=each(*no_slash_paths))
+async def _(api: Api, bp: Blueprint, path_code: tuple[str, int]):
     api.routing = "no_slash"
     api.add_blueprint("/", bp)
     api.add_blueprint("start", bp)
@@ -195,7 +202,8 @@ async def _(api: Api = api, bp: Blueprint = routes, path_code=each(*no_slash_pat
 
 
 @fixture
-def mix_routes(api: Api = api, bp: Blueprint = blueprint):
+@using(api=api, bp=blueprint)
+def mix_routes(api: Api, bp: Blueprint):
     api.routing = "slash"
 
     @bp.route("/foo", routing="strict")
@@ -215,8 +223,9 @@ def mix_routes(api: Api = api, bp: Blueprint = blueprint):
     return api
 
 
-@test("A blueprint can set routing mode against each view")  # type: ignore
-async def _(api: Api = mix_routes):
+@test("A blueprint can set routing mode against each view")
+@using(api=mix_routes)
+async def _(api: Api):
     async with api.client() as client:
         resp = await client.get("/bar", allow_redirects=False)
         assert resp.status_code == HTTPStatus.PERMANENT_REDIRECT
@@ -231,19 +240,20 @@ async def _(api: Api = mix_routes):
 
 
 @fixture
-def startup(bp: Blueprint = blueprint):
+@using(bp=blueprint)
+def startup(bp: Blueprint):
     return bp.on_start(MagicMock())
 
 
 @fixture
-def shutdown(bp: Blueprint = blueprint):
+@using(bp=blueprint)
+def shutdown(bp: Blueprint):
     return bp.on_stop(MagicMock())
 
 
-@test("Lifespan functions registered by bp are called as expected")  # type: ignore
-async def _(
-    api: Api = api, bp: Blueprint = blueprint, startup=startup, shutdown=shutdown
-):
+@test("Lifespan functions registered by bp are called as expected")
+@using(api=api, bp=blueprint, startup=startup, shutdown=shutdown)
+async def _(api: Api, bp: Blueprint, startup: MagicMock, shutdown: MagicMock):
     api.add_blueprint("", bp)
     async with api.client():
         startup.assert_called_once()
@@ -252,7 +262,8 @@ async def _(
 
 
 @fixture
-def handle(bp: Blueprint = blueprint):
+@using(bp=blueprint)
+def handle(bp: Blueprint):
     @bp.handle(NotFoundError)
     class NotFound:
         async def on_error(self, req, resp, e):
@@ -262,8 +273,9 @@ def handle(bp: Blueprint = blueprint):
     return bp
 
 
-@test("A blueprint handles exception")  # type: ignore
-async def _(api: Api = api, bp: Blueprint = handle):
+@test("A blueprint handles exception")
+@using(api=api, bp=handle)
+async def _(api: Api, bp: Blueprint):
     api.add_blueprint("", bp)
     async with api.client() as client:
         response = await client.get("/not/defined")
@@ -271,7 +283,8 @@ async def _(api: Api = api, bp: Blueprint = handle):
 
 
 @fixture
-def before_request(bp: Blueprint = blueprint):
+@using(bp=blueprint)
+def before_request(bp: Blueprint):
     @bp.before_request
     class Hook:
         def __init__(self):
@@ -283,8 +296,9 @@ def before_request(bp: Blueprint = blueprint):
     return Hook
 
 
-@test("A blueprint has request hooks")  # type: ignore
-async def _(api: Api = api, bp: Blueprint = routes, hook=before_request):
+@test("A blueprint has request hooks")
+@using(api=api, bp=routes, hook=before_request)
+async def _(api: Api, bp: Blueprint, hook: type[RequestHandlerProtocol]):
     api.add_blueprint("", bp)
     async with api.client() as client:
         response = await client.get("/")
@@ -293,8 +307,9 @@ async def _(api: Api = api, bp: Blueprint = routes, hook=before_request):
         hook_view.mock.assert_called_once()
 
 
-@test("A blueprint can include other blueprints")  # type: ignore
-async def _(api: Api = api, bp: Blueprint = blueprint):
+@test("A blueprint can include other blueprints")
+@using(api=api, bp=blueprint)
+async def _(api: Api, bp: Blueprint):
     child_bp = Blueprint()
 
     @child_bp.route("/child")
@@ -320,7 +335,8 @@ def path_params():
 
 
 @fixture
-def patterns(api: Api = api):
+@using(api=api)
+def patterns(api: Api):
     @api.route(
         "/{default}/{string:str}/{num1:int}/{num2:float}/{anything:rest_string}/tail"
     )
@@ -331,10 +347,9 @@ def patterns(api: Api = api):
     return BuiltinPatterns
 
 
-@test("A path can include parameters with builtin converters")  # type: ignore
-async def _(
-    api: Api = api, bp: Blueprint = blueprint, view=patterns, params=path_params
-):
+@test("A path can include parameters with builtin converters")
+@using(api=api, bp=blueprint, view=patterns, params=path_params)
+async def _(api: Api, bp: Blueprint, view: type[RequestHandlerProtocol], params: dict):
     path = api.url_for(view, params)
     async with api.client() as client:
         response = await client.get(path)
@@ -342,7 +357,8 @@ async def _(
 
 
 @fixture
-def converter_view(bp: Blueprint = blueprint):
+@using(bp=blueprint)
+def converter_view(bp: Blueprint):
     @bp.route("/{number:int}/{name:upper}", converters={"upper": lambda x: x.upper()})
     class Convert:
         async def on_get(self, req, resp, number: int, name: str):
@@ -367,12 +383,18 @@ valid_params = [
 ]
 
 
-@test("Valid parameters `{params}` are converted.")  # type: ignore
-async def _(
-    api: Api = api,
-    bp: Blueprint = blueprint,
+@test("Valid parameters `{params}` are converted.")
+@using(
+    api=api,
+    bp=blueprint,
     view=converter_view,
     params=each(*valid_params),
+)
+async def _(
+    api: Api,
+    bp: Blueprint,
+    view: type[RequestHandlerProtocol],
+    params: dict,
 ):
     api.add_blueprint("", bp)
     path = api.url_for(view, params)
@@ -389,12 +411,18 @@ invalid_params = [
 ]
 
 
-@test("Invalid parameters `{params}` makes errors.")  # type: ignore
-async def _(
-    api: Api = api,
-    bp: Blueprint = blueprint,
+@test("Invalid parameters `{params}` makes errors.")
+@using(
+    api=api,
+    bp=blueprint,
     view=converter_view,
     params=each(*invalid_params),
+)
+async def _(
+    api: Api,
+    bp: Blueprint,
+    view: type[RequestHandlerProtocol],
+    params: dict,
 ):
     api.add_blueprint("", bp)
     path = api.url_for(view, params)

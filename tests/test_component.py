@@ -1,6 +1,7 @@
 from http import HTTPStatus
 
-from spangle import Api, use_component
+from spangle.api import Api
+from spangle.component import use_component
 from spangle.models.http import Request, Response
 from ward import fixture, test, using
 

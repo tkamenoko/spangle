@@ -1,9 +1,9 @@
-from asyncio import sleep
 import asyncio
+from asyncio import sleep
 
-from ward import fixture, raises, test
-
-from spangle import Api
+from spangle.api import Api
+from spangle.handler_protocols import RequestHandlerProtocol
+from ward import fixture, raises, test, using
 
 
 @fixture
@@ -12,7 +12,8 @@ def api():
 
 
 @fixture
-def timeout(api: Api = api):
+@using(api=api)
+def timeout(api: Api):
     @api.route("/timeout")
     class Timeout:
         async def on_get(self, req, resp):
@@ -23,7 +24,8 @@ def timeout(api: Api = api):
 
 
 @test("Client cancells a request after specified seconds")  # type: ignore
-async def _(api: Api = api, timeout=timeout):
+@using(api=api, timeout=timeout)
+async def _(api: Api, timeout: type[RequestHandlerProtocol]):
     async with api.client() as client:
         with raises(asyncio.TimeoutError):
             await client.get("/timeout", timeout=0.001)
