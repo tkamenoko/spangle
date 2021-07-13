@@ -2,9 +2,9 @@ import asyncio
 from http import HTTPStatus
 
 from jinja2 import escape
-from ward import each, fixture, test
-
-from spangle import Api
+from spangle.api import Api
+from spangle.handler_protocols import RequestHandlerProtocol
+from ward import each, fixture, test, using
 
 
 @fixture
@@ -13,7 +13,8 @@ def api():
 
 
 @fixture
-def cookie_view(api: Api = api):
+@using(api=api)
+def cookie_view(api: Api):
     @api.route("/cookie")
     class CookieView:
         async def on_get(self, req, resp):
@@ -25,7 +26,8 @@ def cookie_view(api: Api = api):
 
 
 @test("Response can set cookies")
-async def _(api: Api = api, view=cookie_view):
+@using(api=api, view=cookie_view)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.get(path)
@@ -36,7 +38,8 @@ async def _(api: Api = api, view=cookie_view):
 
 
 @fixture
-def headers_view(api: Api = api):
+@using(api=api)
+def headers_view(api: Api):
     @api.route("/headers")
     class HeadersView:
         async def on_get(_, req, resp):
@@ -48,8 +51,9 @@ def headers_view(api: Api = api):
     return HeadersView
 
 
-@test("Response can set headers")  # type: ignore
-async def _(api: Api = api, view=headers_view):
+@test("Response can set headers")
+@using(api=api, view=headers_view)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.get(path)
@@ -60,7 +64,8 @@ async def _(api: Api = api, view=headers_view):
 
 
 @fixture
-def byte_view(api: Api = api):
+@using(api=api)
+def byte_view(api: Api):
     @api.route("/byte")
     class ByteView:
         async def on_get(self, req, resp):
@@ -69,8 +74,9 @@ def byte_view(api: Api = api):
     return ByteView
 
 
-@test("Response can send bytes")  # type: ignore
-async def _(api: Api = api, view=byte_view):
+@test("Response can send bytes")
+@using(api=api, view=byte_view)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     async with api.client() as cilent:
         response = await cilent.get(path)
@@ -82,7 +88,8 @@ template_names = ["foo", "てすと", "<script>console.log('not secure')</script
 
 
 @fixture
-def template_view(api: Api = api):
+@using(api=api)
+def template_view(api: Api):
     @api.route("/template")
     class TemplateView:
         async def on_post(_, req, resp):
@@ -92,8 +99,9 @@ def template_view(api: Api = api):
     return TemplateView
 
 
-@test("Response can render Jinja2 template")  # type: ignore
-async def _(api: Api = api, view=template_view, name=each(*template_names)):
+@test("Response can render Jinja2 template")
+@using(api=api, view=template_view, name=each(*template_names))
+async def _(api: Api, view: type[RequestHandlerProtocol], name: str):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.post(path, content=name.encode("utf8"))
@@ -102,7 +110,8 @@ async def _(api: Api = api, view=template_view, name=each(*template_names)):
 
 
 @fixture
-def goal_view(api: Api = api):
+@using(api=api)
+def goal_view(api: Api):
     @api.route("/goal")
     class Goal:
         async def on_get(self, req, resp):
@@ -112,7 +121,8 @@ def goal_view(api: Api = api):
 
 
 @fixture
-def start_view(api: Api = api, goal=goal_view):
+@using(api=api, goal=goal_view)
+def start_view(api: Api, goal: type[RequestHandlerProtocol]):
     @api.route("/start")
     class Start:
         async def on_get(self, req, resp):
@@ -121,8 +131,9 @@ def start_view(api: Api = api, goal=goal_view):
     return Start
 
 
-@test("Response can set redirection to view class")  # type: ignore
-async def _(api: Api = api, view=start_view):
+@test("Response can set redirection to view class")
+@using(api=api, view=start_view)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.get(path)
@@ -137,7 +148,8 @@ def json_data():
 
 
 @fixture
-def json_view(api: Api = api, data=json_data):
+@using(api=api, data=json_data)
+def json_view(api: Api, data: dict):
     @api.route("/json")
     class JsonView:
         async def on_get(self, req, resp):
@@ -146,8 +158,9 @@ def json_view(api: Api = api, data=json_data):
     return JsonView
 
 
-@test("Response can send JSON")  # type: ignore
-async def _(api: Api = api, view=json_view, data=json_data):
+@test("Response can send JSON")
+@using(api=api, view=json_view, data=json_data)
+async def _(api: Api, view: type[RequestHandlerProtocol], data: dict):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.get(path)
@@ -156,7 +169,8 @@ async def _(api: Api = api, view=json_view, data=json_data):
 
 
 @fixture
-def streaming_view(api: Api = api):
+@using(api=api)
+def streaming_view(api: Api):
     async def streaming():
         for i in range(10):
             await asyncio.sleep(0.1)
@@ -171,8 +185,9 @@ def streaming_view(api: Api = api):
     return Stream
 
 
-@test("Response can send stream data")  # type: ignore
-async def _(api: Api = api, view=streaming_view):
+@test("Response can send stream data")
+@using(api=api, view=streaming_view)
+async def _(api: Api, view: type[RequestHandlerProtocol]):
     path = api.url_for(view)
     async with api.client() as client:
         response = await client.get(path, timeout=2)

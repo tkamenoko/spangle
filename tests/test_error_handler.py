@@ -1,10 +1,10 @@
 from http import HTTPStatus
 
-from ward import fixture, test
-from ward.expect import raises
-
-from spangle import Api, ErrorHandler
+from spangle.api import Api
+from spangle.error_handler import ErrorHandler
 from spangle.exceptions import NotFoundError, SpangleError
+from spangle.handler_protocols import RequestHandlerProtocol
+from ward import fixture, raises, test, using
 
 
 @fixture
@@ -18,7 +18,8 @@ def handler():
 
 
 @fixture
-def not_found(handler: ErrorHandler = handler):
+@using(handler=handler)
+def not_found(handler: ErrorHandler):
     @handler.handle(NotFoundError)
     class NotFound:
         async def on_error(self, req, resp, e):
@@ -36,7 +37,8 @@ def child_error():
 
 
 @fixture
-def type_error(handler: ErrorHandler = handler):
+@using(handler=handler)
+def type_error(handler: ErrorHandler):
     @handler.handle(TypeError)
     class Type:
         async def on_error(self, req, resp, e):
@@ -47,7 +49,12 @@ def type_error(handler: ErrorHandler = handler):
 
 
 @fixture
-def errors(not_found=not_found, type_error=type_error, child_error=child_error):
+@using(not_found=not_found, type_error=type_error, child_error=child_error)
+def errors(
+    not_found: type[Exception],
+    type_error: type[Exception],
+    child_error: type[Exception],
+):
     return {
         "Type": (TypeError, 418),
         "Child": (child_error, HTTPStatus.INTERNAL_SERVER_ERROR),
@@ -56,7 +63,8 @@ def errors(not_found=not_found, type_error=type_error, child_error=child_error):
 
 
 @fixture
-def raise_error(api: Api = api, errors=errors):
+@using(api=api, errors=errors)
+def raise_error(api: Api, errors: dict[str, tuple[type[Exception], int]]):
     @api.route("/{r}")
     class Raise:
         async def on_get(self, req, resp, r):
@@ -67,8 +75,12 @@ def raise_error(api: Api = api, errors=errors):
 
 
 @test("Error handler returns response when an error is raised")
+@using(api=api, handler=handler, errors=errors, view=raise_error)
 async def _(
-    api: Api = api, handler: ErrorHandler = handler, errors=errors, view=raise_error
+    api: Api,
+    handler: ErrorHandler,
+    errors: dict[str, tuple[type[Exception], int]],
+    view: type[RequestHandlerProtocol],
 ):
     api.add_error_handler(handler)
     async with api.client() as client:

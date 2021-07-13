@@ -1,16 +1,17 @@
 from http import HTTPStatus
 from unittest.mock import AsyncMock, MagicMock
 
-from ward import each, fixture, test
-from ward.expect import raises
-
-from spangle import Api
+from spangle.api import Api
+from spangle.component import AnyComponentProtocol, use_api, use_component
 from spangle.exceptions import NotFoundError
-from spangle.component import use_api, use_component
+from spangle.handler_protocols import RequestHandlerProtocol
+from spangle.models.http import Response
+from spangle.types import LifespanFunction
+from ward import each, fixture, raises, test, using
 
 
 @fixture
-def api():
+def api() -> Api:
     return Api(static_dir="tests/static", favicon="favicon.ico")
 
 
@@ -39,19 +40,22 @@ class StoreAsync:
 
 
 @fixture
-def store_sync(api: Api = api):
+@using(api=api)
+def store_sync(api: Api):
     api.register_component(StoreSync)
     return StoreSync
 
 
 @fixture
-def store_async(api: Api = api):
+@using(api=api)
+def store_async(api: Api):
     api.register_component(StoreAsync)
     return StoreAsync
 
 
 @fixture
-def start_sync(api: Api = api):
+@using(api=api)
+def start_sync(api: Api):
     start = MagicMock()
     start.__name__ = "start_sync"
     api.on_start(start)
@@ -59,7 +63,8 @@ def start_sync(api: Api = api):
 
 
 @fixture
-def stop_sync(api: Api = api):
+@using(api=api)
+def stop_sync(api: Api):
     stop = MagicMock()
     stop.__name__ = "stop_sync"
     api.on_stop(stop)
@@ -67,7 +72,8 @@ def stop_sync(api: Api = api):
 
 
 @fixture
-def start_async(api: Api = api):
+@using(api=api)
+def start_async(api: Api):
     start = AsyncMock()
     start.__name__ = "start_async"
 
@@ -76,7 +82,8 @@ def start_async(api: Api = api):
 
 
 @fixture
-def stop_async(api: Api = api):
+@using(api=api)
+def stop_async(api: Api):
     stop = AsyncMock()
     stop.__name__ = "stop_async"
 
@@ -85,7 +92,8 @@ def stop_async(api: Api = api):
 
 
 @test("`{store.__name__}` lifespan methods are called once")
-async def _(api: Api = api, store=each(store_sync, store_async)):
+@using(api=api, store=each(store_sync, store_async))
+async def _(api: Api, store: type[AnyComponentProtocol]):
     async with api.client():
         store_instance = api._context.run(use_component, store)
         assert isinstance(store_instance, store)
@@ -95,12 +103,13 @@ async def _(api: Api = api, store=each(store_sync, store_async)):
     store_instance._shutdown.assert_called_once()
 
 
-@test("Lifespan function `{before.__name__}` and `{after.__name__}` are called once")  # type: ignore
-async def _(
-    api: Api = api,
+@test("Lifespan function `{before.__name__}` and `{after.__name__}` are called once")
+@using(
+    api=api,
     before=each(start_sync, start_async),
     after=each(stop_sync, stop_async),
-):
+)
+async def _(api: Api, before: LifespanFunction, after: LifespanFunction):
     async with api.client():
         before.assert_called_once()
         after.assert_not_called()
@@ -111,13 +120,14 @@ class BeforeRequest:
     def __init__(self):
         self.mock = MagicMock()
 
-    async def on_request(self, req, resp, **kw):
+    async def on_request(self, req, resp, /, **kw) -> Response:
         self.mock()
         return resp
 
 
 @fixture
-def before_request(api: Api = api):
+@using(api=api)
+def before_request(api: Api):
     api.before_request(BeforeRequest)
     return BeforeRequest
 
@@ -126,42 +136,61 @@ class AfterRequest:
     def __init__(self):
         self.mock = MagicMock()
 
-    async def on_request(self, req, resp, **kw):
+    async def on_request(self, req, resp, /, **kw) -> Response:
         self.mock()
         return resp
 
 
 @fixture
-def after_request(api: Api = api):
+@using(api=api)
+def after_request(api: Api):
     api.after_request(AfterRequest)
     return AfterRequest
 
 
 @fixture
-def index(api: Api = api, before=before_request, after=after_request):
+@using(
+    api=api,
+    before=before_request,
+)
+def index(
+    api: Api,
+    before: type[RequestHandlerProtocol],
+):
     @api.route("/")
     class Index:
-        def __init__(_):
-            _.api = use_api()
-
-        async def on_get(_, req, resp):
-            before_instance: BeforeRequest = _.api._view_cache[before]
+        async def on_get(self, req, resp):
+            app = use_api()
+            before_instance: BeforeRequest = app._view_cache[before]
             before_instance.mock.assert_called_once()
 
     return Index
 
 
-@test("Methods are called before and after request")  # type: ignore
-async def _(api: Api = api, after=after_request, index=index):
+@test("Methods are called before and after request")
+@using(api=api, after=after_request, before=before_request, index=index)
+async def _(
+    api: Api,
+    after: type[RequestHandlerProtocol],
+    before: type[RequestHandlerProtocol],
+    index: type[RequestHandlerProtocol],
+):
+    with raises(KeyError):
+        # not cached means not called.
+        api._view_cache[before]
+    with raises(KeyError):
+        api._view_cache[after]
     async with api.client() as client:
-        response = await client.get("/")
+        path = api.url_for(index)
+        response = await client.get(path)
         assert response.status_code == HTTPStatus.OK
         after_instance = api._view_cache[after]
         after_instance.mock.assert_called_once()
 
 
-@test("Correct paths are returned.")  # type: ignore
-async def _(api: Api = api):
+@test("Correct paths are returned.")
+@using(api=api)
+async def _(api: Api):
     @api.route("/")
     class Index:
         pass
@@ -198,7 +227,8 @@ static_codes = [HTTPStatus.OK, HTTPStatus.OK, HTTPStatus.OK, HTTPStatus.NOT_FOUN
 
 
 @fixture
-def static_fake(api: Api = api):
+@using(api=api)
+def static_fake(api: Api):
     @api.route("/staticfake")
     class StaticFake:
         pass
@@ -207,11 +237,17 @@ def static_fake(api: Api = api):
 
 
 @test("`{path}` returns status code `{code}`")  # type: ignore
-async def _(
-    api: Api = api,
+@using(
+    api=api,
     path=each(*static_paths),
     code=each(*static_codes),
     _=static_fake,
+)
+async def _(
+    api: Api,
+    path: str,
+    code: int,
+    _: type[RequestHandlerProtocol],
 ):
     async with api.client() as client:
         response = await client.get(path)
@@ -219,25 +255,28 @@ async def _(
 
 
 @fixture
-def not_found(api: Api = api):
+@using(api=api)
+def not_found(api: Api):
     @api.handle(NotFoundError)
     class NotFound:
         async def on_error(_, req, resp, e):
             resp.status_code = 418
             return resp
 
-    return NotFound
+    return 418
 
 
-@test("Api returns a specified status code on error")  # type: ignore
-async def _(api: Api = api, _=not_found):
+@test("Api returns a specified status code on error")
+@using(api=api, status=not_found)
+async def _(api: Api, status: int):
     async with api.client() as client:
         response = await client.get("/not/defined")
-        assert response.status_code == 418
+        assert response.status_code == status
 
 
-@test("Safe or specified methods are allowed to request")  # type: ignore
-async def _(api: Api = api):
+@test("Safe or specified methods are allowed to request")
+@using(api=api)
+async def _(api: Api):
     @api.route("/")
     class Index:
         allowed_methods = ["post"]
@@ -253,17 +292,19 @@ async def _(api: Api = api):
 
 
 @fixture
-def reraise_handler(api: Api = api):
+@using(api=api)
+def reraise(api: Api):
     @api.handle(NotFoundError)
     class NotFound:
         async def on_error(self, req, resp, e):
             resp.reraise = True
 
-    return NotFound
+    return NotFoundError
 
 
-@test("Error handler reraise exceptions after response")  # type: ignore
-async def _(api: Api = api, reraise=reraise_handler):
+@test("Error handler reraise exceptions after response")
+@using(api=api, exc=reraise)
+async def _(api: Api, exc: type[Exception]):
     async with api.client() as client:
-        with raises(NotFoundError):
+        with raises(exc):
             await client.get("/not/defined")
