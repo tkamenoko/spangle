@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.9.1(2021-07-14)
+
+- Fix `TypeVar` to use `bound`
+
 ## v0.9.0(2021-07-12)
 
 - Update dependencies
