@@ -5,7 +5,15 @@ Component tools.
 from __future__ import annotations
 
 from contextvars import ContextVar
-from typing import TYPE_CHECKING, Protocol, TypeVar, Union, cast, runtime_checkable
+from typing import (
+    Optional,
+    TYPE_CHECKING,
+    Protocol,
+    TypeVar,
+    Union,
+    cast,
+    runtime_checkable,
+)
 
 from ._utils import execute
 
@@ -104,13 +112,15 @@ class _ComponentsCache:
 component_ctx = ContextVar("component_ctx", default=_ComponentsCache())
 
 
-def use_component(component: type[T]) -> T:
+def use_component(component: type[T], *, api: Optional[Api] = None) -> T:
     """
     Return registered component instance.
 
     **Args**
 
     * component (`type[spangle.component.AnyComponentProtocol]`): Component class.
+    * api (`Optional[spangle.api.Api]`): Api instance to use its context.
+        Default: `None` (use current context)
 
     **Returns**
 
@@ -121,7 +131,9 @@ def use_component(component: type[T]) -> T:
     * `TypeError` : The component is not registered.
 
     """
-    return component_ctx.get()(component)
+    if not api:
+        return component_ctx.get()(component)
+    return api._context[component_ctx](component)
 
 
 api_ctx: ContextVar[Api] = ContextVar("api_ctx")
