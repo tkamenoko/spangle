@@ -5,15 +5,7 @@ Component tools.
 from __future__ import annotations
 
 from contextvars import ContextVar
-from typing import (
-    TYPE_CHECKING,
-    Optional,
-    Protocol,
-    TypeVar,
-    Union,
-    cast,
-    runtime_checkable,
-)
+from typing import TYPE_CHECKING, Protocol, TypeVar, Union, cast, runtime_checkable
 
 from ._utils import execute
 
@@ -88,11 +80,8 @@ class _ComponentsCache:
     def __init__(self) -> None:
         self.components = {}
 
-    def __call__(self, component: type[T]) -> Optional[T]:
-        try:
-            instance: Optional[T] = cast(T, self.components[component])
-        except KeyError:
-            instance = None
+    def __call__(self, component: type[T]) -> T:
+        instance = cast(T, self.components[component])
         return instance
 
     async def startup(self) -> None:
@@ -115,7 +104,7 @@ class _ComponentsCache:
 component_ctx = ContextVar("component_ctx", default=_ComponentsCache())
 
 
-def use_component(component: type[T]) -> Optional[T]:
+def use_component(component: type[T]) -> T:
     """
     Return registered component instance.
 
@@ -125,7 +114,11 @@ def use_component(component: type[T]) -> Optional[T]:
 
     **Returns**
 
-    * Component instance if registered, else `None`.
+    * Registered component instance.
+
+    **Raises**
+
+    * `TypeError` : The component is not registered.
 
     """
     return component_ctx.get()(component)
