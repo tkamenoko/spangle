@@ -1,6 +1,6 @@
 ---
 title: spangle.component
-module_digest: 83220df2a0387ef7513a34d5d80f0142
+module_digest: 682255c90241d0e6bb5d41291e68a4df
 ---
 
 # Module spangle.component
@@ -161,7 +161,7 @@ Return [`Api `](api-py.md#Api) instance.
 ### use_component {: #use_component }
 
 ```python
-def use_component(component: type[T]) -> Optional[T]
+def use_component(component: type[T], *, api: Optional[Api] = None) -> T
 ```
 
 Return registered component instance.
@@ -169,7 +169,13 @@ Return registered component instance.
 **Args**
 
 - **component** (`type[spangle.component.AnyComponentProtocol]`): Component class.
+- **api** (`Optional[spangle.api.Api]`): Api instance to use its context.
+    Default: `None` (use current context)
 
 **Returns**
 
-* Component instance if registered, else `None`.
+* Registered component instance.
+
+**Raises**
+
+- `KeyError`: The component is not registered.

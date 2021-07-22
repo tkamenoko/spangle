@@ -1271,16 +1271,22 @@
 </ul>
 <hr />
 <h3 id="use_component">use_component<a class="headerlink" href="#use_component" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">use_component</span><span class="p">(</span><span class="n">component</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">T</span><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">use_component</span><span class="p">(</span><span class="n">component</span><span class="p">:</span> <span class="nb">type</span><span class="p">[</span><span class="n">T</span><span class="p">],</span> <span class="o">*</span><span class="p">,</span> <span class="n">api</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Api</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">T</span>
 </code></pre></div>
 <p>Return registered component instance.</p>
 <p><strong>Args</strong></p>
 <ul>
 <li><strong>component</strong> (<code>type[spangle.component.AnyComponentProtocol]</code>): Component class.</li>
+<li><strong>api</strong> (<code>Optional[spangle.api.Api]</code>): Api instance to use its context.
+    Default: <code>None</code> (use current context)</li>
 </ul>
 <p><strong>Returns</strong></p>
 <ul>
-<li>Component instance if registered, else <code>None</code>.</li>
+<li>Registered component instance.</li>
+</ul>
+<p><strong>Raises</strong></p>
+<ul>
+<li><code>KeyError</code>: The component is not registered.</li>
 </ul>
                 
                   
