@@ -1,5 +1,5 @@
 ---
-version: v0.9.1
+version: v0.10.0
 ---
 
 # Component
@@ -52,6 +52,14 @@ class AnotherComp:
 
 !!! Note
 There is no way to define the order of startup hooks. Do not expect that `startup` hooks of other components are already completed.
+
+## Call `use_component` out of api context
+
+If you want to use components out of api context(like test environment), you can set context by passing `Api` instance.
+
+```python
+component = use_component(MyComponent, api=your_api)
+```
 
 ## Use `Api` instance as a component
 

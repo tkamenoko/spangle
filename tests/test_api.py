@@ -95,7 +95,7 @@ def stop_async(api: Api):
 @using(api=api, store=each(store_sync, store_async))
 async def _(api: Api, store: type[AnyComponentProtocol]):
     async with api.client():
-        store_instance = api._context.run(use_component, store)
+        store_instance = use_component(store, api=api)
         assert isinstance(store_instance, store)
         store_instance._startup.assert_called_once()
         store_instance._shutdown.assert_not_called()

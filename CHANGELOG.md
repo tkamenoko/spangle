@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.10.0(2021-07-22)
+
+- Fix `use_component` to raise `KeyError` if given component is not registered.
+- Add `api` option to `use_component` to set context manually.
+
 ## v0.9.1(2021-07-14)
 
 - Fix `TypeVar` to use `bound`

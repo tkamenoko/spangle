@@ -6,8 +6,8 @@ from __future__ import annotations
 
 from contextvars import ContextVar
 from typing import (
-    TYPE_CHECKING,
     Optional,
+    TYPE_CHECKING,
     Protocol,
     TypeVar,
     Union,
@@ -88,11 +88,8 @@ class _ComponentsCache:
     def __init__(self) -> None:
         self.components = {}
 
-    def __call__(self, component: type[T]) -> Optional[T]:
-        try:
-            instance: Optional[T] = cast(T, self.components[component])
-        except KeyError:
-            instance = None
+    def __call__(self, component: type[T]) -> T:
+        instance = cast(T, self.components[component])
         return instance
 
     async def startup(self) -> None:
@@ -115,20 +112,28 @@ class _ComponentsCache:
 component_ctx = ContextVar("component_ctx", default=_ComponentsCache())
 
 
-def use_component(component: type[T]) -> Optional[T]:
+def use_component(component: type[T], *, api: Optional[Api] = None) -> T:
     """
     Return registered component instance.
 
     **Args**
 
     * component (`type[spangle.component.AnyComponentProtocol]`): Component class.
+    * api (`Optional[spangle.api.Api]`): Api instance to use its context.
+        Default: `None` (use current context)
 
     **Returns**
 
-    * Component instance if registered, else `None`.
+    * Registered component instance.
+
+    **Raises**
+
+    * `KeyError` : The component is not registered.
 
     """
-    return component_ctx.get()(component)
+    if not api:
+        return component_ctx.get()(component)
+    return api._context[component_ctx](component)
 
 
 api_ctx: ContextVar[Api] = ContextVar("api_ctx")
