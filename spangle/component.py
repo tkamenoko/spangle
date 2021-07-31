@@ -131,8 +131,7 @@ def use_component(component: type[T], *, api: Optional[Api] = None) -> T:
     * `KeyError` : The component is not registered.
 
     """
-    if not api:
-        return component_ctx.get()(component)
+    api = api or use_api()
     return api._context[component_ctx](component)
 
 
