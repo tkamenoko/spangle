@@ -1,7 +1,7 @@
 from http import HTTPStatus
 
 from spangle.api import Api
-from spangle.component import use_component
+from spangle.component import api_ctx, use_component
 from spangle.models.http import Request, Response
 from ward import fixture, raises, test, using
 
@@ -17,6 +17,12 @@ class MountedComponent:
 
 class RootComponent:
     pass
+
+
+class RootAnotherComponent:
+    async def foobar(self) -> str:
+        use_component(RootComponent)
+        return "foobar"
 
 
 @fixture
@@ -50,6 +56,7 @@ def mounted_api() -> Api:
 def root_api(mounted: Api) -> Api:
     api = Api()
     api.register_component(RootComponent)
+    api.register_component(RootAnotherComponent)
 
     @api.route("/root-app/root-component")
     class RootView:
@@ -97,3 +104,13 @@ async def _(root_api: Api, mounted_api: Api) -> None:
     assert use_component(MountedComponent, api=mounted_api)
     with raises(KeyError):
         use_component(MountedComponent, api=root_api)
+
+
+@test("`use_component` should return a component in `api` context.")
+@using(api=root_api)
+async def _(api: Api) -> None:
+    api_ctx.set(api)
+    another = use_component(RootAnotherComponent)
+    assert await another.foobar()
+    with raises(KeyError):
+        use_component(MountedComponent)
