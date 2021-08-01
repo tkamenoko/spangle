@@ -21,6 +21,21 @@ if TYPE_CHECKING:
     from spangle.api import Api
 
 
+__all__ = [
+    "ComponentProtocol",
+    "AsyncStartupComponentProtocol",
+    "SyncStartupComponentProtocol",
+    "AsyncShutdownComponentProtocol",
+    "SyncShutdownComponentProtocol",
+    "AnyComponentProtocol",
+    "ComponentsCache",
+    "component_ctx",
+    "use_component",
+    "api_ctx",
+    "use_api",
+]
+
+
 @runtime_checkable
 class ComponentProtocol(Protocol):
     """
