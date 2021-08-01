@@ -1,6 +1,6 @@
 ---
 title: spangle
-module_digest: 4cc68b87deddb3f599457935eb428014
+module_digest: 8393f9d4c026ff3f3624fd5884d3dd67
 ---
 
 # Module spangle

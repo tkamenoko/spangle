@@ -1,6 +1,6 @@
 ---
 title: spangle.component
-module_digest: 682255c90241d0e6bb5d41291e68a4df
+module_digest: aaf7c54fb42515213c71f9237235bb08
 ---
 
 # Module spangle.component
@@ -80,6 +80,18 @@ Component must be initialized without arguments.
 #### Base classes {: #ComponentProtocol-bases }
 
 * `typing.Protocol`
+
+------
+
+### ComponentsCache {: #ComponentsCache }
+
+```python
+class ComponentsCache(self)
+```
+
+Store registered component instances based on its context.
+
+Initialize self.  See help(type(self)) for accurate signature.
 
 ------
 

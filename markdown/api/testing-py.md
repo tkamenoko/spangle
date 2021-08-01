@@ -1,6 +1,6 @@
 ---
 title: spangle.testing
-module_digest: f0b315fa8a5e9f81f9c4c1572d985787
+module_digest: 2e7de87ca1f867608adc562d18f134d6
 ---
 
 # Module spangle.testing

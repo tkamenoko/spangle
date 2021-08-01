@@ -17,7 +17,7 @@ from . import models
 from ._dispatcher import _dispatch_http, _dispatch_websocket
 from ._utils import _AppRef, _normalize_path, execute
 from .blueprint import Blueprint, Router
-from .component import AnyComponentProtocol, _ComponentsCache, api_ctx, component_ctx
+from .component import AnyComponentProtocol, ComponentsCache, api_ctx, component_ctx
 from .error_handler import ErrorHandler
 from .handler_protocols import (
     AnyRequestHandlerProtocol,
@@ -119,7 +119,7 @@ class Api:
         self.favicon = None
         self.max_upload_bytes = max_upload_bytes
         self._context = copy_context()
-        self._context.run(component_ctx.set, _ComponentsCache())
+        self._context.run(component_ctx.set, ComponentsCache())
         self._context.run(api_ctx.set, self)
 
         # static files.
@@ -263,7 +263,7 @@ class Api:
         async def _in_context():
             cache_instance = component_ctx.get()
             # call `startup` of components first.
-            await cache_instance.startup()
+            await cache_instance._startup()
             # call startup handlers.
             [await execute(handler) for handler in self.lifespan_handlers["startup"]]
 
@@ -275,7 +275,7 @@ class Api:
             # call shutdown handlers.
             [await execute(handler) for handler in self.lifespan_handlers["shutdown"]]
             # call `shutdown` of components at last.
-            await cache_instance.shutdown()
+            await cache_instance._shutdown()
 
         await self._context.run(asyncio.create_task, _in_context())
 
