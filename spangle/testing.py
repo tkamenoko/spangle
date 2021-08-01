@@ -7,7 +7,7 @@ from collections.abc import Mapping
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from json import JSONDecodeError
-from typing import AnyStr, Optional, TypeVar, Union
+from typing import AnyStr, Optional, Union
 from urllib.parse import quote_plus
 
 import addict
