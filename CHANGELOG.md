@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.10.1(2021-08-01)
+
+- Fix `use_component` to call `use_api` to use expected api context.
+
 ## v0.10.0(2021-07-22)
 
 - Fix `use_component` to raise `KeyError` if given component is not registered.
