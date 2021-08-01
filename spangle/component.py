@@ -82,7 +82,11 @@ AnyComponentProtocol = Union[
 T = TypeVar("T", bound=AnyComponentProtocol)
 
 
-class _ComponentsCache:
+class ComponentsCache:
+    """
+    Store registered component instances based on its context.
+    """
+
     components: dict[type[AnyComponentProtocol], AnyComponentProtocol]
 
     def __init__(self) -> None:
@@ -92,7 +96,7 @@ class _ComponentsCache:
         instance = cast(T, self.components[component])
         return instance
 
-    async def startup(self) -> None:
+    async def _startup(self) -> None:
 
         [
             await execute(getattr(c, "startup", lambda: None))
@@ -100,7 +104,7 @@ class _ComponentsCache:
             if c is not self
         ]
 
-    async def shutdown(self) -> None:
+    async def _shutdown(self) -> None:
 
         [
             await execute(getattr(c, "shutdown", lambda: None))
@@ -109,7 +113,7 @@ class _ComponentsCache:
         ]
 
 
-component_ctx = ContextVar("component_ctx", default=_ComponentsCache())
+component_ctx = ContextVar("component_ctx", default=ComponentsCache())
 
 
 def use_component(component: type[T], *, api: Optional[Api] = None) -> T:
