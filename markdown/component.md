@@ -1,5 +1,5 @@
 ---
-version: v0.10.1
+version: v0.11.0
 ---
 
 # Component
@@ -55,11 +55,10 @@ There is no way to define the order of startup hooks. Do not expect that `startu
 
 ## Call `use_component` out of api context
 
-If you want to use components out of api context(like test environment), you can set context via `api_ctx`.
+If you want to use components out of api context(like test environment), you can set context by passing `Api` instance.
 
 ```python
-api_ctx.set(your_api)
-component = use_component(MyComponent)
+component = use_component(MyComponent, api=your_api)
 ```
 
 ## Use `Api` instance as a component
