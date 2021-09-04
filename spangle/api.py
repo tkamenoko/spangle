@@ -3,6 +3,7 @@ Main Api class.
 """
 
 import asyncio
+import inspect
 import re
 from collections.abc import Callable
 from contextvars import Context, copy_context
@@ -331,9 +332,28 @@ class Api:
 
         """
 
+        def wrapper(f: Callable) -> Callable:
+            if inspect.iscoroutinefunction(f):
+
+                async def async_wrapper(*args, **kw) -> Any:
+                    return await self._context.run(asyncio.create_task, f(*args, **kw))
+
+                return async_wrapper
+
+            def sync_wrapper(*args, **kw) -> Any:
+                return self._context.run(f, *args, **kw)
+
+            return sync_wrapper
+
         def _in_context():
             cache_instance = component_ctx.get()
-            cache_instance.components.update({component: component()})
+            component_instance = component()
+            for name, method in inspect.getmembers(
+                component_instance, inspect.ismethod
+            ):
+                setattr(component_instance, name, wrapper(method))
+
+            cache_instance.components.update({component: component_instance})
 
         self._context.run(_in_context)
 
