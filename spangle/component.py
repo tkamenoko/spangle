@@ -147,7 +147,7 @@ def use_component(component: type[T], *, api: Optional[Api] = None) -> T:
 
     **Raises**
 
-    * `KeyError` : The component is not registered.
+    * `LookupError` : The component is not registered.
 
     """
     api = api or use_api()
