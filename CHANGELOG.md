@@ -1,6 +1,6 @@
 # Changelog
 
-## v0.11.0(Unreleased)
+## v0.11.0(2021-09-05)
 
 - Ensure component methods to be called in correct context.
 

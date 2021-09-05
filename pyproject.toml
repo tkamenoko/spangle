@@ -1,7 +1,7 @@
 [tool]
 [tool.poetry]
 name = "spangle"
-version = "0.10.1"
+version = "0.11.0"
 description = "A small and flexible ASGI application framework for modern web."
 license = "MIT"
 authors = ["T.Kameyama <tkamenoko@vivaldi.net>"]
