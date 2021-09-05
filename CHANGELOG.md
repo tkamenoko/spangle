@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.0(2021-09-05)
+
+- Ensure component methods to be called in correct context.
+
 ## v0.10.1(2021-08-01)
 
 - Fix `use_component` to call `use_api` to use expected api context.

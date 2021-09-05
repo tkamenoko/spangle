@@ -1,6 +1,6 @@
 ---
 title: spangle.component
-module_digest: aaf7c54fb42515213c71f9237235bb08
+module_digest: 0f934114e4e1b838c70c04baed4c8b05
 ---
 
 # Module spangle.component
@@ -190,4 +190,4 @@ Return registered component instance.
 
 **Raises**
 
-- `KeyError`: The component is not registered.
+- `LookupError`: The component is not registered.
