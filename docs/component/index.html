@@ -943,9 +943,8 @@
 </div>
 <p>There is no way to define the order of startup hooks. Do not expect that <code>startup</code> hooks of other components are already completed.</p>
 <h2 id="call-use_component-out-of-api-context">Call <code>use_component</code> out of api context<a class="headerlink" href="#call-use_component-out-of-api-context" title="Permanent link">&para;</a></h2>
-<p>If you want to use components out of api context(like test environment), you can set context via <code>api_ctx</code>.</p>
-<div class="highlight"><pre><span></span><code><span class="n">api_ctx</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">your_api</span><span class="p">)</span>
-<span class="n">component</span> <span class="o">=</span> <span class="n">use_component</span><span class="p">(</span><span class="n">MyComponent</span><span class="p">)</span>
+<p>If you want to use components out of api context(like test environment), you can set context by passing <code>Api</code> instance.</p>
+<div class="highlight"><pre><span></span><code><span class="n">component</span> <span class="o">=</span> <span class="n">use_component</span><span class="p">(</span><span class="n">MyComponent</span><span class="p">,</span> <span class="n">api</span><span class="o">=</span><span class="n">your_api</span><span class="p">)</span>
 </code></pre></div>
 <h2 id="use-api-instance-as-a-component">Use <code>Api</code> instance as a component<a class="headerlink" href="#use-api-instance-as-a-component" title="Permanent link">&para;</a></h2>
 <p>You can use <code>Api</code> instance in view classes or components by calling <a href="../api/component-py/#use_api"><code>use_api</code></a>.</p>

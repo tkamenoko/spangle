@@ -1,6 +1,6 @@
 ---
 title: spangle.api
-module_digest: a3e1f11e5748ac99456dcb9155e274ee
+module_digest: 8919aeb435dcb3d39c8d42207d1cdb78
 ---
 
 # Module spangle.api
