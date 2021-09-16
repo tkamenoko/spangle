@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.11.1(2021-09-17)
+
+- Fix component methods to be able to call another method.
+
 ## v0.11.0(2021-09-05)
 
 - Ensure component methods to be called in correct context.
