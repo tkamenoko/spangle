@@ -16,14 +16,21 @@ class MountedComponent:
 
 
 class RootComponent:
+    def _already_in_context(self) -> str:
+        return "foobar"
+
     def baz(self, *args) -> str:
-        use_component(RootAnotherComponent)
+        another = use_component(RootAnotherComponent)
+        another.barbaz()
+        self._already_in_context()
         return str(args)
 
 
 class RootAnotherComponent:
+    def barbaz(self) -> None:
+        return
+
     async def foobar(self) -> str:
-        use_component(RootComponent)
         return "foobar"
 
 
