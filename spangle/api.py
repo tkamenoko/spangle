@@ -163,7 +163,7 @@ class Api:
         self.add_middleware(ServerErrorMiddleware, debug=self.debug)
 
     async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
-        await self._context.run(
+        await self._context.copy().run(
             asyncio.create_task, self._app_ref["app"](scope, receive, send)
         )
 
@@ -268,7 +268,7 @@ class Api:
             # call startup handlers.
             [await execute(handler) for handler in self.lifespan_handlers["startup"]]
 
-        await self._context.run(asyncio.create_task, _in_context())
+        await self._context.copy().run(asyncio.create_task, _in_context())
 
     async def _shutdown(self) -> None:
         async def _in_context():
@@ -278,7 +278,7 @@ class Api:
             # call `shutdown` of components at last.
             await cache_instance._shutdown()
 
-        await self._context.run(asyncio.create_task, _in_context())
+        await self._context.copy().run(asyncio.create_task, _in_context())
 
     def client(self, timeout: Optional[float] = 1) -> AsyncHttpTestClient:
         """
@@ -336,12 +336,14 @@ class Api:
             if inspect.iscoroutinefunction(f):
 
                 async def async_wrapper(*args, **kw) -> Any:
-                    return await self._context.run(asyncio.create_task, f(*args, **kw))
+                    return await self._context.copy().run(
+                        asyncio.create_task, f(*args, **kw)
+                    )
 
                 return async_wrapper
 
             def sync_wrapper(*args, **kw) -> Any:
-                return self._context.run(f, *args, **kw)
+                return self._context.copy().run(f, *args, **kw)
 
             return sync_wrapper
 
@@ -355,7 +357,7 @@ class Api:
 
             cache_instance.components.update({component: component_instance})
 
-        self._context.run(_in_context)
+        self._context.copy().run(_in_context)
 
         return component
 
