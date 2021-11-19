@@ -4,7 +4,7 @@ from typing import TypedDict, Union
 from starlette.types import ASGIApp
 
 
-class _AppRef(TypedDict):
+class AppRef(TypedDict):
     # Workaround for type error
     app: ASGIApp
 
@@ -15,7 +15,7 @@ async def execute(f: Union[Callable[[], None], Callable[[], Awaitable[None]]]):
         await result
 
 
-def _normalize_path(path: str) -> str:
+def normalize_path(path: str) -> str:
     # 'string'->'/string/'
     if not path.startswith("/"):
         path = "/" + path

@@ -6,11 +6,10 @@ from typing import TYPE_CHECKING, Any, Union
 from starlette.responses import Response as StarletteResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from spangle._internal.router import RedirectBase
-
-from .exceptions import MethodNotAllowedError, NotFoundError, SpangleError
-from .handler_protocols import AnyRequestHandlerProtocol, ErrorHandlerProtocol
-from .models import http, websocket
+from ..exceptions import MethodNotAllowedError, NotFoundError, SpangleError
+from ..handler_protocols import AnyRequestHandlerProtocol, ErrorHandlerProtocol
+from ..models import http, websocket
+from .router import RedirectBase
 
 if TYPE_CHECKING:
     from spangle.api import Api  # pragma: no cover
@@ -45,7 +44,7 @@ def _init_view(
         return view
 
 
-async def _dispatch_http(
+async def dispatch_http(
     scope: Scope, receive: Receive, send: Send, api: Api
 ) -> ASGIApp:
     req = http.Request(scope, receive, send)
@@ -199,7 +198,7 @@ async def _default_response(
     pass
 
 
-async def _dispatch_websocket(
+async def dispatch_websocket(
     scope: Scope, receive: Receive, send: Send, api: Api
 ) -> ASGIApp:
     # upgrade is treated by asgi server.

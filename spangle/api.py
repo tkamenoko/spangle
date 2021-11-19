@@ -15,9 +15,9 @@ from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import models
-from ._dispatcher import _dispatch_http, _dispatch_websocket
+from ._internal.dispatcher import dispatch_http, dispatch_websocket
 from ._internal.router import Router
-from ._utils import _AppRef, _normalize_path, execute
+from ._internal.utils import AppRef, execute, normalize_path
 from .blueprint import Blueprint
 from .component import AnyComponentProtocol, ComponentsCache, api_ctx, component_ctx
 from .error_handler import ErrorHandler
@@ -52,7 +52,7 @@ class Api:
 
     """
 
-    _app_ref: _AppRef
+    _app_ref: AppRef
     _view_cache: dict[
         type[Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol]],
         Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol],
@@ -159,7 +159,7 @@ class Api:
         self.request_hooks = {"before": [], "after": []}
 
         # init middlewares.
-        self._app_ref = _AppRef(app=self._dispatch)
+        self._app_ref = AppRef(app=self._dispatch)
         for md in middleware or []:
             self.add_middleware(md[0], **md[1])
         self.add_middleware(ServerErrorMiddleware, debug=self.debug)
@@ -197,7 +197,7 @@ class Api:
         if self.favicon and scope["path"] == "/favicon.ico":
             scope["path"] = self.favicon
         # check mounted app.
-        normalized = _normalize_path(scope["path"])
+        normalized = normalize_path(scope["path"])
         for prefix, app in self.mounted_app.items():
             if normalized.startswith(prefix):
                 scope["path"] = scope["path"].replace(prefix[:-1], "", 1)
@@ -222,10 +222,10 @@ class Api:
 
         # check spangle views.
         if scope["type"] == "http":
-            app = await _dispatch_http(scope, receive, send, self)
+            app = await dispatch_http(scope, receive, send, self)
             t = asyncio.create_task(app(scope, receive, send))
         elif scope["type"] == "websocket":
-            app = await _dispatch_websocket(scope, receive, send, self)
+            app = await dispatch_websocket(scope, receive, send, self)
             t = asyncio.create_task(app(scope, receive, send))
         else:
             raise ValueError("Invalid scheme.")
@@ -441,7 +441,7 @@ class Api:
         * app (`ASGIApp`): ASGI app to mount.
 
         """
-        self.mounted_app.update({_normalize_path(path): app})
+        self.mounted_app.update({normalize_path(path): app})
 
     def url_for(
         self,
@@ -473,7 +473,7 @@ class Api:
         * **config: params for the middleware.
 
         """
-        self._app_ref = _AppRef(app=middleware(self._app_ref["app"], **config))
+        self._app_ref = AppRef(app=middleware(self._app_ref["app"], **config))
 
     def add_error_handler(self, eh: ErrorHandler) -> None:
         """
