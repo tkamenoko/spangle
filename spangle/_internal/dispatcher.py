@@ -52,10 +52,10 @@ async def dispatch_http(
     resp = http.Response(jinja_env=api._jinja_env, url_for=api.url_for)
     error = None
     try:
-        _resp = await _response_http(scope, receive, send, req, resp, api)
+        _resp = await _response_http(scope, req, resp, api)
     except Exception as e:
         error = e
-        _resp = await _response_http_error(scope, receive, send, req, resp, api, e)
+        _resp = await _response_http_error(req, resp, api, e)
 
     # after_request hooks.
     for cls in api.request_hooks["after"]:
@@ -76,8 +76,6 @@ async def dispatch_http(
 
 async def _response_http(
     scope: Scope,
-    receive: Receive,
-    send: Send,
     req: http.Request,
     resp: http.Response,
     api: Api,
@@ -104,9 +102,6 @@ async def _response_http(
 
 
 async def _response_http_error(
-    scope: Scope,
-    receive: Receive,
-    send: Send,
     req: http.Request,
     resp: http.Response,
     api: Api,
@@ -221,10 +216,10 @@ async def dispatch_websocket(
             f"WebSocket connection against unsupported path `{path}`.", status=1002
         )
     view = _init_view(view_class, api._view_cache)
-    return await _process_websocket(scope, receive, send, conn, view, params, api)
+    return await _process_websocket(conn, view, params, api)
 
 
-async def _process_websocket(scope, receive, send, conn, view, params, api):
+async def _process_websocket(conn, view, params, api):
     # return app that process connection include error handling!
     before_hooks = [
         _init_view(cls, api._view_cache)
@@ -244,7 +239,7 @@ async def _process_websocket(scope, receive, send, conn, view, params, api):
             assert not conn.closed
             await view.on_ws(conn, **params)
         except Exception as e:
-            await _process_websocket_error(scope, receive, send, conn, api, e)
+            await _process_websocket_error(conn, api, e)
             if conn.reraise:
                 raise e from None
         else:
@@ -257,7 +252,7 @@ async def _process_websocket(scope, receive, send, conn, view, params, api):
     return ws
 
 
-async def _process_websocket_error(scope, receive, send, conn, api, e):
+async def _process_websocket_error(conn, api, e):
     if conn.closed:
         raise e from None
     # handler available? it must have on_ws_error(self,conn,e) method.
