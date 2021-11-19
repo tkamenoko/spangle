@@ -5,7 +5,6 @@ from http import HTTPStatus
 from typing import Any, NamedTuple, Optional
 
 from parse import Parser, compile
-
 from spangle.handler_protocols import RequestHandlerProtocol
 
 from .._utils import _normalize_path
@@ -23,6 +22,13 @@ class _CollectedHandler(NamedTuple):
     handler: type[AnyRequestHandlerProtocol]
     converters: Converters
     strategy: RoutingStrategy
+
+
+class RedirectBase(RequestHandlerProtocol):
+    async def on_request(
+        self, req: Request, resp: Response, /, **kw: Any
+    ) -> Optional[Response]:
+        raise NotImplementedError
 
 
 class _StaticRouter:
@@ -68,7 +74,7 @@ class _StaticRouter:
         slash_path = _normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
-        class Redirect(RequestHandlerProtocol):
+        class Redirect(RedirectBase):
             async def on_request(_, req: Request, resp: Response, /) -> Response:
                 given_path = req.url.path
                 resp.redirect(
@@ -85,7 +91,7 @@ class _StaticRouter:
         slash_path = _normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
-        class Redirect(RequestHandlerProtocol):
+        class Redirect(RedirectBase):
             async def on_request(_, req: Request, resp: Response, /) -> Response:
                 given_path = req.url.path
                 resp.redirect(
@@ -279,7 +285,7 @@ class _DynamicRouter:
         slash_path = _normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
-        class Redirect(RequestHandlerProtocol):
+        class Redirect(RedirectBase):
             async def on_request(
                 self, req: Request, resp: Response, /, **kw
             ) -> Response:
@@ -305,7 +311,7 @@ class _DynamicRouter:
         slash_path = _normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
-        class Redirect(RequestHandlerProtocol):
+        class Redirect(RedirectBase):
             async def on_request(
                 self, req: Request, resp: Response, /, **kw
             ) -> Response:
