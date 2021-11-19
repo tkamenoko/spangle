@@ -55,8 +55,8 @@ class IntArg:
         assert isinstance(dynamic, int)
 
 # `default` match does not contain slash(`/`).
-# `rest_string` converter matches any characters including slash.
-@api.route("/{for_spa:rest_string}")
+# `*rest_string` converter matches any characters including slash.
+@api.route("/{for_spa:*rest_string}")
 @api.route("/")
 class SpaView:
     async def on_get(self, req, resp, **kw):
@@ -81,7 +81,8 @@ def regex(x):
 
 regex.pattern = r"[A-Za-z]+(/[A-Za-z]+)+"
 
-@api.route("/accept/custom-pattern/{path:regex}", converters={"regex":regex})
+# convert must start with `*` to include slash for its pattern.
+@api.route("/accept/custom-pattern/{path:*regex}", converters={"*regex":regex})
 class SlashRequired:
     async def on_request(self, req, resp, path):
         assert "/" in path

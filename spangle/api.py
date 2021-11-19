@@ -16,8 +16,9 @@ from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import models
 from ._dispatcher import _dispatch_http, _dispatch_websocket
+from ._internal.router import Router
 from ._utils import _AppRef, _normalize_path, execute
-from .blueprint import Blueprint, Router
+from .blueprint import Blueprint
 from .component import AnyComponentProtocol, ComponentsCache, api_ctx, component_ctx
 from .error_handler import ErrorHandler
 from .handler_protocols import (
@@ -37,7 +38,6 @@ class Api:
 
     **Attributes**
 
-    * router (`spangle.blueprint.Router`): Manage URLs and views.
     * mounted_app (`dict[str, ASGIApp]`): ASGI apps mounted under `Api` .
     * error_handlers (`dict[type[Exception], type[ErrorHandlerProtocol]]`): Called when
         `Exception` is raised.
@@ -48,6 +48,7 @@ class Api:
     * routing (`spangle.types.RoutingStrategy`): Routing strategy about trailing slash.
     * templates_dir (`str`): Path to `Jinja2` templates.
     * max_upload_bytes (`int`): Allowed user uploads size.
+    * default_route (`Optional[str]`): Fallback path.
 
     """
 
@@ -59,8 +60,8 @@ class Api:
     _reverse_views: dict[type[AnyRequestHandlerProtocol], str]
     _jinja_env: Optional[jinja2.Environment]
     _context: Context
+    _router: Router
 
-    router: Router
     mounted_app: dict[str, ASGIApp]
     error_handlers: dict[type[Exception], type[ErrorHandlerProtocol]]
     request_hooks: dict[str, list[type[RequestHandlerProtocol]]]
@@ -70,6 +71,7 @@ class Api:
     routing: RoutingStrategy
     templates_dir: Optional[str]
     max_upload_bytes: int
+    default_route: Optional[str]
 
     def __init__(
         self,
@@ -111,7 +113,7 @@ class Api:
         * max_upload_bytes (`int`): Limit of user upload size. Defaults to 10MB.
 
         """
-        self.router = Router(routing)
+        self._router = Router(routing)
         self._view_cache = {}
         self.mounted_app = {}
         self._reverse_views = {}
@@ -151,7 +153,7 @@ class Api:
         self.routing = routing
 
         # default route.
-        self.router.default_route = default_route
+        self.default_route = default_route
 
         # init before_request.
         self.request_hooks = {"before": [], "after": []}
@@ -373,14 +375,21 @@ class Api:
 
         """
         _path = "/" + path
-        flatten = {}
+        flatten: dict[
+            str,
+            tuple[
+                type[AnyRequestHandlerProtocol], Converters, Optional[RoutingStrategy]
+            ],
+        ] = {}
         for child, view_conv in blueprint.views.items():
             p = re.sub(r"//+", "/", "/".join([_path, child]))
             view, conv, routing = view_conv
             flatten[p] = (view, conv, routing or self.routing)
         for k, v in flatten.items():
             _view, _conv, _routing = v
-            normalized = self.router._add(k, _view, _conv, _routing)
+            normalized = self._router.append(
+                k, _view, converters=_conv, strategy=_routing
+            )
             _k = re.sub(r"{([^/:]+)(:[^/:]+)}", r"{\1}", normalized)
             self._reverse_views.setdefault(_view, _k)
 

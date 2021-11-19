@@ -338,7 +338,7 @@ def path_params():
 @using(api=api)
 def patterns(api: Api):
     @api.route(
-        "/{default}/{string:str}/{num1:int}/{num2:float}/{anything:rest_string}/tail"
+        "/{default}/{string:str}/{num1:int}/{num2:float}/{anything:*rest_string}/tail"
     )
     class BuiltinPatterns:
         async def on_get(self, req, resp, **kw):

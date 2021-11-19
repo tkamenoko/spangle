@@ -6,6 +6,8 @@ from typing import TYPE_CHECKING, Any, Union
 from starlette.responses import Response as StarletteResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
+from spangle._internal.router import RedirectBase
+
 from .exceptions import MethodNotAllowedError, NotFoundError, SpangleError
 from .handler_protocols import AnyRequestHandlerProtocol, ErrorHandlerProtocol
 from .models import http, websocket
@@ -81,7 +83,7 @@ async def _response_http(
     resp: http.Response,
     api: Api,
 ) -> ASGIApp:
-    root = api.router
+    router = api._router
     view_cache = api._view_cache
 
     # before_request hooks.
@@ -91,11 +93,11 @@ async def _response_http(
 
     # get views.
     path = scope["path"] or "/"
-    _view = root.get(path)
+    _view = router.get(path)
     if _view is None:
-        if root.default_route is None:
+        if api.default_route is None:
             raise NotFoundError(f"Give path `{path}` was not found.")
-        _view = root.get(root.default_route)
+        _view = router.get(api.default_route)
     assert _view
     view_class, params = _view
     view = _init_view(view_class, view_cache)
@@ -144,10 +146,11 @@ async def _response_http_error(
 async def _execute_http(
     req: http.Request, resp: http.Response, view, params: dict[str, Any]
 ) -> StarletteResponse:
-    if req.method not in view.allowed_methods:
+    if not isinstance(view, RedirectBase) and req.method not in view.allowed_methods:
         raise MethodNotAllowedError(
             f"`{req.method}` is not allowed.", allowed_methods=view.allowed_methods
         )
+
     # try 'on_request' first, then try 'on_{method}'
     on_request = getattr(view, "on_request", _default_response)
     on_method = getattr(view, f"on_{req.method}", _default_response)
@@ -203,7 +206,7 @@ async def _dispatch_websocket(
     conn = websocket.Connection(scope, receive, send)
     # get route
     path = scope["path"]
-    view_param = api.router.get(path)
+    view_param = api._router.get(path)
 
     # if not found, close with 1002:Protocol Error before accepting.
     if not view_param:

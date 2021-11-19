@@ -208,13 +208,13 @@ async def _(api: Api):
         pass
 
     index = api.url_for(Index)
-    api.router.get(index) == (Index, {})
+    api._router.get(index) == (Index, {})
     foo = api.url_for(Foo)
-    api.router.get(foo) == (Foo, {})
+    api._router.get(foo) == (Foo, {})
     foobar = api.url_for(FooBar)
-    api.router.get(foobar) == (FooBar, {})
+    api._router.get(foobar) == (FooBar, {})
     foovar = api.url_for(FooVar, {"var": "baz"})
-    api.router.get(foovar) == (FooVar, {"var": "baz"})
+    api._router.get(foovar) == (FooVar, {"var": "baz"})
 
 
 static_paths = [

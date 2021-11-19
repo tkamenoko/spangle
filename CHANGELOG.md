@@ -1,5 +1,10 @@
 # Changelog
 
+## v0.12.0(Unreleased)
+
+- Use tree for routing.
+- Fix dynamic routing for rest_params. A converter name must start with `*` to capture slash.
+
 ## v0.11.1(2021-09-17)
 
 - Fix component methods to be able to call another method.
