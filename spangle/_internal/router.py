@@ -6,6 +6,8 @@ from typing import Any, NamedTuple, Optional
 
 from parse import Parser, compile
 
+from spangle.handler_protocols import RequestHandlerProtocol
+
 from .._utils import _normalize_path
 from ..blueprint import AnyRequestHandlerProtocol
 from ..models import Request, Response
@@ -66,29 +68,16 @@ class _StaticRouter:
         slash_path = _normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
-        allowed_methods = {"get", "head", "options"}
-        additional_methods = getattr(handler, "allowed_methods", [])
-        allowed_methods.update([m.lower() for m in additional_methods])
-        unsafe = {"post", "put", "delete", "patch", "connect", "trace"}
-        on_unsafe_methods = {m for m in unsafe if hasattr(handler, "on_" + m)}
-        allowed_methods.update(on_unsafe_methods)
+        class Redirect(RequestHandlerProtocol):
+            async def on_request(_, req: Request, resp: Response, /) -> Response:
+                given_path = req.url.path
+                resp.redirect(
+                    url=given_path[:-1] or "/", status=HTTPStatus.PERMANENT_REDIRECT
+                )
+                return resp
 
-        allowed_methods.add("request")
-
-        async def on_request(_, req: Request, resp: Response):
-            given_path = req.url.path
-            resp.redirect(
-                url=given_path[:-1] or "/", status=HTTPStatus.PERMANENT_REDIRECT
-            )
-            return resp
-
-        redirect = type(
-            "Redirect",
-            (object,),
-            {f"on_{method}": on_request for method in allowed_methods},
-        )
         self.routes[no_trailing_slash] = handler
-        self.routes.setdefault(slash_path, redirect)
+        self.routes.setdefault(slash_path, Redirect)
 
         return no_trailing_slash
 
@@ -96,27 +85,16 @@ class _StaticRouter:
         slash_path = _normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
-        allowed_methods = {"get", "head", "options"}
-        additional_methods = getattr(handler, "allowed_methods", [])
-        allowed_methods.update([m.lower() for m in additional_methods])
-        unsafe = {"post", "put", "delete", "patch", "connect", "trace"}
-        on_unsafe_methods = {m for m in unsafe if hasattr(handler, "on_" + m)}
-        allowed_methods.update(on_unsafe_methods)
+        class Redirect(RequestHandlerProtocol):
+            async def on_request(_, req: Request, resp: Response, /) -> Response:
+                given_path = req.url.path
+                resp.redirect(
+                    url=f"{given_path}/", status=HTTPStatus.PERMANENT_REDIRECT
+                )
+                return resp
 
-        allowed_methods.add("request")
-
-        async def on_request(_, req: Request, resp: Response):
-            given_path = req.url.path
-            resp.redirect(url=f"{given_path}/", status=HTTPStatus.PERMANENT_REDIRECT)
-            return resp
-
-        redirect = type(
-            "Redirect",
-            (object,),
-            {f"on_{method}": on_request for method in allowed_methods},
-        )
         self.routes[slash_path] = handler
-        self.routes.setdefault(no_trailing_slash, redirect)
+        self.routes.setdefault(no_trailing_slash, Redirect)
         return slash_path
 
     def get(self, path: str) -> Optional[_Matched]:
@@ -301,30 +279,21 @@ class _DynamicRouter:
         slash_path = _normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
-        allowed_methods = {"get", "head", "options"}
-        additional_methods = getattr(handler, "allowed_methods", [])
-        allowed_methods.update([m.lower() for m in additional_methods])
-        unsafe = {"post", "put", "delete", "patch", "connect", "trace"}
-        on_unsafe_methods = {m for m in unsafe if hasattr(handler, "on_" + m)}
-        allowed_methods.update(on_unsafe_methods)
+        class Redirect(RequestHandlerProtocol):
+            async def on_request(
+                self, req: Request, resp: Response, /, **kw
+            ) -> Response:
+                given_path = req.url.path
+                resp.redirect(
+                    url=f"{given_path}/", status=HTTPStatus.PERMANENT_REDIRECT
+                )
+                return resp
 
-        allowed_methods.add("request")
-
-        async def on_request(_, req: Request, resp: Response):
-            given_path = req.url.path
-            resp.redirect(url=f"{given_path}/", status=HTTPStatus.PERMANENT_REDIRECT)
-            return resp
-
-        redirect = type(
-            "Redirect",
-            (object,),
-            {f"on_{method}": on_request for method in allowed_methods},
-        )
         _, *next_path_parts = slash_path.split("/")
         self.root_node.append(next_path_parts, handler, converters)
         if not self.get(no_trailing_slash):
             _, *next_path_parts = no_trailing_slash.split("/")
-            self.root_node.append(next_path_parts, redirect, converters)
+            self.root_node.append(next_path_parts, Redirect, converters)
         return slash_path
 
     def _append_no_slash(
@@ -336,32 +305,21 @@ class _DynamicRouter:
         slash_path = _normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
-        allowed_methods = {"get", "head", "options"}
-        additional_methods = getattr(handler, "allowed_methods", [])
-        allowed_methods.update([m.lower() for m in additional_methods])
-        unsafe = {"post", "put", "delete", "patch", "connect", "trace"}
-        on_unsafe_methods = {m for m in unsafe if hasattr(handler, "on_" + m)}
-        allowed_methods.update(on_unsafe_methods)
+        class Redirect(RequestHandlerProtocol):
+            async def on_request(
+                self, req: Request, resp: Response, /, **kw
+            ) -> Response:
+                given_path = req.url.path
+                resp.redirect(
+                    url=given_path[:-1] or "/", status=HTTPStatus.PERMANENT_REDIRECT
+                )
+                return resp
 
-        allowed_methods.add("request")
-
-        async def on_request(_, req: Request, resp: Response):
-            given_path = req.url.path
-            resp.redirect(
-                url=given_path[:-1] or "/", status=HTTPStatus.PERMANENT_REDIRECT
-            )
-            return resp
-
-        redirect = type(
-            "Redirect",
-            (object,),
-            {f"on_{method}": on_request for method in allowed_methods},
-        )
         _, *next_path_parts = no_trailing_slash.split("/")
         self.root_node.append(next_path_parts, handler, converters)
         if not self.get(slash_path):
             _, *next_path_parts = slash_path.split("/")
-            self.root_node.append(next_path_parts, redirect, converters)
+            self.root_node.append(next_path_parts, Redirect, converters)
         return no_trailing_slash
 
     def get(self, path: str) -> Optional[_Matched]:
