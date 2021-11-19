@@ -199,3 +199,23 @@ for path, handler, params in testing_no_slash_handlers:
         else:
             assert matched.handler is handler
         assert matched.params == params
+
+
+@test("Router returns a view with params from too long path")
+async def _():
+    router = Router("strict")
+
+    class View:
+        pass
+
+    router.append("/{anystr:*rest_string}/", View, converters={})
+    matched = router.get("/any/")
+    assert matched
+    assert matched.params == {"anystr": "any"}
+    matched = router.get("/not-match")
+    assert matched is None
+    matched = router.get("/too/long/string/is/comming/")
+    assert matched
+    assert matched.params == {"anystr": "too/long/string/is/comming"}
+    matched = router.get("/too/long/string/but/no-slash")
+    assert matched is None

@@ -113,11 +113,13 @@ class _StaticRouter:
 class _Node:
     _static_nodes: dict[str, _Node]
     _dynamic_nodes: dict[str, tuple[Parser, _Node]]
+    _rest_nodes: dict[str, tuple[Parser, _Node]]
     _handler: Optional[type[AnyRequestHandlerProtocol]]
 
     def __init__(self) -> None:
         self._static_nodes = {}
         self._dynamic_nodes = {}
+        self._rest_nodes = {}
         self._handler = None
 
     def get(self, next_path_parts: list[str], params: dict) -> Optional[_Matched]:
@@ -126,9 +128,11 @@ class _Node:
                 return None
             return _Matched(handler=self._handler, params=params)
         head, *rest_paths = next_path_parts
-        return self._get_from_static_node(
-            head, rest_paths, params
-        ) or self._get_from_dynamic_node(head, rest_paths, params)
+        return (
+            self._get_from_static_node(head, rest_paths, params)
+            or self._get_from_dynamic_node(head, rest_paths, params)
+            or self._get_from_rest_node(head, rest_paths, params)
+        )
 
     def append(
         self,
@@ -140,6 +144,9 @@ class _Node:
             self._handler = handler
             return
         head, *rest_paths = next_path_parts
+        if re.match(r".*{([^/:]+):\*[^/:]+}.*", head):
+            self._append_rest_node(head, rest_paths, handler, converters)
+            return
         if re.match(r".*{([^/:]+)(:[^/:]+)?}.*", head):
             self._append_dynamic_node(head, rest_paths, handler, converters)
             return
@@ -170,6 +177,20 @@ class _Node:
             self._dynamic_nodes[fixed_head] = (parser, _Node())
         self._dynamic_nodes[fixed_head][1].append(rest_paths, handler, converters)
 
+    def _append_rest_node(
+        self,
+        path_head: str,
+        rest_paths: list[str],
+        handler: type[AnyRequestHandlerProtocol],
+        converters: Converters,
+    ):
+        path = "/".join([path_head, *rest_paths])
+        fixed_path = re.sub(r"{([^:]+)}", r"{\1:default}", path)
+        if fixed_path not in self._rest_nodes:
+            parser = compile(fixed_path, converters)
+            self._rest_nodes[fixed_path] = (parser, _Node())
+        self._rest_nodes[fixed_path][1].append([], handler, converters)
+
     def _get_from_static_node(
         self, path_head: str, rest_paths: list[str], params: dict
     ) -> Optional[_Matched]:
@@ -189,6 +210,23 @@ class _Node:
             if parsed is not None:
                 new_params = parsed.named
                 found = next_node.get(rest_paths, {**params, **new_params})
+                if found:
+                    return found
+
+        return None
+
+    def _get_from_rest_node(
+        self, path_head: str, rest_paths: list[str], params: dict
+    ) -> Optional[_Matched]:
+        path = "/".join([path_head, *rest_paths])
+        for parser, next_node in self._rest_nodes.values():
+            try:
+                parsed = parser.parse(path)
+            except Exception:
+                continue
+            if parsed is not None:
+                new_params = {k: v for k, v in parsed.named.items()}
+                found = next_node.get([], {**params, **new_params})
                 if found:
                     return found
 
@@ -214,7 +252,7 @@ _builtin_converters = {
     "default": _wrapper(_default_converter),
 }
 
-_builtin_converters["rest_string"] = _default_converter
+_builtin_converters["*rest_string"] = _default_converter
 
 
 class _DynamicRouter:
@@ -372,6 +410,3 @@ class Router:
 
     def get(self, path: str) -> Optional[_Matched]:
         return self._static_router.get(path) or self._dynamic_router.get(path)
-
-
-# TODO: reverse router
