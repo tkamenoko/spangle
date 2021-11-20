@@ -22,6 +22,8 @@ from starlette.responses import Response as StarletteResponse
 from starlette.responses import StreamingResponse
 from starlette.types import Receive, Scope, Send
 
+from ..component import use_api
+
 
 class _Accept:
     """
@@ -328,9 +330,7 @@ class Response:
     """
 
     __slots__ = (
-        "_jinja",
         "_redirect_to",
-        "_url_for",
         "_starlette_resp",
         "_body",
         "_text",
@@ -343,9 +343,7 @@ class Response:
         "reraise",
     )
 
-    _jinja: Optional[jinja2.Environment]
     _redirect_to: Optional[tuple[str, Optional[str]]]
-    _url_for: Optional[Callable]
     _starlette_resp: type[StarletteResponse]
     _body: Any
     _text: Optional[str]
@@ -358,11 +356,9 @@ class Response:
     streaming: Optional[AsyncGenerator]
     reraise: bool
 
-    def __init__(self, jinja_env: jinja2.Environment = None, url_for=None) -> None:
+    def __init__(self) -> None:
         """Do not use manually."""
-        self._jinja = jinja_env
         self._redirect_to = None
-        self._url_for = url_for
         self._starlette_resp = StarletteResponse
         self._body = None
         self._text = None
@@ -639,11 +635,12 @@ class Response:
         * `NotFoundError`: Missing requested template.
 
         """
-        if self._jinja is None:
+        jinja_env = use_api()._jinja_env
+        if jinja_env is None:
             raise ValueError("Set jinja env.")
 
         try:
-            template = self._jinja.get_template(template_name)
+            template = jinja_env.get_template(template_name)
         except jinja2.exceptions.TemplateNotFound:
             raise NotFoundError
 
@@ -688,8 +685,8 @@ class Response:
         self.status_code = status
         self._starlette_resp = RedirectResponse
         if view:
-            assert self._url_for
-            redirect_to = self._url_for(view, params)
+            url_for = use_api().url_for
+            redirect_to = url_for(view, params)
         elif url:
             redirect_to = url
         else:

@@ -206,9 +206,7 @@ class Api:
                 if scope["type"] == "http":
                     model = {
                         "req": models.http.Request(scope, receive, send),
-                        "resp": models.http.Response(
-                            jinja_env=self._jinja_env, url_for=self.url_for
-                        ),
+                        "resp": models.http.Response(),
                     }
                 elif scope["type"] == "websocket":
                     model = {"conn": models.websocket.Connection(scope, receive, send)}
