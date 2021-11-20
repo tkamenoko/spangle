@@ -47,7 +47,6 @@ def _init_view(cls: type[T]) -> T:
 async def dispatch_http(scope: Scope, receive: Receive, send: Send) -> ASGIApp:
     api = use_api()
     req = http.Request(scope, receive, send)
-    req.max_upload_bytes = api.max_upload_bytes
     resp = http.Response()
     error = None
     try:

@@ -2,7 +2,6 @@
 HTTP Request & Response.
 """
 
-
 from collections.abc import AsyncGenerator, Awaitable, Callable
 from http import HTTPStatus
 from http.cookies import SimpleCookie
@@ -13,8 +12,6 @@ import addict
 import chardet
 import jinja2
 from multidict import CIMultiDict, CIMultiDictProxy, MultiDict, MultiDictProxy
-from spangle.exceptions import NotFoundError, TooLargeRequestError
-from spangle.parser import _parse_body
 from starlette.requests import URL, Address
 from starlette.requests import Request as StarletteRequest
 from starlette.responses import JSONResponse, RedirectResponse
@@ -23,6 +20,8 @@ from starlette.responses import StreamingResponse
 from starlette.types import Receive, Scope, Send
 
 from ..component import use_api
+from ..exceptions import NotFoundError, TooLargeRequestError
+from ..parser import _parse_body
 
 
 class _Accept:
@@ -73,7 +72,7 @@ class Request:
 
     * headers (`CIMultiDictProxy`): The request headers, case-insensitive dictionary.
     * state (`addict.Dict`): Any object you want to store while the response.
-    * max_upload_bytes (`int`): Limit upload size against each request.
+    * max_upload_bytes (`Optional[int]`): Limit upload size against each request.
 
     """
 
@@ -104,7 +103,7 @@ class Request:
 
     headers: CIMultiDictProxy
     state: addict.Dict
-    max_upload_bytes: int
+    max_upload_bytes: Optional[int]
 
     def __init__(self, scope: Scope, receive: Receive, send: Send) -> None:
         """Do not use manually."""
@@ -120,6 +119,7 @@ class Request:
 
         self.headers = CIMultiDictProxy(CIMultiDict(self._request.headers.items()))
         self.state = addict.Dict()
+        self.max_upload_bytes = None
 
     @property
     async def content(self) -> bytes:
@@ -131,16 +131,21 @@ class Request:
         * `spangle.exceptions.TooLargeRequestError` : when request body is too large.
 
         """
+        max_upload_bytes = (
+            self.max_upload_bytes
+            if self.max_upload_bytes is not None
+            else use_api().max_upload_bytes
+        )
         if self._content is None:
             content_length = self.headers.get("content-length", "0")
-            if int(content_length) > self.max_upload_bytes:
+            if int(content_length) > max_upload_bytes:
                 raise TooLargeRequestError
 
             body = b""
             real_length = 0
             async for chunk in self._request.stream():
                 real_length += len(chunk)
-                if real_length > self.max_upload_bytes:
+                if real_length > max_upload_bytes:
                     raise TooLargeRequestError
                 body += chunk
             self._content = body
