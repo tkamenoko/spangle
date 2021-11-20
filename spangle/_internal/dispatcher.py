@@ -1,37 +1,36 @@
 from __future__ import annotations
 
 from http import HTTPStatus
-from typing import TYPE_CHECKING, Any, Union
+from typing import Any, TypeVar, Union, cast
 
 from starlette.responses import Response as StarletteResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-from spangle._internal.router import RedirectBase
-
-from .exceptions import MethodNotAllowedError, NotFoundError, SpangleError
-from .handler_protocols import AnyRequestHandlerProtocol, ErrorHandlerProtocol
-from .models import http, websocket
-
-if TYPE_CHECKING:
-    from spangle.api import Api  # pragma: no cover
+from ..component import use_api
+from ..exceptions import MethodNotAllowedError, NotFoundError, SpangleError
+from ..handler_protocols import (
+    AnyRequestHandlerProtocol,
+    ErrorHandlerProtocol,
+    WebSocketErrorHandlerProtocol,
+)
+from ..models import http, websocket
+from .router import RedirectBase
 
 ViewType = Union[
     AnyRequestHandlerProtocol,
     ErrorHandlerProtocol,
 ]
 
+T = TypeVar("T", bound=ViewType)
 
-def _init_view(
-    cls: type[ViewType],
-    view_cache: dict[
-        type[ViewType],
-        ViewType,
-    ],
-) -> ViewType:
+
+def _init_view(cls: type[T]) -> T:
+    view_cache = use_api()._view_cache
+    cls_ = cast(type[ViewType], cls)
     try:
-        return view_cache[cls]
+        return cast(T, view_cache[cls_])
     except KeyError:
-        view = cls()
+        view = cls_()
         allowed_methods = {"get", "head", "options"}
         additional_methods = getattr(view, "allowed_methods", [])
         allowed_methods.update([m.lower() for m in additional_methods])
@@ -41,26 +40,24 @@ def _init_view(
         allowed_methods.update(on_unsafe_methods)
         setattr(view, "allowed_methods", allowed_methods)
 
-        view_cache.update({cls: view})
-        return view
+        view_cache.update({cls_: view})
+        return cast(T, view)
 
 
-async def _dispatch_http(
-    scope: Scope, receive: Receive, send: Send, api: Api
-) -> ASGIApp:
+async def dispatch_http(scope: Scope, receive: Receive, send: Send) -> ASGIApp:
+    api = use_api()
     req = http.Request(scope, receive, send)
-    req.max_upload_bytes = api.max_upload_bytes
-    resp = http.Response(jinja_env=api._jinja_env, url_for=api.url_for)
+    resp = http.Response()
     error = None
     try:
-        _resp = await _response_http(scope, receive, send, req, resp, api)
+        _resp = await _response_http(scope, req, resp)
     except Exception as e:
         error = e
-        _resp = await _response_http_error(scope, receive, send, req, resp, api, e)
+        _resp = await _response_http_error(req, resp, e)
 
     # after_request hooks.
     for cls in api.request_hooks["after"]:
-        hook = _init_view(cls, api._view_cache)
+        hook = _init_view(cls)
         _resp = (
             await getattr(hook, "on_request", _default_response)(req, _resp)
         ) or _resp
@@ -76,19 +73,13 @@ async def _dispatch_http(
 
 
 async def _response_http(
-    scope: Scope,
-    receive: Receive,
-    send: Send,
-    req: http.Request,
-    resp: http.Response,
-    api: Api,
+    scope: Scope, req: http.Request, resp: http.Response
 ) -> ASGIApp:
+    api = use_api()
     router = api._router
-    view_cache = api._view_cache
-
     # before_request hooks.
     for cls in api.request_hooks["before"]:
-        hook = _init_view(cls, view_cache)
+        hook = _init_view(cls)
         resp = (await getattr(hook, "on_request", _default_response)(req, resp)) or resp
 
     # get views.
@@ -96,23 +87,18 @@ async def _response_http(
     _view = router.get(path)
     if _view is None:
         if api.default_route is None:
-            raise NotFoundError(f"Give path `{path}` was not found.")
+            raise NotFoundError(f"Given path `{path}` was not found.")
         _view = router.get(api.default_route)
     assert _view
     view_class, params = _view
-    view = _init_view(view_class, view_cache)
+    view = _init_view(view_class)
     return await _execute_http(req, resp, view, params)
 
 
 async def _response_http_error(
-    scope: Scope,
-    receive: Receive,
-    send: Send,
-    req: http.Request,
-    resp: http.Response,
-    api: Api,
-    error: Exception,
+    req: http.Request, resp: http.Response, error: Exception
 ) -> ASGIApp:
+    api = use_api()
     handlers = api.error_handlers
     # delete response body.
     resp._redirect_to = None
@@ -130,7 +116,7 @@ async def _response_http_error(
             view_class = handlers[parent]
         except KeyError:
             continue
-        view = _init_view(view_class, api._view_cache)
+        view = _init_view(view_class)
         if not hasattr(view, "on_error"):
             continue
         return await _execute_http_error(req, resp, error, view)
@@ -138,7 +124,7 @@ async def _response_http_error(
         # Default error handler.
         if isinstance(error, SpangleError):
             # TODO: more friendly message
-            return await _execute_http_builtin_error(req, resp, error, api._view_cache)
+            return await _execute_http_builtin_error(req, resp, error)
         else:
             raise error from None
 
@@ -179,16 +165,10 @@ class _BuiltinErrorResponse:
 
 
 async def _execute_http_builtin_error(
-    req: http.Request,
-    resp: http.Response,
-    e: SpangleError,
-    view_cache: dict[
-        type[Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol]],
-        Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol],
-    ],
+    req: http.Request, resp: http.Response, e: SpangleError
 ) -> ASGIApp:
 
-    view = _init_view(_BuiltinErrorResponse, view_cache)
+    view = _init_view(_BuiltinErrorResponse)
 
     return await _execute_http_error(req, resp, e, view)
 
@@ -199,9 +179,8 @@ async def _default_response(
     pass
 
 
-async def _dispatch_websocket(
-    scope: Scope, receive: Receive, send: Send, api: Api
-) -> ASGIApp:
+async def dispatch_websocket(scope: Scope, receive: Receive, send: Send) -> ASGIApp:
+    api = use_api()
     # upgrade is treated by asgi server.
     conn = websocket.Connection(scope, receive, send)
     # get route
@@ -221,21 +200,18 @@ async def _dispatch_websocket(
         raise NotFoundError(
             f"WebSocket connection against unsupported path `{path}`.", status=1002
         )
-    view = _init_view(view_class, api._view_cache)
-    return await _process_websocket(scope, receive, send, conn, view, params, api)
+    view = _init_view(view_class)
+    return await _process_websocket(conn, view, params)
 
 
-async def _process_websocket(scope, receive, send, conn, view, params, api):
+async def _process_websocket(conn: websocket.Connection, view, params: dict):
+    api = use_api()
     # return app that process connection include error handling!
     before_hooks = [
-        _init_view(cls, api._view_cache)
-        for cls in api.request_hooks["before"]
-        if hasattr(cls, "on_ws")
+        _init_view(cls) for cls in api.request_hooks["before"] if hasattr(cls, "on_ws")
     ]
     after_hooks = [
-        _init_view(cls, api._view_cache)
-        for cls in api.request_hooks["after"]
-        if hasattr(cls, "on_ws")
+        _init_view(cls) for cls in api.request_hooks["after"] if hasattr(cls, "on_ws")
     ]
 
     async def ws(scope, receive, send):
@@ -245,7 +221,7 @@ async def _process_websocket(scope, receive, send, conn, view, params, api):
             assert not conn.closed
             await view.on_ws(conn, **params)
         except Exception as e:
-            await _process_websocket_error(scope, receive, send, conn, api, e)
+            await _process_websocket_error(conn, e)
             if conn.reraise:
                 raise e from None
         else:
@@ -258,7 +234,8 @@ async def _process_websocket(scope, receive, send, conn, view, params, api):
     return ws
 
 
-async def _process_websocket_error(scope, receive, send, conn, api, e):
+async def _process_websocket_error(conn: websocket.Connection, e: Exception):
+    api = use_api()
     if conn.closed:
         raise e from None
     # handler available? it must have on_ws_error(self,conn,e) method.
@@ -267,8 +244,8 @@ async def _process_websocket_error(scope, receive, send, conn, api, e):
             view_class = api.error_handlers[parent]
         except KeyError:
             continue
-        view = _init_view(view_class, api._view_cache)
-        if not hasattr(view, "on_ws_error"):
+        view = _init_view(view_class)
+        if not isinstance(view, WebSocketErrorHandlerProtocol):
             continue
         # if found, use the method to close connection.
         await view.on_ws_error(conn, e)

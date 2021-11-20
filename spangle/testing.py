@@ -18,8 +18,7 @@ from multidict import CIMultiDict
 from starlette.types import ASGIApp
 from urllib3.filepost import RequestField, encode_multipart_formdata
 
-from ._utils import _AppRef
-
+from ._internal.utils import AppRef
 
 Headers = Union[Mapping[str, str], list[tuple[str, str]]]
 Params = Union[Mapping[str, str], list[tuple[str, str]]]
@@ -91,7 +90,7 @@ class HttpTestResponse:
 
 
 class _BaseWebSocket:
-    _app_ref: _AppRef
+    _app_ref: AppRef
     host: str
     path: str
     headers: CIMultiDict
@@ -107,7 +106,7 @@ class _BaseWebSocket:
         cookies: Optional[Mapping] = None,
         timeout: Optional[float] = None,
     ):
-        self._app_ref = _AppRef(app=http._app_ref["app"])
+        self._app_ref = AppRef(app=http._app_ref["app"])
         self.host = http.host
         self._client = http._client
         self.path = path
@@ -211,7 +210,7 @@ class AsyncWebsocketClient(_BaseWebSocket):
 
     """
 
-    _app_ref: _AppRef
+    _app_ref: AppRef
     host: str
     path: str
     headers: CIMultiDict
@@ -282,7 +281,7 @@ class AsyncWebsocketClient(_BaseWebSocket):
 
 
 class _BaseClient:
-    _app_ref: _AppRef
+    _app_ref: AppRef
     _transport: ASGITransport
     host: str
     _client: AsyncClient
@@ -295,7 +294,7 @@ class _BaseClient:
         host="www.example.com",
         client=("127.0.0.1", 123),
     ):
-        self._app_ref = _AppRef(app=app)
+        self._app_ref = AppRef(app=app)
         self._transport = ASGITransport(app, client=client)
         self.host = host
         self._client = AsyncClient(

@@ -7,10 +7,10 @@ from typing import Any, NamedTuple, Optional
 from parse import Parser, compile
 from spangle.handler_protocols import RequestHandlerProtocol
 
-from .._utils import _normalize_path
 from ..blueprint import AnyRequestHandlerProtocol
 from ..models import Request, Response
 from ..types import Converters, RoutingStrategy
+from .utils import normalize_path
 
 
 class _Matched(NamedTuple):
@@ -56,7 +56,7 @@ class _StaticRouter:
         return path
 
     def _append_clone(self, path: str, handler: type[AnyRequestHandlerProtocol]) -> str:
-        slash_path = _normalize_path(path)
+        slash_path = normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
         if path.endswith("/"):
             original_path = slash_path
@@ -71,7 +71,7 @@ class _StaticRouter:
     def _append_no_slash(
         self, path: str, handler: type[AnyRequestHandlerProtocol]
     ) -> str:
-        slash_path = _normalize_path(path)
+        slash_path = normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
         class Redirect(RedirectBase):
@@ -88,7 +88,7 @@ class _StaticRouter:
         return no_trailing_slash
 
     def _append_slash(self, path: str, handler: type[AnyRequestHandlerProtocol]) -> str:
-        slash_path = _normalize_path(path)
+        slash_path = normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
         class Redirect(RedirectBase):
@@ -299,7 +299,7 @@ class _DynamicRouter:
         handler: type[AnyRequestHandlerProtocol],
         converters: Converters,
     ) -> str:
-        slash_path = _normalize_path(path)
+        slash_path = normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
         if path.endswith("/"):
             original_path = slash_path
@@ -320,7 +320,7 @@ class _DynamicRouter:
         handler: type[AnyRequestHandlerProtocol],
         converters: Converters,
     ) -> str:
-        slash_path = _normalize_path(path)
+        slash_path = normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
         class Redirect(RedirectBase):
@@ -346,7 +346,7 @@ class _DynamicRouter:
         handler: type[AnyRequestHandlerProtocol],
         converters: Converters,
     ) -> str:
-        slash_path = _normalize_path(path)
+        slash_path = normalize_path(path)
         no_trailing_slash = slash_path[:-1] or "/"
 
         class Redirect(RedirectBase):

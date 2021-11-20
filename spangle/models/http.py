@@ -2,7 +2,6 @@
 HTTP Request & Response.
 """
 
-
 from collections.abc import AsyncGenerator, Awaitable, Callable
 from http import HTTPStatus
 from http.cookies import SimpleCookie
@@ -13,14 +12,16 @@ import addict
 import chardet
 import jinja2
 from multidict import CIMultiDict, CIMultiDictProxy, MultiDict, MultiDictProxy
-from spangle.exceptions import NotFoundError, TooLargeRequestError
-from spangle.parser import _parse_body
 from starlette.requests import URL, Address
 from starlette.requests import Request as StarletteRequest
 from starlette.responses import JSONResponse, RedirectResponse
 from starlette.responses import Response as StarletteResponse
 from starlette.responses import StreamingResponse
 from starlette.types import Receive, Scope, Send
+
+from ..component import use_api
+from ..exceptions import NotFoundError, TooLargeRequestError
+from ..parser import _parse_body
 
 
 class _Accept:
@@ -71,7 +72,7 @@ class Request:
 
     * headers (`CIMultiDictProxy`): The request headers, case-insensitive dictionary.
     * state (`addict.Dict`): Any object you want to store while the response.
-    * max_upload_bytes (`int`): Limit upload size against each request.
+    * max_upload_bytes (`Optional[int]`): Limit upload size against each request.
 
     """
 
@@ -102,7 +103,7 @@ class Request:
 
     headers: CIMultiDictProxy
     state: addict.Dict
-    max_upload_bytes: int
+    max_upload_bytes: Optional[int]
 
     def __init__(self, scope: Scope, receive: Receive, send: Send) -> None:
         """Do not use manually."""
@@ -118,6 +119,7 @@ class Request:
 
         self.headers = CIMultiDictProxy(CIMultiDict(self._request.headers.items()))
         self.state = addict.Dict()
+        self.max_upload_bytes = None
 
     @property
     async def content(self) -> bytes:
@@ -129,16 +131,21 @@ class Request:
         * `spangle.exceptions.TooLargeRequestError` : when request body is too large.
 
         """
+        max_upload_bytes = (
+            self.max_upload_bytes
+            if self.max_upload_bytes is not None
+            else use_api().max_upload_bytes
+        )
         if self._content is None:
             content_length = self.headers.get("content-length", "0")
-            if int(content_length) > self.max_upload_bytes:
+            if int(content_length) > max_upload_bytes:
                 raise TooLargeRequestError
 
             body = b""
             real_length = 0
             async for chunk in self._request.stream():
                 real_length += len(chunk)
-                if real_length > self.max_upload_bytes:
+                if real_length > max_upload_bytes:
                     raise TooLargeRequestError
                 body += chunk
             self._content = body
@@ -328,9 +335,7 @@ class Response:
     """
 
     __slots__ = (
-        "_jinja",
         "_redirect_to",
-        "_url_for",
         "_starlette_resp",
         "_body",
         "_text",
@@ -343,9 +348,7 @@ class Response:
         "reraise",
     )
 
-    _jinja: Optional[jinja2.Environment]
     _redirect_to: Optional[tuple[str, Optional[str]]]
-    _url_for: Optional[Callable]
     _starlette_resp: type[StarletteResponse]
     _body: Any
     _text: Optional[str]
@@ -358,11 +361,9 @@ class Response:
     streaming: Optional[AsyncGenerator]
     reraise: bool
 
-    def __init__(self, jinja_env: jinja2.Environment = None, url_for=None) -> None:
+    def __init__(self) -> None:
         """Do not use manually."""
-        self._jinja = jinja_env
         self._redirect_to = None
-        self._url_for = url_for
         self._starlette_resp = StarletteResponse
         self._body = None
         self._text = None
@@ -639,11 +640,12 @@ class Response:
         * `NotFoundError`: Missing requested template.
 
         """
-        if self._jinja is None:
+        jinja_env = use_api()._jinja_env
+        if jinja_env is None:
             raise ValueError("Set jinja env.")
 
         try:
-            template = self._jinja.get_template(template_name)
+            template = jinja_env.get_template(template_name)
         except jinja2.exceptions.TemplateNotFound:
             raise NotFoundError
 
@@ -688,8 +690,8 @@ class Response:
         self.status_code = status
         self._starlette_resp = RedirectResponse
         if view:
-            assert self._url_for
-            redirect_to = self._url_for(view, params)
+            url_for = use_api().url_for
+            redirect_to = url_for(view, params)
         elif url:
             redirect_to = url
         else:
