@@ -222,10 +222,10 @@ class Api:
 
         # check spangle views.
         if scope["type"] == "http":
-            app = await dispatch_http(scope, receive, send, self)
+            app = await dispatch_http(scope, receive, send)
             t = asyncio.create_task(app(scope, receive, send))
         elif scope["type"] == "websocket":
-            app = await dispatch_websocket(scope, receive, send, self)
+            app = await dispatch_websocket(scope, receive, send)
             t = asyncio.create_task(app(scope, receive, send))
         else:
             raise ValueError("Invalid scheme.")
