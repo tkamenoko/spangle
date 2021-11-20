@@ -6,12 +6,15 @@ from typing import Any, TypeVar, Union, cast
 from starlette.responses import Response as StarletteResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
+
 from ..component import use_api
 from ..exceptions import MethodNotAllowedError, NotFoundError, SpangleError
 from ..handler_protocols import (
+    params_context,
     AnyRequestHandlerProtocol,
     ErrorHandlerProtocol,
     WebSocketErrorHandlerProtocol,
+    WebsocketHandlerProtocol,
 )
 from ..models import http, websocket
 from .router import RedirectBase
@@ -140,8 +143,9 @@ async def _execute_http(
     # try 'on_request' first, then try 'on_{method}'
     on_request = getattr(view, "on_request", _default_response)
     on_method = getattr(view, f"on_{req.method}", _default_response)
-    _resp = (await on_request(req, resp, **params)) or resp
-    result = (await on_method(req, _resp, **params)) or _resp
+    params_context.set(params)
+    _resp = (await on_request(req, resp)) or resp
+    result = (await on_method(req, _resp)) or _resp
     return result  # type: ignore
 
 
@@ -173,9 +177,7 @@ async def _execute_http_builtin_error(
     return await _execute_http_error(req, resp, e, view)
 
 
-async def _default_response(
-    req: http.Request, resp: http.Response, **kw
-) -> http.Response:
+async def _default_response(req: http.Request, resp: http.Response) -> http.Response:
     pass
 
 
@@ -194,8 +196,8 @@ async def dispatch_websocket(scope: Scope, receive: Receive, send: Send) -> ASGI
             f"WebSocket connection against unsupported path `{path}`.", status=1002
         )
     view_class, params = view_param
-    # view has on_ws(self,conn,**kw)? if not, close with 1002.
-    if not hasattr(view_class, "on_ws"):
+    # view implements on_ws(self,conn)? if not, close with 1002.
+    if not issubclass(view_class, WebsocketHandlerProtocol):
         await conn.close(1002)
         raise NotFoundError(
             f"WebSocket connection against unsupported path `{path}`.", status=1002
@@ -204,14 +206,20 @@ async def dispatch_websocket(scope: Scope, receive: Receive, send: Send) -> ASGI
     return await _process_websocket(conn, view, params)
 
 
-async def _process_websocket(conn: websocket.Connection, view, params: dict):
+async def _process_websocket(
+    conn: websocket.Connection, view: WebsocketHandlerProtocol, params: dict
+):
     api = use_api()
     # return app that process connection include error handling!
     before_hooks = [
-        _init_view(cls) for cls in api.request_hooks["before"] if hasattr(cls, "on_ws")
+        _init_view(cls)
+        for cls in api.request_hooks["before"]
+        if issubclass(cls, WebsocketHandlerProtocol)
     ]
     after_hooks = [
-        _init_view(cls) for cls in api.request_hooks["after"] if hasattr(cls, "on_ws")
+        _init_view(cls)
+        for cls in api.request_hooks["after"]
+        if issubclass(cls, WebSocketErrorHandlerProtocol)
     ]
 
     async def ws(scope, receive, send):
@@ -219,7 +227,8 @@ async def _process_websocket(conn: websocket.Connection, view, params: dict):
             for hook in before_hooks:
                 await hook.on_ws(conn)
             assert not conn.closed
-            await view.on_ws(conn, **params)
+            params_context.set(params)
+            await view.on_ws(conn)
         except Exception as e:
             await _process_websocket_error(conn, e)
             if conn.reraise:
