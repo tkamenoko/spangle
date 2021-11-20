@@ -3,6 +3,7 @@
 """
 
 from http import HTTPStatus
+from typing import Optional
 
 
 class SpangleError(Exception):
@@ -14,7 +15,7 @@ class SpangleError(Exception):
         self,
         message="Something wrong.",
         status=HTTPStatus.INTERNAL_SERVER_ERROR,
-        headers: dict[str, str] = None,
+        headers: Optional[dict[str, str]] = None,
     ):
         """
         **Args**
@@ -51,7 +52,7 @@ class MethodNotAllowedError(SpangleError):
         self,
         message="Method not allowed.",
         status=HTTPStatus.METHOD_NOT_ALLOWED,
-        allowed_methods: set[str] = None,
+        allowed_methods: Optional[set[str]] = None,
     ):
         assert allowed_methods
         headers = {"Allow": ", ".join([m.upper() for m in allowed_methods])}
