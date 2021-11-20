@@ -38,14 +38,14 @@ class UrlExample:
 
 ### Query string
 
-`params` is [`MultiDictProxy`](https://github.com/aio-libs/multidict) that contains parsed query strings.
+`queries` is [`MultiDictProxy`](https://github.com/aio-libs/multidict) that contains parsed query strings.
 
 ```python
 @api.route("/search")
 class Search:
     # parse `/search?q=somevalue`
     async def on_get(self, req, resp):
-        queries = req.params
+        queries = req.queries
         value = queries.get("q")
 
 ```

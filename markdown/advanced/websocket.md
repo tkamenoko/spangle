@@ -13,7 +13,8 @@ You can define a WebSocket endpoint the same as HTTP endpoint, but the name is `
 ```python
 @api.route("/websocket/{name}", routing="clone")
 class WebSocket:
-    async def on_ws(self, conn, name: str):
+    async def on_ws(self, conn):
+        name = use_params()["name"]
         await conn.accept()
         await conn.send(f"hello, {name}!")
         while True:
