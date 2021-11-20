@@ -12,14 +12,14 @@ This is an example to implement your `login_required` decorator.
 
 ```python
 def login_required(f):
-    async def inner(view, req: Request, resp: Response, **params):
+    async def inner(view, req: Request, resp: Response):
         auth = use_component(AuthComp)
         token = req.headers["authorization"]
         user = await auth.get_user(token)
         if not user:
             raise AuthError("Need to login.")
         req.state.user = user
-        return await f(view, req, resp, **params)
+        return await f(view, req, resp)
     return inner
 
 # usage

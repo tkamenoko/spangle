@@ -4,6 +4,7 @@
 
 - Use tree for routing.
 - Fix dynamic routing for rest_params. A converter name must start with `*` to capture slash.
+- Change parameter api. Use `use_params` instead of keyword arguments.
 
 ## v0.11.1(2021-09-17)
 

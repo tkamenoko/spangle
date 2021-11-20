@@ -35,9 +35,8 @@ api = Api()
 @api.route("/api/{foo}")
 @api.route("/")
 class Index:
-    async def on_get(self, req, resp, **kw):
-        # `kw` may contain parsed path params.
-        pass
+    async def on_get(self, req, resp):
+        ...
 
 ```
 

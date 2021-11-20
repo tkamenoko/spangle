@@ -15,7 +15,8 @@ api = Api()
 
 @api.route("/testing/{value}")
 class TestView:
-    async def on_get(self, req, resp, value):
+    async def on_get(self, req, resp):
+        value = use_params()["value"]
         resp.status_code = 418
         resp.text = value
 

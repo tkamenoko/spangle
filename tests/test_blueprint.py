@@ -1,10 +1,11 @@
 from http import HTTPStatus
+from typing import TypedDict, cast
 from unittest.mock import MagicMock
 
 from spangle.api import Api
 from spangle.blueprint import Blueprint
 from spangle.exceptions import NotFoundError
-from spangle.handler_protocols import RequestHandlerProtocol
+from spangle.handler_protocols import RequestHandlerProtocol, use_params
 from ward import each, fixture, raises, test
 from ward.fixtures import using
 
@@ -26,15 +27,18 @@ def routes(bp: Blueprint):
     @bp.route("/allowed")
     @bp.route("/")
     class Index:
-        pass
+        async def on_request(self, req, resp):
+            pass
 
     @bp.route("/foo")
     class Foo:
-        pass
+        async def on_request(self, req, resp):
+            pass
 
     @bp.route("/bar/{p}")
     class Bar:
-        pass
+        async def on_request(self, req, resp):
+            pass
 
     return bp
 
@@ -208,7 +212,8 @@ def mix_routes(api: Api, bp: Blueprint):
 
     @bp.route("/foo", routing="strict")
     class Foo:
-        pass
+        async def on_post(self, req, resp):
+            pass
 
     @bp.route("/bar")
     class Bar:
@@ -217,7 +222,8 @@ def mix_routes(api: Api, bp: Blueprint):
 
     @bp.route("/baz", routing="no_slash")
     class Baz:
-        pass
+        async def on_post(self, req, resp):
+            pass
 
     api.add_blueprint("/", bp)
     return api
@@ -290,7 +296,7 @@ def before_request(bp: Blueprint):
         def __init__(self):
             self.mock = MagicMock()
 
-        async def on_request(self, req, resp, **kw):
+        async def on_request(self, req, resp):
             self.mock()
 
     return Hook
@@ -337,12 +343,20 @@ def path_params():
 @fixture
 @using(api=api)
 def patterns(api: Api):
+    class Params(TypedDict):
+        default: str
+        string: str
+        num1: int
+        num2: float
+        anything: str
+
     @api.route(
         "/{default}/{string:str}/{num1:int}/{num2:float}/{anything:*rest_string}/tail"
     )
     class BuiltinPatterns:
-        async def on_get(self, req, resp, **kw):
-            resp.json.update(kw)
+        async def on_get(self, req, resp):
+            params = cast(Params, use_params())
+            resp.json.update(params)
 
     return BuiltinPatterns
 
@@ -359,9 +373,16 @@ async def _(api: Api, bp: Blueprint, view: type[RequestHandlerProtocol], params:
 @fixture
 @using(bp=blueprint)
 def converter_view(bp: Blueprint):
+    class Params(TypedDict):
+        number: int
+        name: str
+
     @bp.route("/{number:int}/{name:upper}", converters={"upper": lambda x: x.upper()})
     class Convert:
-        async def on_get(self, req, resp, number: int, name: str):
+        async def on_get(self, req, resp):
+            params = cast(Params, use_params())
+            name = params["name"]
+            number = params["number"]
             assert name.isupper()
             resp.json.number = number
             resp.json.name = name

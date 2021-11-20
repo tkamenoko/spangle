@@ -5,9 +5,8 @@ from http import HTTPStatus
 from typing import Any, NamedTuple, Optional
 
 from parse import Parser, compile
-from spangle.handler_protocols import RequestHandlerProtocol
 
-from ..blueprint import AnyRequestHandlerProtocol
+from ..handler_protocols import AnyRequestHandlerProtocol, RequestHandlerProtocol
 from ..models import Request, Response
 from ..types import Converters, RoutingStrategy
 from .utils import normalize_path
@@ -25,9 +24,7 @@ class _CollectedHandler(NamedTuple):
 
 
 class RedirectBase(RequestHandlerProtocol):
-    async def on_request(
-        self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]:
+    async def on_request(self, req: Request, resp: Response, /) -> Optional[Response]:
         raise NotImplementedError
 
 

@@ -82,7 +82,7 @@ class Request:
         "_content",
         "_mimetype",
         "_full_url",
-        "_params",
+        "_queries",
         "_media",
         "_method",
         "_version",
@@ -96,7 +96,7 @@ class Request:
     _content: Optional[bytes]
     _mimetype: Optional[str]
     _full_url: Optional[str]
-    _params: Optional[MultiDictProxy]
+    _queries: Optional[MultiDictProxy]
     _media: Any
     _method: str
     _version: str
@@ -112,7 +112,7 @@ class Request:
         self._content = None
         self._mimetype = None
         self._full_url = None
-        self._params = None
+        self._queries = None
         self._media = None
         self._method = self._request.method.lower()
         self._version = scope["http_version"]
@@ -195,13 +195,13 @@ class Request:
         return self._request.url
 
     @property
-    def params(self) -> MultiDictProxy:
+    def queries(self) -> MultiDictProxy:
         """(`MultiDictProxy`): The parsed query parameters used for the request."""
-        if self._params is None:
-            params = parse_qsl(self.url.query)
-            d = MultiDict(params)
-            self._params = MultiDictProxy(d)
-        return self._params
+        if self._queries is None:
+            queries = parse_qsl(self.url.query)
+            d = MultiDict(queries)
+            self._queries = MultiDictProxy(d)
+        return self._queries
 
     @property
     def full_url(self) -> str:

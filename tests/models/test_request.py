@@ -1,8 +1,9 @@
 from http import HTTPStatus
 from json import loads
+from typing import TypedDict, cast
 
 from spangle.api import Api
-from spangle.handler_protocols import RequestHandlerProtocol
+from spangle.handler_protocols import RequestHandlerProtocol, use_params
 from ward import each, fixture, test, using
 
 
@@ -21,11 +22,15 @@ queries = {
 @fixture
 @using(api=api)
 def param_view(api: Api):
+    class Params(TypedDict):
+        path: str
+
     @api.route("/{path}")
     class ParamView:
-        async def on_get(self, req, resp, path):
-            p = dict(**req.params)
-            print(p, req.params)
+        async def on_get(self, req, resp):
+            params = cast(Params, use_params())
+            p = dict(**req.queries)
+            path = params["path"]
             assert queries[path] == p
             assert req.full_url.startswith(f"http://www.example.com/{path}")
 
