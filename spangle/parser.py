@@ -10,7 +10,7 @@ from tempfile import SpooledTemporaryFile
 from typing import TYPE_CHECKING, NamedTuple, Optional
 from urllib.parse import parse_qsl
 
-from multidict import MultiDict, MultiDictProxy
+from starlette.datastructures import MultiDict, ImmutableMultiDict
 from multipart import MultipartParser
 
 from .exceptions import ParseError
@@ -43,7 +43,7 @@ class UploadedFile(NamedTuple):
     mimetype: str
 
 
-async def _parse_body(req: Request, parse_as: str = None) -> MultiDictProxy:
+async def _parse_body(req: Request, parse_as: str = None) -> ImmutableMultiDict:
     parser = _get_parser(parse_as)
 
     if not parser:
@@ -63,7 +63,7 @@ async def _parse_body(req: Request, parse_as: str = None) -> MultiDictProxy:
 
 def _get_parser(
     type_: Optional[str],
-) -> Optional[Callable[[Request], Awaitable[MultiDictProxy]]]:
+) -> Optional[Callable[[Request], Awaitable[ImmutableMultiDict]]]:
     if type_ == "json":
         return _parse_json
     elif type_ == "form":
@@ -76,10 +76,10 @@ def _get_parser(
         return None
 
 
-async def _parse_json(req: Request) -> MultiDictProxy:
+async def _parse_json(req: Request) -> ImmutableMultiDict:
+    # TODO: json may not be dict.
     content = await req.content
-    result = MultiDict(loads(content))
-    return MultiDictProxy(result)
+    return ImmutableMultiDict(loads(content))
 
 
 def _parse_sync(
@@ -89,7 +89,7 @@ def _parse_sync(
 
     for part in MultipartParser(stream, boundary, content_length, **kw):
         if part.filename or not part.is_buffered():
-            result.add(
+            result.append(
                 part.name,
                 UploadedFile(
                     filename=part.filename,
@@ -98,11 +98,11 @@ def _parse_sync(
                 ),
             )
         else:
-            result.add(part.name, part.value)
+            result.append(part.name, part.value)
     return result
 
 
-async def _parse_multipart(req: Request) -> MultiDictProxy:
+async def _parse_multipart(req: Request) -> ImmutableMultiDict:
     content_length = int(req.headers.get("content-length", "-1"))
     content_type = req.headers.get("content-type", "")
 
@@ -130,10 +130,9 @@ async def _parse_multipart(req: Request) -> MultiDictProxy:
         None, partial(_parse_sync, stream, boundary, content_length, **kw)
     )
 
-    return MultiDictProxy(parsed)
+    return ImmutableMultiDict(parsed)
 
 
-async def _parse_form(req: Request) -> MultiDictProxy:
+async def _parse_form(req: Request) -> ImmutableMultiDict:
     data = await req.text
-    result = MultiDict(parse_qsl(data))
-    return MultiDictProxy(result)
+    return ImmutableMultiDict(parse_qsl(data))

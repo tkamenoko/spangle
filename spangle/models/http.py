@@ -6,13 +6,17 @@ from collections.abc import AsyncGenerator, Awaitable, Callable
 from http import HTTPStatus
 from http.cookies import SimpleCookie
 from typing import Any, Optional, Union
-from urllib.parse import parse_qsl, unquote_plus
+from urllib.parse import unquote_plus
 
 import addict
 import chardet
 import jinja2
-from multidict import MultiDict, MultiDictProxy
-from starlette.datastructures import Headers, MutableHeaders
+from starlette.datastructures import (
+    Headers,
+    MutableHeaders,
+    QueryParams,
+    ImmutableMultiDict,
+)
 from starlette.requests import URL, Address
 from starlette.requests import Request as StarletteRequest
 from starlette.responses import JSONResponse, RedirectResponse
@@ -97,7 +101,7 @@ class Request:
     _content: Optional[bytes]
     _mimetype: Optional[str]
     _full_url: Optional[str]
-    _queries: Optional[MultiDictProxy]
+    _queries: Optional[QueryParams]
     _media: Any
     _method: str
     _version: str
@@ -196,12 +200,10 @@ class Request:
         return self._request.url
 
     @property
-    def queries(self) -> MultiDictProxy:
-        """(`MultiDictProxy`): The parsed query parameters used for the request."""
+    def queries(self) -> QueryParams:
+        """(`QueryParams`): The parsed query parameters used for the request."""
         if self._queries is None:
-            queries = parse_qsl(self.url.query)
-            d = MultiDict(queries)
-            self._queries = MultiDictProxy(d)
+            self._queries = QueryParams(self.url.query)
         return self._queries
 
     @property
@@ -267,7 +269,7 @@ class Request:
         self,
         parser: Callable[["Request"], Awaitable[Any]] = None,
         parse_as: str = None,
-    ) -> Union[MultiDictProxy, Any]:
+    ) -> Union[ImmutableMultiDict, Any]:
         """
         Decode the request body to dict-like object. Must be awaited.
 
@@ -282,7 +284,7 @@ class Request:
 
         **Returns**
 
-        * `MultiDictProxy`: May be overridden by custom parser.
+        * `ImmutableMultiDict`: May be overridden by custom parser.
 
         """
         if self._media is None:

@@ -3,11 +3,9 @@ WebSocket connection.
 """
 
 from typing import AnyStr, Optional, Union
-from urllib.parse import parse_qsl
 
 import addict
-from multidict import MultiDict, MultiDictProxy
-from starlette.datastructures import URL, Headers
+from starlette.datastructures import URL, Headers, QueryParams
 from starlette.types import Receive, Scope, Send
 from starlette.websockets import WebSocket
 
@@ -35,7 +33,7 @@ class Connection:
     closed: bool
     headers: Headers
 
-    _queries: Optional[MultiDictProxy[str]]
+    _queries: Optional[QueryParams]
     _connection: WebSocket
 
     def __init__(self, scope: Scope, receive: Receive, send: Send):
@@ -116,10 +114,8 @@ class Connection:
         return self._connection.url
 
     @property
-    def queries(self) -> MultiDictProxy[str]:
-        """(`MultiDictProxy`): The parsed query parameters used for the request."""
+    def queries(self) -> QueryParams:
+        """(`QueryParams`): The parsed query parameters used for the request."""
         if self._queries is None:
-            queries = parse_qsl(self.url.query)
-            d = MultiDict(queries)
-            self._queries = MultiDictProxy(d)
+            self._queries = QueryParams(self.url.query)
         return self._queries
