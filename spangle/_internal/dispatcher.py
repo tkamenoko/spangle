@@ -1,39 +1,31 @@
 from __future__ import annotations
 
 from http import HTTPStatus
-from typing import Any, TypeVar, Union, cast
+from typing import Any, TypeVar, cast
 
 from starlette.responses import Response as StarletteResponse
 from starlette.types import ASGIApp, Receive, Scope, Send
 
-
 from ..component import use_api
 from ..exceptions import MethodNotAllowedError, NotFoundError, SpangleError
 from ..handler_protocols import (
-    params_context,
-    AnyRequestHandlerProtocol,
-    ErrorHandlerProtocol,
+    BaseHandlerProtocol,
     WebSocketErrorHandlerProtocol,
     WebsocketHandlerProtocol,
+    params_context,
 )
 from ..models import http, websocket
 from .router import RedirectBase
 
-ViewType = Union[
-    AnyRequestHandlerProtocol,
-    ErrorHandlerProtocol,
-]
-
-T = TypeVar("T", bound=ViewType)
+T = TypeVar("T", bound=BaseHandlerProtocol)
 
 
 def _init_view(cls: type[T]) -> T:
     view_cache = use_api()._view_cache
-    cls_ = cast(type[ViewType], cls)
     try:
-        return cast(T, view_cache[cls_])
+        return cast(T, view_cache[cls])
     except KeyError:
-        view = cls_()
+        view = cls()
         allowed_methods = {"get", "head", "options"}
         additional_methods = getattr(view, "allowed_methods", [])
         allowed_methods.update([m.lower() for m in additional_methods])
@@ -43,7 +35,7 @@ def _init_view(cls: type[T]) -> T:
         allowed_methods.update(on_unsafe_methods)
         setattr(view, "allowed_methods", allowed_methods)
 
-        view_cache.update({cls_: view})
+        view_cache.update({cls: view})
         return cast(T, view)
 
 

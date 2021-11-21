@@ -15,8 +15,8 @@ from asgiref.testing import ApplicationCommunicator
 from asgiref.timeout import timeout as timeout_ctx
 from httpx import ASGITransport, AsyncClient
 from httpx import Headers as HttpxHeaders
-from httpx import Response
-from starlette.datastructures import MutableHeaders
+from httpx import Response, Cookies
+from starlette.datastructures import MutableHeaders, QueryParams
 from starlette.types import ASGIApp
 from urllib3.filepost import RequestField, encode_multipart_formdata
 
@@ -96,7 +96,7 @@ class _BaseWebSocket:
     host: str
     path: str
     headers: MutableHeaders
-    params: Params
+    queries: QueryParams
     timeout: Optional[float]
 
     def __init__(
@@ -104,7 +104,7 @@ class _BaseWebSocket:
         http: _BaseClient,
         path: str = "",
         headers: Optional[MutableHeaders] = None,
-        params: Optional[Params] = None,
+        queries: Optional[Params] = None,
         cookies: Optional[Mapping] = None,
         timeout: Optional[float] = None,
     ):
@@ -117,16 +117,16 @@ class _BaseWebSocket:
         for c in cookie_headers:
             k, v = c.split(":", 1)
             self.headers.append(k, v)
-        self.params = params or []
+        self.queries = QueryParams(queries or [])
         self.timeout = timeout
 
     async def _connect(self, path: str = None):
         self.path = path or self.path
-        params = self.params or []
-        if isinstance(params, Mapping):
-            qsl = [f"{quote_plus(k)}={quote_plus(v)}" for k, v in params.items()]
+        queries = self.queries
+        if isinstance(queries, Mapping):
+            qsl = [f"{quote_plus(k)}={quote_plus(v)}" for k, v in queries.items()]
         else:
-            qsl = [f"{quote_plus(k)}={quote_plus(v)}" for k, v in params]
+            qsl = [f"{quote_plus(k)}={quote_plus(v)}" for k, v in queries]
         qs = "&".join(qsl).encode("ascii")
         headers = [
             (k.encode("latin-1"), v.encode("latin-1")) for k, v in self.headers.items()
@@ -207,7 +207,7 @@ class AsyncWebsocketClient(_BaseWebSocket):
     * host(`str`): Dummy domain.
     * path(`str`): WebSocket endpoint.
     * headers(`MutableHeaders`): Headers used to connect.
-    * params(`Params`): Parsed querystrings.
+    * queries(`QueryParams`): Parsed querystrings.
     * timeout(`Optional[int]`): How long test client waits for.
 
     """
@@ -216,7 +216,7 @@ class AsyncWebsocketClient(_BaseWebSocket):
     host: str
     path: str
     headers: MutableHeaders
-    params: Params
+    queries: QueryParams
     timeout: Optional[int]
 
     def __init__(
@@ -224,14 +224,14 @@ class AsyncWebsocketClient(_BaseWebSocket):
         http: "AsyncHttpTestClient",
         path: str = "",
         headers: Optional[MutableHeaders] = None,
-        params: Optional[Params] = None,
+        queries: Optional[Params] = None,
         cookies: Optional[Mapping] = None,
         timeout: Optional[float] = None,
     ):
         """
         Do not use manually.
         """
-        super().__init__(http, path, headers, params, cookies, timeout)
+        super().__init__(http, path, headers, queries, cookies, timeout)
 
     async def connect(self, path: str = None):
         """
@@ -331,9 +331,9 @@ class _BaseClient:
         self,
         method: str,
         path: str,
-        params: Optional[Params] = None,
+        queries: Optional[Params] = None,
         headers: Optional[Headers] = None,
-        cookies: Optional[Mapping[str, str]] = None,
+        cookies: Optional[dict[str, str]] = None,
         json: Optional[Mapping] = None,
         files: Optional[Mapping] = None,
         form: Optional[Mapping] = None,
@@ -362,7 +362,8 @@ class _BaseClient:
             data = content
         timeout = timeout or self.timeout
         if cookies is not None:
-            self._client.cookies = {}
+            self._client.cookies = Cookies()
+        query_params = QueryParams(queries or [])
         if timeout is not None:
             _headers = [(k, v) for k, v in ci_headers.items()]
             async with timeout_ctx(timeout):
@@ -371,7 +372,7 @@ class _BaseClient:
                     path,
                     headers=_headers,
                     data=data,
-                    params=params,
+                    params=query_params,
                     json=json,
                     cookies=cookies,
                     follow_redirects=False,
@@ -384,7 +385,7 @@ class _BaseClient:
                         path,
                         headers=_headers,
                         data=data,
-                        params=params,
+                        params=query_params,
                         json=json,
                         cookies=cookies,
                         follow_redirects=allow_redirects,
@@ -398,7 +399,7 @@ class _BaseClient:
                 path,
                 headers=_headers,
                 data=data,
-                params=params,
+                params=query_params,
                 json=json,
                 cookies=cookies,
                 follow_redirects=False,
@@ -411,7 +412,7 @@ class _BaseClient:
                     path,
                     headers=_headers,
                     data=data,
-                    params=params,
+                    params=query_params,
                     json=json,
                     cookies=cookies,
                     follow_redirects=allow_redirects,
@@ -447,9 +448,9 @@ class AsyncHttpTestClient(_BaseClient):
         self,
         method: str,
         path: str,
-        params: Optional[Params] = None,
+        queries: Optional[Params] = None,
         headers: Optional[Headers] = None,
-        cookies: Optional[Mapping] = None,
+        cookies: Optional[dict[str, str]] = None,
         json: Optional[Mapping] = None,
         files: Optional[Mapping] = None,
         form: Optional[Mapping] = None,
@@ -464,9 +465,9 @@ class AsyncHttpTestClient(_BaseClient):
 
         * method (`str`): HTTP request method.
         * path (`str`): Requesting location.
-        * params (`Params`): Querystring as `dict` or `list` of `(name, value)`.
+        * queries (`Params`): Querystring as `dict` or `list` of `(name, value)`.
         * headers (`Headers`): HTTP headers.
-        * cookies (`Mapping`): Sending HTTP cookies.
+        * cookies (`dict[str, str]`): Sending HTTP cookies.
         * json (`Mapping`): Request body as json.
         * files (`Mapping`): Multipart form.
         * form (`Mapping`): URL encoded form.
@@ -483,7 +484,7 @@ class AsyncHttpTestClient(_BaseClient):
         return await self._request(
             method,
             path,
-            params=params,
+            queries=queries,
             headers=headers,
             cookies=cookies,
             json=json,
@@ -498,7 +499,7 @@ class AsyncHttpTestClient(_BaseClient):
         self,
         path: str,
         subprotocols: Optional[list[str]] = None,
-        params: Optional[Params] = None,
+        queries: Optional[Params] = None,
         headers: Optional[Headers] = None,
         cookies: Optional[Mapping] = None,
         timeout: Optional[float] = None,
@@ -520,14 +521,14 @@ class AsyncHttpTestClient(_BaseClient):
         if subprotocols is not None:
             ci_headers.setdefault("sec-websocket-protocol", ", ".join(subprotocols))
 
-        return AsyncWebsocketClient(self, path, ci_headers, params, cookies, timeout)
+        return AsyncWebsocketClient(self, path, ci_headers, queries, cookies, timeout)
 
     async def get(
         self,
         path: str,
-        params: Optional[Params] = None,
+        queries: Optional[Params] = None,
         headers: Optional[Headers] = None,
-        cookies: Optional[Mapping] = None,
+        cookies: Optional[dict[str, str]] = None,
         timeout: Optional[float] = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
@@ -538,7 +539,7 @@ class AsyncHttpTestClient(_BaseClient):
         return await self.request(
             "get",
             path,
-            params=params,
+            queries=queries,
             headers=headers,
             cookies=cookies,
             timeout=timeout,
@@ -548,9 +549,9 @@ class AsyncHttpTestClient(_BaseClient):
     async def post(
         self,
         path: str,
-        params: Optional[Params] = None,
+        queries: Optional[Params] = None,
         headers: Optional[Headers] = None,
-        cookies: Optional[Mapping] = None,
+        cookies: Optional[dict[str, str]] = None,
         json: Optional[Mapping] = None,
         files: Optional[Mapping] = None,
         form: Optional[Mapping] = None,
@@ -565,7 +566,7 @@ class AsyncHttpTestClient(_BaseClient):
         return await self.request(
             "post",
             path,
-            params=params,
+            queries=queries,
             headers=headers,
             cookies=cookies,
             json=json,
@@ -579,9 +580,9 @@ class AsyncHttpTestClient(_BaseClient):
     async def put(
         self,
         path: str,
-        params: Optional[Params] = None,
+        queries: Optional[Params] = None,
         headers: Optional[Headers] = None,
-        cookies: Optional[Mapping] = None,
+        cookies: Optional[dict[str, str]] = None,
         json: Optional[Mapping] = None,
         files: Optional[Mapping] = None,
         form: Optional[Mapping] = None,
@@ -596,7 +597,7 @@ class AsyncHttpTestClient(_BaseClient):
         return await self.request(
             "put",
             path,
-            params=params,
+            queries=queries,
             headers=headers,
             cookies=cookies,
             json=json,
@@ -610,9 +611,9 @@ class AsyncHttpTestClient(_BaseClient):
     async def patch(
         self,
         path: str,
-        params: Optional[Params] = None,
+        queries: Optional[Params] = None,
         headers: Optional[Headers] = None,
-        cookies: Optional[Mapping] = None,
+        cookies: Optional[dict[str, str]] = None,
         json: Optional[Mapping] = None,
         files: Optional[Mapping] = None,
         form: Optional[Mapping] = None,
@@ -627,7 +628,7 @@ class AsyncHttpTestClient(_BaseClient):
         return await self.request(
             "patch",
             path,
-            params=params,
+            queries=queries,
             headers=headers,
             cookies=cookies,
             json=json,
@@ -641,9 +642,9 @@ class AsyncHttpTestClient(_BaseClient):
     async def delete(
         self,
         path: str,
-        params: Optional[Params] = None,
+        queries: Optional[Params] = None,
         headers: Optional[Headers] = None,
-        cookies: Optional[Mapping] = None,
+        cookies: Optional[dict[str, str]] = None,
         timeout: Optional[float] = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
@@ -654,7 +655,7 @@ class AsyncHttpTestClient(_BaseClient):
         return await self.request(
             "delete",
             path,
-            params=params,
+            queries=queries,
             headers=headers,
             cookies=cookies,
             timeout=timeout,
