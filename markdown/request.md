@@ -8,7 +8,7 @@ version: v0.11.0
 
 ## Get request headers
 
-Request headers are [`CIMultiDictProxy`](https://github.com/aio-libs/multidict) .
+Request header is [`starlette.Headers`](https://www.starlette.io/requests/#headers) instance.
 
 ```python
 @api.route("/")
