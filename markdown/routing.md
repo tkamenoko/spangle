@@ -1,5 +1,5 @@
 ---
-version: v0.11.0
+version: v0.12.0
 ---
 
 # Routing
@@ -29,7 +29,7 @@ You can get values from URL by using f-string style routing. To get params in a 
 @api.route("/path/to/{name}")
 class DynamicRoute(object):
     async def on_request(self, req, resp):
-        name = use_api()["name"]
+        name = use_params()["name"]
         # `spangle` tries to get a view from static routes first.
         assert name != "page"
 

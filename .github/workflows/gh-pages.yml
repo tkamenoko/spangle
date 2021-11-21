@@ -1,31 +1,23 @@
-name: unittest
+name: GitHub Pages
 
 on:
   push:
     branches:
       - master
-      - develop
-  pull_request:
-    branches:
-      - master
 
 jobs:
-  test:
-    strategy:
-      matrix:
-        os: ["ubuntu-latest"]
-        python-version: ["3.9", "3.10"]
-    runs-on: ${{ matrix.os }}
+  deploy:
+    runs-on: ubuntu-20.04
     steps:
       #----------------------------------------------
       #       check-out repo and set-up python
       #----------------------------------------------
       - name: Check out repository
         uses: actions/checkout@v2
-      - name: Set up python ${{ matrix.python-version }}
+      - name: Set up python3.9
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.9
       #----------------------------------------------
       #  -----  install & configure poetry  -----
       #----------------------------------------------
@@ -50,7 +42,15 @@ jobs:
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
         run: poetry install --no-interaction --no-root
       #----------------------------------------------
-      # run test suite
+      # build docs
       #----------------------------------------------
-      - name: Run tests
-        run: poetry run poe test
+      - name: Build docs
+        run: "poetry run poe doc:build"
+      #----------------------------------------------
+      # deploy docs
+      #----------------------------------------------
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs

@@ -1,6 +1,6 @@
 ---
 title: spangle.blueprint
-module_digest: 1db70b0ecae0130b7832f050ed7c71a8
+module_digest: e243699ed9dbb30377368c593f274777
 ---
 
 # Module spangle.blueprint
@@ -124,54 +124,3 @@ Bind a path to the decorated view. The path will be fixed by routing mode.
 - **converters** (`Optional[Converters]`): Params converters
     for dynamic routing.
 - **routing** (`Optional[RoutingStrategy]`): Routing strategy.
-
-------
-
-### Router {: #Router }
-
-```python
-class Router(self, routing: RoutingStrategy)
-```
-
-Manage URLs and views. Do not use this manually.
-
-Initialize self.
-
-------
-
-#### Methods {: #Router-methods }
-
-[**get**](#Router.get){: #Router.get }
-
-```python
-def get(
-    self, path: str
-    ) -> Optional[tuple[type[AnyRequestHandlerProtocol], dict[str, Any]]]
-```
-
-Find a view matching to `path`, or return `None` .
-
-**Args**
-
-- **path** (`str`): Requested location.
-
-**Returns**
-
-- `Optional[tuple[type[AnyRequestHandlerProtocol], dict[str, Any]]]`: View
-    class and params parsed from `path` .
-
-------
-
-### RoutesMapping {: #RoutesMapping }
-
-```python
-class RoutesMapping(self, *args, **kwargs)
-```
-
-Store collected pattern-view mapping.
-
-------
-
-#### Base classes {: #RoutesMapping-bases }
-
-* `builtins.dict`

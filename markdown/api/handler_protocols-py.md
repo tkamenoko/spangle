@@ -1,6 +1,6 @@
 ---
 title: spangle.handler_protocols
-module_digest: a351d0a3590a4cf6c97ad1c185a31b10
+module_digest: 71d88366ef779491ae5610169ba68f26
 ---
 
 # Module spangle.handler_protocols
@@ -46,9 +46,7 @@ Every handler class should initialize without args.
 [**on_delete**](#DeleteHandlerProtocol.on_delete){: #DeleteHandlerProtocol.on_delete }
 
 ```python
-async def on_delete(
-    self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]
+async def on_delete(self, req: Request, resp: Response, /) -> Optional[Response]
 ```
 
 ------
@@ -74,9 +72,7 @@ Every handler class should initialize without args.
 [**on_get**](#GetHandlerProtocol.on_get){: #GetHandlerProtocol.on_get }
 
 ```python
-async def on_get(
-    self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]
+async def on_get(self, req: Request, resp: Response, /) -> Optional[Response]
 ```
 
 ------
@@ -130,9 +126,7 @@ Every handler class should initialize without args.
 [**on_patch**](#PatchHandlerProtocol.on_patch){: #PatchHandlerProtocol.on_patch }
 
 ```python
-async def on_patch(
-    self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]
+async def on_patch(self, req: Request, resp: Response, /) -> Optional[Response]
 ```
 
 ------
@@ -158,9 +152,7 @@ Every handler class should initialize without args.
 [**on_post**](#PostHandlerProtocol.on_post){: #PostHandlerProtocol.on_post }
 
 ```python
-async def on_post(
-    self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]
+async def on_post(self, req: Request, resp: Response, /) -> Optional[Response]
 ```
 
 ------
@@ -186,9 +178,7 @@ Every handler class should initialize without args.
 [**on_put**](#PutHandlerProtocol.on_put){: #PutHandlerProtocol.on_put }
 
 ```python
-async def on_put(
-    self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]
+async def on_put(self, req: Request, resp: Response, /) -> Optional[Response]
 ```
 
 ------
@@ -214,9 +204,7 @@ Every handler class should initialize without args.
 [**on_request**](#RequestHandlerProtocol.on_request){: #RequestHandlerProtocol.on_request }
 
 ```python
-async def on_request(
-    self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]
+async def on_request(self, req: Request, resp: Response, /) -> Optional[Response]
 ```
 
 ------
@@ -268,5 +256,15 @@ Every handler class should initialize without args.
 [**on_ws**](#WebsocketHandlerProtocol.on_ws){: #WebsocketHandlerProtocol.on_ws }
 
 ```python
-async def on_ws(self, conn: Connection, /, **kw: Any) -> None
+async def on_ws(self, conn: Connection, /) -> None
 ```
+
+## Functions
+
+### use_params {: #use_params }
+
+```python
+def use_params() -> dict
+```
+
+Return parsed parameters typed by `types` .
