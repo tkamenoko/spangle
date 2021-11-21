@@ -1,10 +1,11 @@
 # Changelog
 
-## v0.12.0(Unreleased)
+## v0.12.0(2021-11-22)
 
 - Use tree for routing.
 - Fix dynamic routing for rest_params. A converter name must start with `*` to capture slash.
 - Change parameter api. Use `use_params` instead of keyword arguments.
+- Remove unused dependencies.
 
 ## v0.11.1(2021-09-17)
 
