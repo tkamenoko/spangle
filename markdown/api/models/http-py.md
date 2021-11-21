@@ -1,6 +1,6 @@
 ---
 title: spangle.models.http
-module_digest: dbf00fa5611a6b839463ea504f32e9b8
+module_digest: f824865e65f9b4de931bd215faf0838d
 ---
 
 # Module spangle.models.http
@@ -19,9 +19,9 @@ Incoming HTTP request class.
 
 **Attributes**
 
-- **headers** (`CIMultiDictProxy`): The request headers, case-insensitive dictionary.
+- **headers** (`Headers`): The request headers, case-insensitive dictionary.
 - **state** (`addict.Dict`): Any object you want to store while the response.
-- **max_upload_bytes** (`int`): Limit upload size against each request.
+- **max_upload_bytes** (`Optional[int]`): Limit upload size against each request.
 
 Do not use manually.
 
@@ -53,7 +53,7 @@ Do not use manually.
 
 - **mimetype**{: #Request.mimetype } (`str`): Mimetype of the request’s body, or `""` .
 
-- **params**{: #Request.params } (`MultiDictProxy`): The parsed query parameters used for the request.
+- **queries**{: #Request.queries } (`QueryParams`): The parsed query parameters used for the request.
 
 - **text**{: #Request.text } (`str`): The request body, as unicode-decoded. Must be awaited.
 
@@ -90,9 +90,10 @@ Test given type is acceptable or not.
 ```python
 async def media(
     self,
-    parser: Callable[["Request"], Awaitable[Any]] = None,
-    parse_as: str = None,
-    ) -> Union[MultiDictProxy, Any]
+    *,
+    parser: Callable[["Request"], Awaitable[T]] = None,
+    parse_as: Optional[ParseMode] = None,
+    ) -> Union[ImmutableMultiDict, T, JsonType]
 ```
 
 Decode the request body to dict-like object. Must be awaited.
@@ -101,14 +102,16 @@ You can use custom parser by setting your function.
 
 **Args**
 
-- **parser** (`Optional[Callable[[Request], Awaitable[Any]]]`): Custom parser,
+- **parser** (`Optional[Callable[[Request], Awaitable[T]]]`): Custom parser,
     must be async function. If not given, [`spangle `](../index.md) uses builtin parser.
-- **parse_as** (`Optional[str]`): Select parser to decode the body. Accept
+- **parse_as** (`Optional[ParseMode]`): Select parser to decode the body. Accept
     `"json"` , `"form"` , or `"multipart"` .
 
 **Returns**
 
-- `MultiDictProxy`: May be overridden by custom parser.
+- `T`: Parsed by given function.
+- `ImmutableMultiDict`
+- `JsonType`
 
 ------
 
@@ -129,15 +132,15 @@ HTTP2 push-promise.
 ### Response {: #Response }
 
 ```python
-class Response(self, jinja_env: jinja2.Environment = None, url_for=None)
+class Response(self)
 ```
 
 Outgoing HTTP response class. `Response` instance is ASGI3 application.
 
 **Attributes**
 
-- **headers** (`CIMultiDict`): The response headers, case-insensitive dictionary. To set
-    values having same key, use `headers.add()` .
+- **headers** (`MutableHeaders`): The response headers, case-insensitive dictionary.
+    To set values having same key, use `headers.append()` .
 - **cookies** (`SimpleCookie`): Dict-like http cookies. `Set-Cookie` header refers this.
     You can set cookie-attributes.
 - **status** (`int`): The response's status code.

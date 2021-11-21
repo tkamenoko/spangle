@@ -1,6 +1,6 @@
 ---
 title: spangle.api
-module_digest: 8919aeb435dcb3d39c8d42207d1cdb78
+module_digest: 890a127bfeac37adb4a166ab02ca62db
 ---
 
 # Module spangle.api
@@ -31,7 +31,6 @@ The main application class.
 
 **Attributes**
 
-- **router** (`spangle.blueprint.Router`): Manage URLs and views.
 - **mounted_app** (`dict[str, ASGIApp]`): ASGI apps mounted under `Api` .
 - **error_handlers** (`dict[type[Exception], type[ErrorHandlerProtocol]]`): Called when
     `Exception` is raised.
@@ -42,6 +41,7 @@ The main application class.
 - **routing** (`spangle.types.RoutingStrategy`): Routing strategy about trailing slash.
 - **templates_dir** (`str`): Path to `Jinja2` templates.
 - **max_upload_bytes** (`int`): Allowed user uploads size.
+- **default_route** (`Optional[str]`): Fallback path.
 
 **Args**
 

@@ -1,5 +1,5 @@
 ---
-version: v0.11.0
+version: v0.12.0
 ---
 
 # Static Files
@@ -10,7 +10,7 @@ You should serve static files from other servers like `nginx` in production, but
 
 ```python
 # map requests `/static/files/*` to `path/to/dir/*` .
-api = Api(static_dir="path/to/dir",static_root="/static/files")
+api = Api(static_dir="path/to/dir", static_root="/static/files")
 
 ```
 

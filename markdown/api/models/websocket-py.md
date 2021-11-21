@@ -1,6 +1,6 @@
 ---
 title: spangle.models.websocket
-module_digest: 8b3ac50a57d64af0c3506d4f8c41fc08
+module_digest: d73d13d2e0eca103e0df403656a96ad5
 ---
 
 # Module spangle.models.websocket
@@ -23,7 +23,7 @@ WebSocket connection to communicate with a client.
 - **closed** (`bool`): Whether connection is closed or not.
 - **reraise** (`bool`): In ErrorHandler, if set true, reraise the exception after
     closing connection.
-- **headers** (`CIMultiDictProxy`): The connection headers, case-insensitive dictionary.
+- **headers** (`Headers`): The connection headers, case-insensitive dictionary.
 
 Do not use manually.
 
@@ -31,7 +31,7 @@ Do not use manually.
 
 #### Instance attributes {: #Connection-attrs }
 
-- **params**{: #Connection.params } (`MultiDictProxy`): The parsed query parameters used for the request.
+- **queries**{: #Connection.queries } (`QueryParams`): The parsed query parameters used for the request.
 
 - **url**{: #Connection.url } (`URL`): The parsed URL of the request. For more details, see
     [Starlette docs](https://www.starlette.io/requests/#url) .

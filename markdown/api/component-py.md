@@ -1,6 +1,6 @@
 ---
 title: spangle.component
-module_digest: 0f934114e4e1b838c70c04baed4c8b05
+module_digest: f95ebcfb0e22ae075cf27aa4bdd2e7c1
 ---
 
 # Module spangle.component
