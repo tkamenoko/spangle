@@ -370,7 +370,7 @@ class _BaseClient:
                     params=params,
                     json=json,
                     cookies=cookies,
-                    allow_redirects=False,
+                    follow_redirects=False,
                     timeout=timeout,
                 )
                 if allow_redirects and 300 <= response.status_code < 400:
@@ -383,7 +383,7 @@ class _BaseClient:
                         params=params,
                         json=json,
                         cookies=cookies,
-                        allow_redirects=allow_redirects,
+                        follow_redirects=allow_redirects,
                         timeout=timeout,
                     )
 
@@ -397,7 +397,7 @@ class _BaseClient:
                 params=params,
                 json=json,
                 cookies=cookies,
-                allow_redirects=False,
+                follow_redirects=False,
                 timeout=timeout,
             )
             if allow_redirects and 300 <= response.status_code < 400:
@@ -410,7 +410,7 @@ class _BaseClient:
                     params=params,
                     json=json,
                     cookies=cookies,
-                    allow_redirects=allow_redirects,
+                    follow_redirects=allow_redirects,
                     timeout=timeout,
                 )
         return HttpTestResponse(response)
