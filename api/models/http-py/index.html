@@ -1,0 +1,1470 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="canonical" href="https://tkamenoko.github.io/spangle/api/models/http-py/">
+      
+      <link rel="icon" href="../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.2.3, mkdocs-material-7.3.6">
+    
+    
+      
+        <title>spangle.models.http - spangle - ASGI framework for modern web application</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.a57b2b03.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.3f5d1f46.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#009485">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+      
+    
+    
+    
+    
+      
+
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="teal" data-md-color-accent="pink">
+  
+    
+    <script>function __prefix(e){return new URL("../../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#module-spanglemodelshttp" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="spangle - ASGI framework for modern web application" class="md-header__button md-logo" aria-label="spangle - ASGI framework for modern web application" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8.5.75a.75.75 0 0 0-1.5 0v5.19L4.391 3.33a.75.75 0 1 0-1.06 1.061L5.939 7H.75a.75.75 0 0 0 0 1.5h5.19l-2.61 2.609a.75.75 0 1 0 1.061 1.06L7 9.561v5.189a.75.75 0 0 0 1.5 0V9.56l2.609 2.61a.75.75 0 1 0 1.06-1.061L9.561 8.5h5.189a.75.75 0 0 0 0-1.5H9.56l2.61-2.609a.75.75 0 0 0-1.061-1.06L8.5 5.939V.75z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            spangle - ASGI framework for modern web application
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              spangle.models.http
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/tkamenoko/spangle/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="spangle - ASGI framework for modern web application" class="md-nav__button md-logo" aria-label="spangle - ASGI framework for modern web application" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path d="M8.5.75a.75.75 0 0 0-1.5 0v5.19L4.391 3.33a.75.75 0 1 0-1.06 1.061L5.939 7H.75a.75.75 0 0 0 0 1.5h5.19l-2.61 2.609a.75.75 0 1 0 1.061 1.06L7 9.561v5.189a.75.75 0 0 0 1.5 0V9.56l2.609 2.61a.75.75 0 1 0 1.06-1.061L9.561 8.5h5.189a.75.75 0 0 0 0-1.5H9.56l2.61-2.609a.75.75 0 0 0-1.061-1.06L8.5 5.939V.75z"/></svg>
+
+    </a>
+    spangle - ASGI framework for modern web application
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/tkamenoko/spangle/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../introduction/" class="md-nav__link">
+        Introduction
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../routing/" class="md-nav__link">
+        Routing
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../methods/" class="md-nav__link">
+        HTTP Methods
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../request/" class="md-nav__link">
+        Request
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../response/" class="md-nav__link">
+        Response
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../component/" class="md-nav__link">
+        Component
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../lifespan/" class="md-nav__link">
+        Lifespan Events
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../request-hooks/" class="md-nav__link">
+        Request Hooks
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../error-handling/" class="md-nav__link">
+        Error Handling
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../statics/" class="md-nav__link">
+        Static Files
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../test-client/" class="md-nav__link">
+        Test Client
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_13" type="checkbox" id="__nav_13" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_13">
+          Advanced Features
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Advanced Features" data-md-level="1">
+        <label class="md-nav__title" for="__nav_13">
+          <span class="md-nav__icon md-icon"></span>
+          Advanced Features
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../advanced/" class="md-nav__link">
+        Advanced features
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../advanced/blueprint/" class="md-nav__link">
+        Application Blueprint
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../advanced/websocket/" class="md-nav__link">
+        WebSocket
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../advanced/decorator/" class="md-nav__link">
+        Use Decorator
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../advanced/middleware/" class="md-nav__link">
+        ASGI Middleware
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../advanced/mount/" class="md-nav__link">
+        Mount Other ASGI App
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../advanced/default-route/" class="md-nav__link">
+        Default Routing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../advanced/cli-tools/" class="md-nav__link">
+        CLI Tools
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14" type="checkbox" id="__nav_14" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_14">
+          API
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API" data-md-level="1">
+        <label class="md-nav__title" for="__nav_14">
+          <span class="md-nav__icon md-icon"></span>
+          API
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        spangle
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api-py/" class="md-nav__link">
+        spangle.api
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../blueprint-py/" class="md-nav__link">
+        spangle.blueprint
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../component-py/" class="md-nav__link">
+        spangle.component
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../error_handler-py/" class="md-nav__link">
+        spangle.error_handler
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../exceptions-py/" class="md-nav__link">
+        spangle.exceptions
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../handler_protocols-py/" class="md-nav__link">
+        spangle.handler_protocols
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../parser-py/" class="md-nav__link">
+        spangle.parser
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../testing-py/" class="md-nav__link">
+        spangle.testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../types-py/" class="md-nav__link">
+        spangle.types
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14_11" type="checkbox" id="__nav_14_11" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_14_11">
+          Cli
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Cli" data-md-level="2">
+        <label class="md-nav__title" for="__nav_14_11">
+          <span class="md-nav__icon md-icon"></span>
+          Cli
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/" class="md-nav__link">
+        spangle.cli
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cli/run-py/" class="md-nav__link">
+        spangle.cli.run
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_14_12" type="checkbox" id="__nav_14_12" checked>
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_14_12">
+          Models
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Models" data-md-level="2">
+        <label class="md-nav__title" for="__nav_14_12">
+          <span class="md-nav__icon md-icon"></span>
+          Models
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        spangle.models
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          spangle.models.http
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        spangle.models.http
+      </a>
+      
+        
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#classes" class="md-nav__link">
+    Classes
+  </a>
+  
+    <nav class="md-nav" aria-label="Classes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#Request" class="md-nav__link">
+    Request
+  </a>
+  
+    <nav class="md-nav" aria-label="Request">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#Request-attrs" class="md-nav__link">
+    Instance attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Request-methods" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Response" class="md-nav__link">
+    Response
+  </a>
+  
+    <nav class="md-nav" aria-label="Response">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#Response-attrs" class="md-nav__link">
+    Instance attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Response-methods" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../websocket-py/" class="md-nav__link">
+        spangle.models.websocket
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#classes" class="md-nav__link">
+    Classes
+  </a>
+  
+    <nav class="md-nav" aria-label="Classes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#Request" class="md-nav__link">
+    Request
+  </a>
+  
+    <nav class="md-nav" aria-label="Request">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#Request-attrs" class="md-nav__link">
+    Instance attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Request-methods" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Response" class="md-nav__link">
+    Response
+  </a>
+  
+    <nav class="md-nav" aria-label="Response">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#Response-attrs" class="md-nav__link">
+    Instance attributes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#Response-methods" class="md-nav__link">
+    Methods
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                <h1 id="module-spanglemodelshttp">Module spangle.models.http<a class="headerlink" href="#module-spanglemodelshttp" title="Permanent link">&para;</a></h1>
+<p>HTTP Request &amp; Response.</p>
+<h2 id="classes">Classes<a class="headerlink" href="#classes" title="Permanent link">&para;</a></h2>
+<h3 id="Request">Request<a class="headerlink" href="#Request" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">:</span> <span class="n">Scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">:</span> <span class="n">Receive</span><span class="p">,</span> <span class="n">send</span><span class="p">:</span> <span class="n">Send</span><span class="p">)</span>
+</code></pre></div>
+<p>Incoming HTTP request class.</p>
+<p><strong>Attributes</strong></p>
+<ul>
+<li><strong>headers</strong> (<code>Headers</code>): The request headers, case-insensitive dictionary.</li>
+<li><strong>state</strong> (<code>addict.Dict</code>): Any object you want to store while the response.</li>
+<li><strong>max_upload_bytes</strong> (<code>Optional[int]</code>): Limit upload size against each request.</li>
+</ul>
+<p>Do not use manually.</p>
+<hr />
+<h4 id="Request-attrs">Instance attributes<a class="headerlink" href="#Request-attrs" title="Permanent link">&para;</a></h4>
+<ul>
+<li>
+<p><strong id="Request.apparent_encoding">apparent_encoding</strong> (<code>Dict[str, Union[str, float]]</code>): Guess the content encoding, provided by the
+    <code>chardet</code> library. Must be awaited.</p>
+</li>
+<li>
+<p><strong id="Request.client">client</strong> (<code>Address</code>): The client address.</p>
+<p><strong>Attributes</strong></p>
+<ul>
+<li>host (<code>Optional[str]</code>): The client address, like <code>"127.0.0.1"</code> .</li>
+<li>port (<code>Optional[int]</code>): The client port, like <code>1234</code> .</li>
+</ul>
+</li>
+<li>
+<p><strong id="Request.content">content</strong> (<code>bytes</code>): The request body, as bytes. Must be awaited.</p>
+</li>
+</ul>
+<p><strong>Raises</strong></p>
+<ul>
+<li>
+<p><a href="../../exceptions-py/#TooLargeRequestError"><code>TooLargeRequestError</code></a>: when request body is too large.</p>
+</li>
+<li>
+<p><strong id="Request.cookies">cookies</strong> (<code>dict[str, str]</code>): The cookies sent in the request, as a dictionary.</p>
+</li>
+<li>
+<p><strong id="Request.full_url">full_url</strong> (<code>str</code>): The full URL of the request.</p>
+</li>
+<li>
+<p><strong id="Request.method">method</strong> (<code>str</code>): The request method, lower-cased.</p>
+</li>
+<li>
+<p><strong id="Request.mimetype">mimetype</strong> (<code>str</code>): Mimetype of the request’s body, or <code>""</code> .</p>
+</li>
+<li>
+<p><strong id="Request.queries">queries</strong> (<code>QueryParams</code>): The parsed query parameters used for the request.</p>
+</li>
+<li>
+<p><strong id="Request.text">text</strong> (<code>str</code>): The request body, as unicode-decoded. Must be awaited.</p>
+</li>
+<li>
+<p><strong id="Request.url">url</strong> (<code>URL</code>): The parsed URL of the request. For more details, see
+    <a href="https://www.starlette.io/requests/#url">Starlette docs</a> .</p>
+</li>
+<li>
+<p><strong id="Request.version">version</strong> (<code>str</code>): The HTTP version, like <code>"1.1"</code> , <code>"2"</code> .</p>
+</li>
+</ul>
+<hr />
+<h4 id="Request-methods">Methods<a class="headerlink" href="#Request-methods" title="Permanent link">&para;</a></h4>
+<p><a href="#Request.accept" id="Request.accept"><strong>accept</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span>
+</code></pre></div>
+<p>Test given type is acceptable or not.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>content_type</strong> (<code>str</code>): Testing <code>"mime/type"</code> .</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li>Optional[<code>tuple[str, float]</code>]: The first accepted type and its priority in
+    the range: <code>0.0&lt;=q&lt;=1.0</code> , or <code>None</code> .</li>
+</ul>
+<hr />
+<p><a href="#Request.media" id="Request.media"><strong>media</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">media</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">parser</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;Request&quot;</span><span class="p">],</span> <span class="n">Awaitable</span><span class="p">[</span><span class="n">T</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">parse_as</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ParseMode</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">ImmutableMultiDict</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">JsonType</span><span class="p">]</span>
+</code></pre></div>
+<p>Decode the request body to dict-like object. Must be awaited.</p>
+<p>You can use custom parser by setting your function.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>parser</strong> (<code>Optional[Callable[[Request], Awaitable[T]]]</code>): Custom parser,
+    must be async function. If not given, <a href="../../"><code>spangle</code></a> uses builtin parser.</li>
+<li><strong>parse_as</strong> (<code>Optional[ParseMode]</code>): Select parser to decode the body. Accept
+    <code>"json"</code> , <code>"form"</code> , or <code>"multipart"</code> .</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><code>T</code>: Parsed by given function.</li>
+<li><code>ImmutableMultiDict</code></li>
+<li><code>JsonType</code></li>
+</ul>
+<hr />
+<p><a href="#Request.push" id="Request.push"><strong>push</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">push</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>HTTP2 push-promise.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>path</strong> (<code>str</code>): A content location in the app.</li>
+</ul>
+<hr />
+<h3 id="Response">Response<a class="headerlink" href="#Response" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="nc">Response</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</code></pre></div>
+<p>Outgoing HTTP response class. <code>Response</code> instance is ASGI3 application.</p>
+<p><strong>Attributes</strong></p>
+<ul>
+<li><strong>headers</strong> (<code>MutableHeaders</code>): The response headers, case-insensitive dictionary.
+    To set values having same key, use <code>headers.append()</code> .</li>
+<li><strong>cookies</strong> (<code>SimpleCookie</code>): Dict-like http cookies. <code>Set-Cookie</code> header refers this.
+    You can set cookie-attributes.</li>
+<li><strong>status</strong> (<code>int</code>): The response&rsquo;s status code.</li>
+<li><strong>streaming</strong> (<code>Optional[AsyncGenerator]</code>): Async generator for streaming. If set,
+    other response body attrs like <code>media</code> are ignored.</li>
+<li><strong>mimetype</strong> (<code>str</code>): The mediatype of the response body.</li>
+<li><strong>reraise</strong> (<code>bool</code>): In ErrorHandler, if set true, reraise the exception after
+    sending data.</li>
+</ul>
+<p>Do not use manually.</p>
+<hr />
+<h4 id="Response-attrs">Instance attributes<a class="headerlink" href="#Response-attrs" title="Permanent link">&para;</a></h4>
+<ul>
+<li>
+<p><strong id="Response.content">content</strong> (<code>bytes</code>): Bytes of the response body. Default-type:
+    <code>"application/octet-stream"</code> .</p>
+</li>
+<li>
+<p><strong id="Response.json">json</strong> (<code>Any</code>): A dict sent to the client. Default-type: <code>"application/json"</code> .
+    You can set values like <code>resp.json.keyName.you = "want"</code> .</p>
+</li>
+<li>
+<p><strong id="Response.text">text</strong> (<code>str</code>): A unicode string of the response body. Default-type: <code>"text/plain"</code> .</p>
+</li>
+</ul>
+<hr />
+<h4 id="Response-methods">Methods<a class="headerlink" href="#Response-methods" title="Permanent link">&para;</a></h4>
+<p><a href="#Response.add_header" id="Response.add_header"><strong>add_header</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">add_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
+</code></pre></div>
+<p>Append new header. To overwrite, use <code>spangle.models.http.Response.set_header</code> .</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>key</strong> (<code>str</code>): Header&rsquo;s key.</li>
+<li><strong>value</strong> (<code>str</code>): Header&rsquo;s value.</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><a href="#Response"><code>Response</code></a>: Return self.</li>
+</ul>
+<hr />
+<p><a href="#Response.delete_cookie" id="Response.delete_cookie"><strong>delete_cookie</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">delete_cookie</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span> <span class="n">domain</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
+</code></pre></div>
+<p>Remove cookie value from client.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li>
+<p><strong>key</strong> (<code>str</code>)
+Cookie options:</p>
+</li>
+<li>
+<p><strong>path</strong> (<code>str</code>)</p>
+</li>
+<li>
+<p><strong>domain</strong> (<code>str</code>)
+<strong>Returns</strong></p>
+</li>
+<li>
+<p><a href="#Response"><code>Response</code></a>: Return self.</p>
+</li>
+</ul>
+<hr />
+<p><a href="#Response.load_template" id="Response.load_template"><strong>load_template</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">async</span> <span class="k">def</span> <span class="nf">load_template</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">template_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;text/html&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
+</code></pre></div>
+<p>Load <code>jinja2</code> template, render, set headers &amp; text.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>template_name</strong> (<code>str</code>): The template <code>"path/name"</code> .</li>
+<li><strong>content_type</strong> (<code>str</code>): <code>"text/html"</code> .</li>
+<li><strong>**params</strong>: Variables used in the template. <code>api</code> is reserved by
+    <a href="../../api-py/#Api"><code>Api</code></a> instance by default.</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><a href="#Response"><code>Response</code></a>: Return self.</li>
+</ul>
+<p><strong>Raises</strong></p>
+<ul>
+<li><code>ValueError</code>: Missing <code>jinja2</code> env in <a href="../../api-py/#Api"><code>Api</code></a> instance.</li>
+<li><code>NotFoundError</code>: Missing requested template.</li>
+</ul>
+<hr />
+<p><a href="#Response.redirect" id="Response.redirect"><strong>redirect</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">redirect</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">view</span><span class="p">:</span> <span class="nb">type</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="n">HTTPStatus</span><span class="o">.</span><span class="n">TEMPORARY_REDIRECT</span><span class="p">,</span>
+    <span class="n">query_string</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
+</code></pre></div>
+<p>Set redirect view/location. Positional args are not allowed.</p>
+<p>If both <code>view</code> and <code>url</code> are set, <code>url</code> is ignored.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>view</strong> (<code>Type</code>): View class that the client redirect to.</li>
+<li><strong>params</strong> (<code>dict</code>): Dynamic URL params passed to the view.</li>
+<li><strong>url</strong> (<code>str</code>): The location out of the app.</li>
+<li><strong>status</strong> (<code>int</code>): HTTP status code. Must be <code>300&lt;=status&lt;400</code> .</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><a href="#Response"><code>Response</code></a>: Return self.</li>
+</ul>
+<hr />
+<p><a href="#Response.set_content" id="Response.set_content"><strong>set_content</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_content</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">content</span><span class="p">:</span> <span class="nb">bytes</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;application/octet-stream&quot;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
+</code></pre></div>
+<p>Set bytes to response body with content type.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>content</strong> (<code>bytes</code>): Response body as bytes.</li>
+<li><strong>content_type</strong> (<code>str</code>): Response content type.</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><a href="#Response"><code>Response</code></a>: Return self.</li>
+</ul>
+<hr />
+<p><a href="#Response.set_cookie" id="Response.set_cookie"><strong>set_cookie</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_cookie</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">max_age</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">expires</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span><span class="p">,</span>
+    <span class="n">comment</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">domain</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">secure</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">httponly</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">samesite</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Lax&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
+</code></pre></div>
+<p>Set cookie value to given key with params.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>key</strong> (<code>str</code>)</li>
+<li>
+<p><strong>value</strong> (<code>str</code>)
+Cookie options:</p>
+</li>
+<li>
+<p><strong>max_age</strong> (<code>Optional[int]</code>)</p>
+</li>
+<li><strong>expires</strong> (<code>Optional[int]</code>)</li>
+<li><strong>path</strong> (<code>Optional[str]</code>)</li>
+<li><strong>comment</strong> (<code>Optional[str]</code>)</li>
+<li><strong>domain</strong> (<code>Optional[str]</code>)</li>
+<li><strong>secure</strong> (<code>bool</code>)</li>
+<li><strong>httponly</strong> (<code>bool</code>)</li>
+<li><strong>version</strong> (<code>Optional[int]</code>)</li>
+<li>
+<p><strong>samesite</strong> (<code>Optional[str]</code>)
+<strong>Returns</strong></p>
+</li>
+<li>
+<p><a href="#Response"><code>Response</code></a>: Return self.</p>
+</li>
+</ul>
+<hr />
+<p><a href="#Response.set_header" id="Response.set_header"><strong>set_header</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
+</code></pre></div>
+<p>Set HTTP header value to given key. It overwrites value if exists.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>key</strong> (<code>str</code>): Header&rsquo;s key.</li>
+<li><strong>value</strong> (<code>str</code>): Header&rsquo;s value.</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><a href="#Response"><code>Response</code></a>: Return self.</li>
+</ul>
+<hr />
+<p><a href="#Response.set_status" id="Response.set_status"><strong>set_status</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
+</code></pre></div>
+<p>Set HTTP status code.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>status</strong> (<code>int</code>): HTTP status code.</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><a href="#Response"><code>Response</code></a>: Return self.</li>
+</ul>
+<hr />
+<p><a href="#Response.set_text" id="Response.set_text"><strong>set_text</strong></a></p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">content_type</span><span class="o">=</span><span class="s2">&quot;text/plain&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Response&quot;</span>
+</code></pre></div>
+<p>Set given text to response body with content type.</p>
+<p><strong>Args</strong></p>
+<ul>
+<li><strong>text</strong> (<code>str</code>): Response body as UTF-8 string.</li>
+<li><strong>content_type</strong> (<code>str</code>): Response content type.</li>
+</ul>
+<p><strong>Returns</strong></p>
+<ul>
+<li><a href="#Response"><code>Response</code></a>: Return self.</li>
+</ul>
+                
+                  
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        
+        <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Previous: spangle.models" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              spangle.models
+            </div>
+          </div>
+        </a>
+      
+      
+        
+        <a href="../websocket-py/" class="md-footer__link md-footer__link--next" aria-label="Next: spangle.models.websocket" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              spangle.models.websocket
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        
+          Made with
+          <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+            Material for MkDocs
+          </a>
+        
+        
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "../../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../../assets/javascripts/workers/search.fcfe8b6d.min.js", "version": null}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.b1047164.min.js"></script>
+      
+    
+  </body>
+</html>
