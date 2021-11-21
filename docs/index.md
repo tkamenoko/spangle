@@ -6,6 +6,8 @@ version: v0.12.0
 
 [![PyPI](https://img.shields.io/pypi/v/spangle)](https://pypi.org/project/spangle/)
 [![PyPI - License](https://img.shields.io/pypi/l/spangle)](https://pypi.org/project/spangle/)
+[![unittest](https://github.com/tkamenoko/spangle/actions/workflows/unittest.yml/badge.svg)](https://github.com/tkamenoko/spangle/actions/workflows/unittest.yml)
+[![GitHub Pages](https://github.com/tkamenoko/spangle/actions/workflows/gh-pages.yml/badge.svg)](https://github.com/tkamenoko/spangle/actions/workflows/gh-pages.yml)
 
 `spangle` is a small and flexible ASGI application framework for modern web.
 
