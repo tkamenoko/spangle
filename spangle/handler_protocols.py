@@ -1,7 +1,15 @@
 """
 Protocols of request/error handler.
 """
-from typing import Any, Optional, Protocol, TypeVar, Union, runtime_checkable
+
+from contextvars import ContextVar
+from typing import (
+    Optional,
+    Protocol,
+    TypeVar,
+    Union,
+    runtime_checkable,
+)
 
 from .models import Connection, Request, Response
 
@@ -21,6 +29,16 @@ __all__ = [
 ]
 
 
+params_context: ContextVar[dict] = ContextVar("params_context")
+
+
+def use_params() -> dict:
+    """
+    Return parsed parameters typed by `types` .
+    """
+    return params_context.get()
+
+
 @runtime_checkable
 class BaseHandlerProtocol(Protocol):
     """
@@ -33,55 +51,43 @@ class BaseHandlerProtocol(Protocol):
 
 @runtime_checkable
 class RequestHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_request(
-        self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]:
+    async def on_request(self, req: Request, resp: Response, /) -> Optional[Response]:
         ...
 
 
 @runtime_checkable
 class GetHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_get(
-        self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]:
+    async def on_get(self, req: Request, resp: Response, /) -> Optional[Response]:
         ...
 
 
 @runtime_checkable
 class PostHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_post(
-        self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]:
+    async def on_post(self, req: Request, resp: Response, /) -> Optional[Response]:
         ...
 
 
 @runtime_checkable
 class PutHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_put(
-        self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]:
+    async def on_put(self, req: Request, resp: Response, /) -> Optional[Response]:
         ...
 
 
 @runtime_checkable
 class DeleteHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_delete(
-        self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]:
+    async def on_delete(self, req: Request, resp: Response, /) -> Optional[Response]:
         ...
 
 
 @runtime_checkable
 class PatchHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_patch(
-        self, req: Request, resp: Response, /, **kw: Any
-    ) -> Optional[Response]:
+    async def on_patch(self, req: Request, resp: Response, /) -> Optional[Response]:
         ...
 
 
 @runtime_checkable
 class WebsocketHandlerProtocol(BaseHandlerProtocol, Protocol):
-    async def on_ws(self, conn: Connection, /, **kw: Any) -> None:
+    async def on_ws(self, conn: Connection, /) -> None:
         ...
 
 

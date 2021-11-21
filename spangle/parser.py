@@ -7,11 +7,11 @@ from collections.abc import Awaitable, Callable
 from functools import partial
 from json import loads
 from tempfile import SpooledTemporaryFile
-from typing import TYPE_CHECKING, NamedTuple, Optional
+from typing import TYPE_CHECKING, Literal, NamedTuple, Optional, Union
 from urllib.parse import parse_qsl
 
-from multidict import MultiDict, MultiDictProxy
 from multipart import MultipartParser
+from starlette.datastructures import ImmutableMultiDict, MultiDict
 
 from .exceptions import ParseError
 
@@ -23,6 +23,9 @@ _type_to_parser = {
     "multipart/form-data": "multipart",
     "application/x-www-form-urlencoded": "form",
 }
+
+
+JsonType = Union[dict, list, float, None, str, bool]
 
 
 class UploadedFile(NamedTuple):
@@ -43,7 +46,13 @@ class UploadedFile(NamedTuple):
     mimetype: str
 
 
-async def _parse_body(req: Request, parse_as: str = None) -> MultiDictProxy:
+ParseMode = Literal["json", "form", "multipart"]
+
+
+async def _parse_body(
+    req: Request, parse_as: Optional[ParseMode] = None
+) -> Union[ImmutableMultiDict, JsonType]:
+
     parser = _get_parser(parse_as)
 
     if not parser:
@@ -51,9 +60,9 @@ async def _parse_body(req: Request, parse_as: str = None) -> MultiDictProxy:
         if not c_type:
             raise ParseError("'Content-Type' header not found.")
         mimetype = c_type.pop(0)
-        try:
-            parser = _get_parser(_type_to_parser[mimetype])
-        except KeyError:
+
+        parser = _get_parser(_type_to_parser[mimetype])
+        if not parser:
             raise ParseError(f"'{mimetype}' is not supported.")
 
     assert parser
@@ -62,24 +71,21 @@ async def _parse_body(req: Request, parse_as: str = None) -> MultiDictProxy:
 
 
 def _get_parser(
-    type_: Optional[str],
-) -> Optional[Callable[[Request], Awaitable[MultiDictProxy]]]:
-    if type_ == "json":
+    key: Optional[str],
+) -> Optional[Callable[[Request], Awaitable[Union[ImmutableMultiDict, JsonType]]]]:
+    if key == "json":
         return _parse_json
-    elif type_ == "form":
+    elif key == "form":
         return _parse_form
-    elif type_ == "multipart":
+    elif key == "multipart":
         return _parse_multipart
-    elif type_:
-        raise ParseError(f"'{type_}' is not supported.")
-    else:
-        return None
+
+    return None
 
 
-async def _parse_json(req: Request) -> MultiDictProxy:
+async def _parse_json(req: Request) -> JsonType:
     content = await req.content
-    result = MultiDict(loads(content))
-    return MultiDictProxy(result)
+    return loads(content)
 
 
 def _parse_sync(
@@ -89,7 +95,7 @@ def _parse_sync(
 
     for part in MultipartParser(stream, boundary, content_length, **kw):
         if part.filename or not part.is_buffered():
-            result.add(
+            result.append(
                 part.name,
                 UploadedFile(
                     filename=part.filename,
@@ -98,11 +104,11 @@ def _parse_sync(
                 ),
             )
         else:
-            result.add(part.name, part.value)
+            result.append(part.name, part.value)
     return result
 
 
-async def _parse_multipart(req: Request) -> MultiDictProxy:
+async def _parse_multipart(req: Request) -> ImmutableMultiDict:
     content_length = int(req.headers.get("content-length", "-1"))
     content_type = req.headers.get("content-type", "")
 
@@ -130,10 +136,9 @@ async def _parse_multipart(req: Request) -> MultiDictProxy:
         None, partial(_parse_sync, stream, boundary, content_length, **kw)
     )
 
-    return MultiDictProxy(parsed)
+    return ImmutableMultiDict(parsed)
 
 
-async def _parse_form(req: Request) -> MultiDictProxy:
+async def _parse_form(req: Request) -> ImmutableMultiDict:
     data = await req.text
-    result = MultiDict(parse_qsl(data))
-    return MultiDictProxy(result)
+    return ImmutableMultiDict(parse_qsl(data))

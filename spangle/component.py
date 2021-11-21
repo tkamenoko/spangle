@@ -6,8 +6,8 @@ from __future__ import annotations
 
 from contextvars import ContextVar
 from typing import (
-    Optional,
     TYPE_CHECKING,
+    Optional,
     Protocol,
     TypeVar,
     Union,
@@ -15,7 +15,7 @@ from typing import (
     runtime_checkable,
 )
 
-from ._utils import execute
+from ._internal.utils import execute
 
 if TYPE_CHECKING:
     from spangle.api import Api

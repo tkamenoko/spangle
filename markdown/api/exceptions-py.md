@@ -1,6 +1,6 @@
 ---
 title: spangle.exceptions
-module_digest: ee750a30fe7c6f4e3a17ca1e0acec60e
+module_digest: 6ce76e1677f625495f91a66400293f6d
 ---
 
 # Module spangle.exceptions
@@ -16,7 +16,7 @@ class MethodNotAllowedError(
     self,
     message="Method not allowed.",
     status=HTTPStatus.METHOD_NOT_ALLOWED,
-    allowed_methods: set[str] = None,)
+    allowed_methods: Optional[set[str]] = None,)
 ```
 
 405: Unexpected method. Safe methods like `GET` will be accepted anytime.
@@ -87,7 +87,7 @@ class SpangleError(
     self,
     message="Something wrong.",
     status=HTTPStatus.INTERNAL_SERVER_ERROR,
-    headers: dict[str, str] = None,)
+    headers: Optional[dict[str, str]] = None,)
 ```
 
 500: Base class of spangle-errors.

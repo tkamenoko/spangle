@@ -1,5 +1,5 @@
 ---
-version: v0.11.0
+version: v0.12.0
 ---
 
 # Default Routing for Single Page Application
@@ -35,9 +35,8 @@ api = Api()
 @api.route("/api/{foo}")
 @api.route("/")
 class Index:
-    async def on_get(self, req, resp, **kw):
-        # `kw` may contain parsed path params.
-        pass
+    async def on_get(self, req, resp):
+        ...
 
 ```
 

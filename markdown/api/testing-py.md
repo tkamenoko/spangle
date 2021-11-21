@@ -1,6 +1,6 @@
 ---
 title: spangle.testing
-module_digest: 2e7de87ca1f867608adc562d18f134d6
+module_digest: f89ae37ac611215b4706317f2a4a88c3
 ---
 
 # Module spangle.testing
@@ -46,10 +46,10 @@ Mock HTTP client without running server. Lifespan-event is supported by
 async def delete(
     self,
     path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    timeout: int = None,
+    queries: Optional[Params] = None,
+    headers: Optional[Headers] = None,
+    cookies: Optional[dict[str, str]] = None,
+    timeout: Optional[float] = None,
     allow_redirects=True,
     ) -> HttpTestResponse
 ```
@@ -65,10 +65,10 @@ Send `DELETE` request to `app` . See
 async def get(
     self,
     path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    timeout: int = None,
+    queries: Optional[Params] = None,
+    headers: Optional[Headers] = None,
+    cookies: Optional[dict[str, str]] = None,
+    timeout: Optional[float] = None,
     allow_redirects=True,
     ) -> HttpTestResponse
 ```
@@ -84,14 +84,14 @@ Send `GET` request to `app` . See
 async def patch(
     self,
     path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    json: Mapping = None,
-    files: Mapping = None,
-    form: Mapping = None,
-    content: bytes = None,
-    timeout: int = None,
+    queries: Optional[Params] = None,
+    headers: Optional[Headers] = None,
+    cookies: Optional[dict[str, str]] = None,
+    json: Optional[Mapping] = None,
+    files: Optional[Mapping] = None,
+    form: Optional[Mapping] = None,
+    content: Optional[bytes] = None,
+    timeout: Optional[float] = None,
     allow_redirects=True,
     ) -> HttpTestResponse
 ```
@@ -107,14 +107,14 @@ Send `PATCH` request to `app` . See
 async def post(
     self,
     path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    json: Mapping = None,
-    files: Mapping = None,
-    form: Mapping = None,
-    content: bytes = None,
-    timeout: int = None,
+    queries: Optional[Params] = None,
+    headers: Optional[Headers] = None,
+    cookies: Optional[dict[str, str]] = None,
+    json: Optional[Mapping] = None,
+    files: Optional[Mapping] = None,
+    form: Optional[Mapping] = None,
+    content: Optional[bytes] = None,
+    timeout: Optional[float] = None,
     allow_redirects=True,
     ) -> HttpTestResponse
 ```
@@ -130,14 +130,14 @@ Send `POST` request to `app` . See
 async def put(
     self,
     path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    json: Mapping = None,
-    files: Mapping = None,
-    form: Mapping = None,
-    content: bytes = None,
-    timeout: int = None,
+    queries: Optional[Params] = None,
+    headers: Optional[Headers] = None,
+    cookies: Optional[dict[str, str]] = None,
+    json: Optional[Mapping] = None,
+    files: Optional[Mapping] = None,
+    form: Optional[Mapping] = None,
+    content: Optional[bytes] = None,
+    timeout: Optional[float] = None,
     allow_redirects=True,
     ) -> HttpTestResponse
 ```
@@ -154,14 +154,14 @@ async def request(
     self,
     method: str,
     path: str,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    json: Mapping = None,
-    files: Mapping = None,
-    form: Mapping = None,
-    content: bytes = None,
-    timeout: int = None,
+    queries: Optional[Params] = None,
+    headers: Optional[Headers] = None,
+    cookies: Optional[dict[str, str]] = None,
+    json: Optional[Mapping] = None,
+    files: Optional[Mapping] = None,
+    form: Optional[Mapping] = None,
+    content: Optional[bytes] = None,
+    timeout: Optional[float] = None,
     allow_redirects=True,
     ) -> HttpTestResponse
 ```
@@ -172,9 +172,9 @@ Send request to `app`.
 
 - **method** (`str`): HTTP request method.
 - **path** (`str`): Requesting location.
-- **params** (`Params`): Querystring as `dict` or `list` of `(name, value)`.
+- **queries** (`Params`): Querystring as `dict` or `list` of `(name, value)`.
 - **headers** (`Headers`): HTTP headers.
-- **cookies** (`Mapping`): Sending HTTP cookies.
+- **cookies** (`dict[str, str]`): Sending HTTP cookies.
 - **json** (`Mapping`): Request body as json.
 - **files** (`Mapping`): Multipart form.
 - **form** (`Mapping`): URL encoded form.
@@ -195,11 +195,11 @@ Send request to `app`.
 def ws_connect(
     self,
     path: str,
-    subprotocols: list[str] = None,
-    params: Params = None,
-    headers: Headers = None,
-    cookies: Mapping = None,
-    timeout: int = None,
+    subprotocols: Optional[list[str]] = None,
+    queries: Optional[Params] = None,
+    headers: Optional[Headers] = None,
+    cookies: Optional[Mapping] = None,
+    timeout: Optional[float] = None,
     ) -> AsyncWebsocketClient
 ```
 
@@ -214,10 +214,10 @@ class AsyncWebsocketClient(
     self,
     http: "AsyncHttpTestClient",
     path: str = "",
-    headers: CIMultiDict = None,
-    params: Params = None,
-    cookies: Mapping = None,
-    timeout: int = None,)
+    headers: Optional[MutableHeaders] = None,
+    queries: Optional[Params] = None,
+    cookies: Optional[Mapping] = None,
+    timeout: Optional[float] = None,)
 ```
 
 Asynchronous WebSocket test client. It is expected to be called from
@@ -227,8 +227,8 @@ Asynchronous WebSocket test client. It is expected to be called from
 
 - **host** (`str`): Dummy domain.
 - **path** (`str`): WebSocket endpoint.
-- **headers** (`CIMultiDict`): Headers used to connect.
-- **params** (`Params`): Parsed querystrings.
+- **headers** (`MutableHeaders`): Headers used to connect.
+- **queries** (`QueryParams`): Parsed querystrings.
 - **timeout** (`Optional[int]`): How long test client waits for.
 
 Do not use manually.
@@ -325,7 +325,7 @@ Do not use manually.
 
 - **cookies**{: #HttpTestResponse.cookies } (`Cookies`): Dict-like response cookies.
 
-- **headers**{: #HttpTestResponse.headers } (`CIMultiDict`): Response header, as `dict` .
+- **headers**{: #HttpTestResponse.headers } (`Headers`): Response header, as `dict` .
 
 - **json**{: #HttpTestResponse.json } (`addict.Dict`): Json response. Dot access available, like
     `resp.json.what.you.want` .

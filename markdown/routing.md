@@ -1,5 +1,5 @@
 ---
-version: v0.11.0
+version: v0.12.0
 ---
 
 # Routing
@@ -22,21 +22,23 @@ class StaticRoute:
 
 ## Dynamic routing
 
-You can get values from URL by using f-string style routing.
+You can get values from URL by using f-string style routing. To get params in a method, call [`use_params`](api/handler_protocols-py.md#use_params) .
 
 ```python
 # routing.py
 @api.route("/path/to/{name}")
 class DynamicRoute(object):
-    async def on_request(self, req, resp, name:str):
+    async def on_request(self, req, resp):
+        name = use_params()["name"]
         # `spangle` tries to get a view from static routes first.
         assert name != "page"
 
 @api.route("/use/{multiple}/{allowed}")
 class Multiple:
-    async def on_request(self, req, resp, **kw):
-        assert "multiple" in kw
-        assert "allowed" in kw
+    async def on_request(self, req, resp):
+        params = use_params()
+        assert "multiple" in params
+        assert "allowed" in params
 
 ```
 
@@ -51,15 +53,16 @@ View methods accept URL arguments as `str` by default. You can change this behav
 # `str` is an alias of `default`.
 @api.route("/use/{dynamic:int}")
 class IntArg:
-    async def on_request(self, req, resp, dynamic):
+    async def on_request(self, req, resp):
+        dynamic = use_params()["dynamic"]
         assert isinstance(dynamic, int)
 
 # `default` match does not contain slash(`/`).
-# `rest_string` converter matches any characters including slash.
-@api.route("/{for_spa:rest_string}")
+# `*rest_string` converter matches any characters including slash.
+@api.route("/{for_spa:*rest_string}")
 @api.route("/")
 class SpaView:
-    async def on_get(self, req, resp, **kw):
+    async def on_get(self, req, resp):
         ...
 
 
@@ -71,7 +74,8 @@ def month(v:str) -> int:
 
 @api.route("/articles-in-{m:month}", converters={"month":month})
 class CustomConverter:
-    async def on_request(self, req, resp, m):
+    async def on_request(self, req, resp):
+        m = use_params()["m"]
         assert 1<=m<=12
 
 
@@ -81,9 +85,11 @@ def regex(x):
 
 regex.pattern = r"[A-Za-z]+(/[A-Za-z]+)+"
 
-@api.route("/accept/custom-pattern/{path:regex}", converters={"regex":regex})
+# convert must start with `*` to include slash for its pattern.
+@api.route("/accept/custom-pattern/{path:*regex}", converters={"*regex":regex})
 class SlashRequired:
-    async def on_request(self, req, resp, path):
+    async def on_request(self, req, resp):
+        path = use_params()["path"]
         assert "/" in path
 
 ```

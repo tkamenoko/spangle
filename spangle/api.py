@@ -7,7 +7,7 @@ import inspect
 import re
 from collections.abc import Callable
 from contextvars import Context, copy_context
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal, Optional
 
 import jinja2
 from starlette.middleware.errors import ServerErrorMiddleware
@@ -15,13 +15,15 @@ from starlette.staticfiles import StaticFiles
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import models
-from ._dispatcher import _dispatch_http, _dispatch_websocket
-from ._utils import _AppRef, _normalize_path, execute
-from .blueprint import Blueprint, Router
+from ._internal.dispatcher import dispatch_http, dispatch_websocket
+from ._internal.router import Router
+from ._internal.utils import AppRef, execute, normalize_path
+from .blueprint import Blueprint
 from .component import AnyComponentProtocol, ComponentsCache, api_ctx, component_ctx
 from .error_handler import ErrorHandler
 from .handler_protocols import (
     AnyRequestHandlerProtocol,
+    BaseHandlerProtocol,
     ErrorHandlerProtocol,
     RequestHandlerProtocol,
 )
@@ -37,7 +39,6 @@ class Api:
 
     **Attributes**
 
-    * router (`spangle.blueprint.Router`): Manage URLs and views.
     * mounted_app (`dict[str, ASGIApp]`): ASGI apps mounted under `Api` .
     * error_handlers (`dict[type[Exception], type[ErrorHandlerProtocol]]`): Called when
         `Exception` is raised.
@@ -48,19 +49,17 @@ class Api:
     * routing (`spangle.types.RoutingStrategy`): Routing strategy about trailing slash.
     * templates_dir (`str`): Path to `Jinja2` templates.
     * max_upload_bytes (`int`): Allowed user uploads size.
+    * default_route (`Optional[str]`): Fallback path.
 
     """
 
-    _app_ref: _AppRef
-    _view_cache: dict[
-        type[Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol]],
-        Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol],
-    ]
+    _app_ref: AppRef
+    _view_cache: dict[type[BaseHandlerProtocol], BaseHandlerProtocol]
     _reverse_views: dict[type[AnyRequestHandlerProtocol], str]
     _jinja_env: Optional[jinja2.Environment]
     _context: Context
+    _router: Router
 
-    router: Router
     mounted_app: dict[str, ASGIApp]
     error_handlers: dict[type[Exception], type[ErrorHandlerProtocol]]
     request_hooks: dict[str, list[type[RequestHandlerProtocol]]]
@@ -70,6 +69,7 @@ class Api:
     routing: RoutingStrategy
     templates_dir: Optional[str]
     max_upload_bytes: int
+    default_route: Optional[str]
 
     def __init__(
         self,
@@ -111,7 +111,7 @@ class Api:
         * max_upload_bytes (`int`): Limit of user upload size. Defaults to 10MB.
 
         """
-        self.router = Router(routing)
+        self._router = Router(routing)
         self._view_cache = {}
         self.mounted_app = {}
         self._reverse_views = {}
@@ -151,13 +151,13 @@ class Api:
         self.routing = routing
 
         # default route.
-        self.router.default_route = default_route
+        self.default_route = default_route
 
         # init before_request.
         self.request_hooks = {"before": [], "after": []}
 
         # init middlewares.
-        self._app_ref = _AppRef(app=self._dispatch)
+        self._app_ref = AppRef(app=self._dispatch)
         for md in middleware or []:
             self.add_middleware(md[0], **md[1])
         self.add_middleware(ServerErrorMiddleware, debug=self.debug)
@@ -195,7 +195,7 @@ class Api:
         if self.favicon and scope["path"] == "/favicon.ico":
             scope["path"] = self.favicon
         # check mounted app.
-        normalized = _normalize_path(scope["path"])
+        normalized = normalize_path(scope["path"])
         for prefix, app in self.mounted_app.items():
             if normalized.startswith(prefix):
                 scope["path"] = scope["path"].replace(prefix[:-1], "", 1)
@@ -204,9 +204,7 @@ class Api:
                 if scope["type"] == "http":
                     model = {
                         "req": models.http.Request(scope, receive, send),
-                        "resp": models.http.Response(
-                            jinja_env=self._jinja_env, url_for=self.url_for
-                        ),
+                        "resp": models.http.Response(),
                     }
                 elif scope["type"] == "websocket":
                     model = {"conn": models.websocket.Connection(scope, receive, send)}
@@ -220,10 +218,10 @@ class Api:
 
         # check spangle views.
         if scope["type"] == "http":
-            app = await _dispatch_http(scope, receive, send, self)
+            app = await dispatch_http(scope, receive, send)
             t = asyncio.create_task(app(scope, receive, send))
         elif scope["type"] == "websocket":
-            app = await _dispatch_websocket(scope, receive, send, self)
+            app = await dispatch_websocket(scope, receive, send)
             t = asyncio.create_task(app(scope, receive, send))
         else:
             raise ValueError("Invalid scheme.")
@@ -373,14 +371,21 @@ class Api:
 
         """
         _path = "/" + path
-        flatten = {}
+        flatten: dict[
+            str,
+            tuple[
+                type[AnyRequestHandlerProtocol], Converters, Optional[RoutingStrategy]
+            ],
+        ] = {}
         for child, view_conv in blueprint.views.items():
             p = re.sub(r"//+", "/", "/".join([_path, child]))
             view, conv, routing = view_conv
             flatten[p] = (view, conv, routing or self.routing)
         for k, v in flatten.items():
             _view, _conv, _routing = v
-            normalized = self.router._add(k, _view, _conv, _routing)
+            normalized = self._router.append(
+                k, _view, converters=_conv, strategy=_routing
+            )
             _k = re.sub(r"{([^/:]+)(:[^/:]+)}", r"{\1}", normalized)
             self._reverse_views.setdefault(_view, _k)
 
@@ -432,7 +437,7 @@ class Api:
         * app (`ASGIApp`): ASGI app to mount.
 
         """
-        self.mounted_app.update({_normalize_path(path): app})
+        self.mounted_app.update({normalize_path(path): app})
 
     def url_for(
         self,
@@ -464,7 +469,7 @@ class Api:
         * **config: params for the middleware.
 
         """
-        self._app_ref = _AppRef(app=middleware(self._app_ref["app"], **config))
+        self._app_ref = AppRef(app=middleware(self._app_ref["app"], **config))
 
     def add_error_handler(self, eh: ErrorHandler) -> None:
         """

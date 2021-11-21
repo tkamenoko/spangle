@@ -2,25 +2,33 @@
 HTTP Request & Response.
 """
 
-
 from collections.abc import AsyncGenerator, Awaitable, Callable
 from http import HTTPStatus
 from http.cookies import SimpleCookie
-from typing import Any, Optional, Union
-from urllib.parse import parse_qsl, unquote_plus
+from typing import Any, Literal, Optional, TypeVar, Union, overload
+from urllib.parse import unquote_plus
 
 import addict
 import chardet
 import jinja2
-from multidict import CIMultiDict, CIMultiDictProxy, MultiDict, MultiDictProxy
-from spangle.exceptions import NotFoundError, TooLargeRequestError
-from spangle.parser import _parse_body
+from starlette.datastructures import (
+    Headers,
+    ImmutableMultiDict,
+    MutableHeaders,
+    QueryParams,
+)
 from starlette.requests import URL, Address
 from starlette.requests import Request as StarletteRequest
 from starlette.responses import JSONResponse, RedirectResponse
 from starlette.responses import Response as StarletteResponse
 from starlette.responses import StreamingResponse
 from starlette.types import Receive, Scope, Send
+
+from ..component import use_api
+from ..exceptions import NotFoundError, TooLargeRequestError
+from ..parser import JsonType, ParseMode, _parse_body
+
+T = TypeVar("T")
 
 
 class _Accept:
@@ -45,7 +53,7 @@ class _Accept:
         self.q = q
 
     def __str__(self) -> str:
-        return self.main_type + "/" + self.subtype
+        return f"{self.main_type}/{self.subtype}"
 
     def accept(self, testing_type: str) -> bool:
         # wildcard.
@@ -69,9 +77,9 @@ class Request:
 
     **Attributes**
 
-    * headers (`CIMultiDictProxy`): The request headers, case-insensitive dictionary.
+    * headers (`Headers`): The request headers, case-insensitive dictionary.
     * state (`addict.Dict`): Any object you want to store while the response.
-    * max_upload_bytes (`int`): Limit upload size against each request.
+    * max_upload_bytes (`Optional[int]`): Limit upload size against each request.
 
     """
 
@@ -81,7 +89,7 @@ class Request:
         "_content",
         "_mimetype",
         "_full_url",
-        "_params",
+        "_queries",
         "_media",
         "_method",
         "_version",
@@ -95,14 +103,14 @@ class Request:
     _content: Optional[bytes]
     _mimetype: Optional[str]
     _full_url: Optional[str]
-    _params: Optional[MultiDictProxy]
+    _queries: Optional[QueryParams]
     _media: Any
     _method: str
     _version: str
 
-    headers: CIMultiDictProxy
+    headers: Headers
     state: addict.Dict
-    max_upload_bytes: int
+    max_upload_bytes: Optional[int]
 
     def __init__(self, scope: Scope, receive: Receive, send: Send) -> None:
         """Do not use manually."""
@@ -111,13 +119,14 @@ class Request:
         self._content = None
         self._mimetype = None
         self._full_url = None
-        self._params = None
+        self._queries = None
         self._media = None
         self._method = self._request.method.lower()
         self._version = scope["http_version"]
 
-        self.headers = CIMultiDictProxy(CIMultiDict(self._request.headers.items()))
+        self.headers = self._request.headers
         self.state = addict.Dict()
+        self.max_upload_bytes = None
 
     @property
     async def content(self) -> bytes:
@@ -129,16 +138,21 @@ class Request:
         * `spangle.exceptions.TooLargeRequestError` : when request body is too large.
 
         """
+        max_upload_bytes = (
+            self.max_upload_bytes
+            if self.max_upload_bytes is not None
+            else use_api().max_upload_bytes
+        )
         if self._content is None:
             content_length = self.headers.get("content-length", "0")
-            if int(content_length) > self.max_upload_bytes:
+            if int(content_length) > max_upload_bytes:
                 raise TooLargeRequestError
 
             body = b""
             real_length = 0
             async for chunk in self._request.stream():
                 real_length += len(chunk)
-                if real_length > self.max_upload_bytes:
+                if real_length > max_upload_bytes:
                     raise TooLargeRequestError
                 body += chunk
             self._content = body
@@ -164,7 +178,7 @@ class Request:
         """(`str`): Mimetype of the request’s body, or `""` ."""
         if self._mimetype is None:
             self._mimetype = self.headers.get("content-type", "")
-        return self._mimetype  # type: ignore
+        return self._mimetype
 
     @property
     def client(self) -> Address:
@@ -188,13 +202,11 @@ class Request:
         return self._request.url
 
     @property
-    def params(self) -> MultiDictProxy:
-        """(`MultiDictProxy`): The parsed query parameters used for the request."""
-        if self._params is None:
-            params = parse_qsl(self.url.query)
-            d = MultiDict(params)
-            self._params = MultiDictProxy(d)
-        return self._params
+    def queries(self) -> QueryParams:
+        """(`QueryParams`): The parsed query parameters used for the request."""
+        if self._queries is None:
+            self._queries = QueryParams(self.url.query)
+        return self._queries
 
     @property
     def full_url(self) -> str:
@@ -232,7 +244,7 @@ class Request:
         """
 
         if self._accepts is None:
-            raw: list[str] = self.headers.getall("Accept", [])
+            raw: list[str] = self.headers.getlist("Accept")
             a_list = []
             for i in raw:
                 a_values = i.replace(" ", "").split(",")
@@ -255,11 +267,30 @@ class Request:
         b = await self.content
         return chardet.detect(b)
 
+    @overload
+    async def media(self) -> Union[ImmutableMultiDict, JsonType]:
+        ...
+
+    @overload
+    async def media(self, *, parse_as: Literal["json"]) -> JsonType:
+        ...
+
+    @overload
+    async def media(
+        self, *, parse_as: Literal["form", "multipart"]
+    ) -> ImmutableMultiDict:
+        ...
+
+    @overload
+    async def media(self, *, parser: Callable[["Request"], Awaitable[T]]) -> T:
+        ...
+
     async def media(
         self,
-        parser: Callable[["Request"], Awaitable[Any]] = None,
-        parse_as: str = None,
-    ) -> Union[MultiDictProxy, Any]:
+        *,
+        parser: Callable[["Request"], Awaitable[T]] = None,
+        parse_as: Optional[ParseMode] = None,
+    ) -> Union[ImmutableMultiDict, T, JsonType]:
         """
         Decode the request body to dict-like object. Must be awaited.
 
@@ -267,14 +298,16 @@ class Request:
 
         **Args**
 
-        * parser (`Optional[Callable[[Request], Awaitable[Any]]]`): Custom parser,
+        * parser (`Optional[Callable[[Request], Awaitable[T]]]`): Custom parser,
             must be async function. If not given, `spangle` uses builtin parser.
-        * parse_as (`Optional[str]`): Select parser to decode the body. Accept
+        * parse_as (`Optional[ParseMode]`): Select parser to decode the body. Accept
             `"json"` , `"form"` , or `"multipart"` .
 
         **Returns**
 
-        * `MultiDictProxy`: May be overridden by custom parser.
+        * `T`: Parsed by given function.
+        * `ImmutableMultiDict`
+        * `JsonType`
 
         """
         if self._media is None:
@@ -314,8 +347,8 @@ class Response:
 
     **Attributes**
 
-    * headers (`CIMultiDict`): The response headers, case-insensitive dictionary. To set
-        values having same key, use `headers.add()` .
+    * headers (`MutableHeaders`): The response headers, case-insensitive dictionary.
+        To set values having same key, use `headers.append()` .
     * cookies (`SimpleCookie`): Dict-like http cookies. `Set-Cookie` header refers this.
         You can set cookie-attributes.
     * status (`int`): The response's status code.
@@ -328,9 +361,7 @@ class Response:
     """
 
     __slots__ = (
-        "_jinja",
         "_redirect_to",
-        "_url_for",
         "_starlette_resp",
         "_body",
         "_text",
@@ -343,33 +374,29 @@ class Response:
         "reraise",
     )
 
-    _jinja: Optional[jinja2.Environment]
     _redirect_to: Optional[tuple[str, Optional[str]]]
-    _url_for: Optional[Callable]
     _starlette_resp: type[StarletteResponse]
     _body: Any
     _text: Optional[str]
     _content: Optional[bytes]
     _json: Union[addict.Dict, list, None]
 
-    headers: CIMultiDict[str]
+    headers: MutableHeaders
     cookies: SimpleCookie
     status_code: int
     streaming: Optional[AsyncGenerator]
     reraise: bool
 
-    def __init__(self, jinja_env: jinja2.Environment = None, url_for=None) -> None:
+    def __init__(self) -> None:
         """Do not use manually."""
-        self._jinja = jinja_env
         self._redirect_to = None
-        self._url_for = url_for
         self._starlette_resp = StarletteResponse
         self._body = None
         self._text = None
         self._content = None
         self._json = None
 
-        self.headers = CIMultiDict()
+        self.headers = MutableHeaders()
         self.cookies = SimpleCookie()
         self.status_code = HTTPStatus.OK
         self.streaming: Optional[AsyncGenerator] = None
@@ -551,7 +578,7 @@ class Response:
         * `spangle.models.http.Response`: Return self.
 
         """
-        self.headers.add(key, value)
+        self.headers.append(key, value)
         return self
 
     def set_header(self, key: str, value: str) -> "Response":
@@ -639,11 +666,12 @@ class Response:
         * `NotFoundError`: Missing requested template.
 
         """
-        if self._jinja is None:
+        jinja_env = use_api()._jinja_env
+        if jinja_env is None:
             raise ValueError("Set jinja env.")
 
         try:
-            template = self._jinja.get_template(template_name)
+            template = jinja_env.get_template(template_name)
         except jinja2.exceptions.TemplateNotFound:
             raise NotFoundError
 
@@ -688,8 +716,8 @@ class Response:
         self.status_code = status
         self._starlette_resp = RedirectResponse
         if view:
-            assert self._url_for
-            redirect_to = self._url_for(view, params)
+            url_for = use_api().url_for
+            redirect_to = url_for(view, params)
         elif url:
             redirect_to = url
         else:
@@ -703,4 +731,4 @@ class Response:
             return
         cookies = self.cookies.output(header="").split("\r\n")
         for c in cookies:
-            self.headers.add("Set-Cookie", c.lstrip())
+            self.headers.append("Set-Cookie", c.lstrip())

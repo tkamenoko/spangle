@@ -1,9 +1,10 @@
 from http import HTTPStatus
+from typing import TypedDict, cast
 
 from spangle.api import Api
 from spangle.error_handler import ErrorHandler
 from spangle.exceptions import NotFoundError, SpangleError
-from spangle.handler_protocols import RequestHandlerProtocol
+from spangle.handler_protocols import RequestHandlerProtocol, use_params
 from ward import fixture, raises, test, using
 
 
@@ -65,10 +66,14 @@ def errors(
 @fixture
 @using(api=api, errors=errors)
 def raise_error(api: Api, errors: dict[str, tuple[type[Exception], int]]):
+    class Params(TypedDict):
+        r: str
+
     @api.route("/{r}")
     class Raise:
-        async def on_get(self, req, resp, r):
-            e = errors[r][0]
+        async def on_get(self, req, resp):
+            params = cast(Params, use_params())
+            e = errors[params["r"]][0]
             raise e
 
     return Raise
