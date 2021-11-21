@@ -60,7 +60,7 @@ async def _(api: Api, view: type[RequestHandlerProtocol]):
         assert response.status_code == HTTPStatus.OK
         headers = response.headers
         assert headers["authorization"] == "Test dummy"
-        assert headers.getall("foo") == ["baz", "spam"]
+        assert headers.get_list("foo") == ["baz", "spam"]
 
 
 @fixture

@@ -13,8 +13,10 @@ from urllib.parse import quote_plus
 import addict
 from asgiref.testing import ApplicationCommunicator
 from asgiref.timeout import timeout as timeout_ctx
-from httpx import ASGITransport, AsyncClient, Response
-from multidict import CIMultiDict
+from httpx import ASGITransport, AsyncClient
+from httpx import Headers as HttpxHeaders
+from httpx import Response
+from starlette.datastructures import MutableHeaders
 from starlette.types import ASGIApp
 from urllib3.filepost import RequestField, encode_multipart_formdata
 
@@ -42,7 +44,7 @@ class HttpTestResponse:
 
     status_code: Union[HTTPStatus, int]
     _resp: Response
-    _headers: Optional[CIMultiDict[str]] = None
+    _headers: Optional[HttpxHeaders] = None
     _json: Optional[addict.Dict] = None
 
     def __init__(self, resp: Response):
@@ -54,10 +56,10 @@ class HttpTestResponse:
             self.status_code = self._resp.status_code
 
     @property
-    def headers(self) -> CIMultiDict:
-        """(`CIMultiDict`): Response header, as `dict` ."""
+    def headers(self) -> HttpxHeaders:
+        """(`Headers`): Response header, as `dict` ."""
         if self._headers is None:
-            self._headers = CIMultiDict(self._resp.headers.multi_items())
+            self._headers = self._resp.headers
         return self._headers
 
     @property
@@ -93,7 +95,7 @@ class _BaseWebSocket:
     _app_ref: AppRef
     host: str
     path: str
-    headers: CIMultiDict
+    headers: MutableHeaders
     params: Params
     timeout: Optional[float]
 
@@ -101,7 +103,7 @@ class _BaseWebSocket:
         self,
         http: _BaseClient,
         path: str = "",
-        headers: Optional[CIMultiDict] = None,
+        headers: Optional[MutableHeaders] = None,
         params: Optional[Params] = None,
         cookies: Optional[Mapping] = None,
         timeout: Optional[float] = None,
@@ -110,11 +112,11 @@ class _BaseWebSocket:
         self.host = http.host
         self._client = http._client
         self.path = path
-        self.headers = headers or CIMultiDict()
+        self.headers = headers or MutableHeaders()
         cookie_headers = SimpleCookie(cookies).output().splitlines()
         for c in cookie_headers:
             k, v = c.split(":", 1)
-            self.headers.add(k, v)
+            self.headers.append(k, v)
         self.params = params or []
         self.timeout = timeout
 
@@ -204,7 +206,7 @@ class AsyncWebsocketClient(_BaseWebSocket):
 
     * host(`str`): Dummy domain.
     * path(`str`): WebSocket endpoint.
-    * headers(`CIMultiDict`): Headers used to connect.
+    * headers(`MutableHeaders`): Headers used to connect.
     * params(`Params`): Parsed querystrings.
     * timeout(`Optional[int]`): How long test client waits for.
 
@@ -213,7 +215,7 @@ class AsyncWebsocketClient(_BaseWebSocket):
     _app_ref: AppRef
     host: str
     path: str
-    headers: CIMultiDict
+    headers: MutableHeaders
     params: Params
     timeout: Optional[int]
 
@@ -221,10 +223,10 @@ class AsyncWebsocketClient(_BaseWebSocket):
         self,
         http: "AsyncHttpTestClient",
         path: str = "",
-        headers: CIMultiDict = None,
-        params: Params = None,
-        cookies: Mapping = None,
-        timeout: int = None,
+        headers: Optional[MutableHeaders] = None,
+        params: Optional[Params] = None,
+        cookies: Optional[Mapping] = None,
+        timeout: Optional[float] = None,
     ):
         """
         Do not use manually.
@@ -285,12 +287,12 @@ class _BaseClient:
     _transport: ASGITransport
     host: str
     _client: AsyncClient
-    timeout: Union[float, None]
+    timeout: Optional[float]
 
     def __init__(
         self,
         app: ASGIApp,
-        timeout: Union[float, None] = 1,
+        timeout: Optional[float] = 1,
         host="www.example.com",
         client=("127.0.0.1", 123),
     ):
@@ -340,12 +342,14 @@ class _BaseClient:
         allow_redirects=True,
     ) -> HttpTestResponse:
         # TODO: max_redirects?
-        if isinstance(headers, list):
-            ci_headers = CIMultiDict(headers)
-        elif headers is None:
-            ci_headers = CIMultiDict()
+        if isinstance(headers, Mapping):
+            ci_headers = MutableHeaders(headers=headers)
         else:
-            ci_headers = CIMultiDict(headers)
+            ci_headers = MutableHeaders(
+                raw=[
+                    (k.encode("latin-1"), v.encode("latin-1")) for k, v in headers or []
+                ]
+            )
         if files:
             file_list = [
                 RequestField.from_tuples(key, value) for key, value in files.items()
@@ -443,14 +447,14 @@ class AsyncHttpTestClient(_BaseClient):
         self,
         method: str,
         path: str,
-        params: Params = None,
-        headers: Headers = None,
-        cookies: Mapping = None,
-        json: Mapping = None,
-        files: Mapping = None,
-        form: Mapping = None,
-        content: bytes = None,
-        timeout: int = None,
+        params: Optional[Params] = None,
+        headers: Optional[Headers] = None,
+        cookies: Optional[Mapping] = None,
+        json: Optional[Mapping] = None,
+        files: Optional[Mapping] = None,
+        form: Optional[Mapping] = None,
+        content: Optional[bytes] = None,
+        timeout: Optional[float] = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
         """
@@ -493,31 +497,38 @@ class AsyncHttpTestClient(_BaseClient):
     def ws_connect(
         self,
         path: str,
-        subprotocols: list[str] = None,
-        params: Params = None,
-        headers: Headers = None,
-        cookies: Mapping = None,
-        timeout: int = None,
+        subprotocols: Optional[list[str]] = None,
+        params: Optional[Params] = None,
+        headers: Optional[Headers] = None,
+        cookies: Optional[Mapping] = None,
+        timeout: Optional[float] = None,
     ) -> AsyncWebsocketClient:
         """
         Create asynchronous WebSocket Connection.
         """
-        headers = CIMultiDict(headers or {})
-        headers.setdefault("connection", "upgrade")
-        headers.setdefault("sec-websocket-key", "testserver==")
-        headers.setdefault("sec-websocket-version", "13")
+        if isinstance(headers, Mapping):
+            ci_headers = MutableHeaders(headers=headers)
+        else:
+            ci_headers = MutableHeaders(
+                raw=[
+                    (k.encode("latin-1"), v.encode("latin-1")) for k, v in headers or []
+                ]
+            )
+        ci_headers.setdefault("connection", "upgrade")
+        ci_headers.setdefault("sec-websocket-key", "testserver==")
+        ci_headers.setdefault("sec-websocket-version", "13")
         if subprotocols is not None:
-            headers.setdefault("sec-websocket-protocol", ", ".join(subprotocols))
+            ci_headers.setdefault("sec-websocket-protocol", ", ".join(subprotocols))
 
-        return AsyncWebsocketClient(self, path, headers, params, cookies, timeout)
+        return AsyncWebsocketClient(self, path, ci_headers, params, cookies, timeout)
 
     async def get(
         self,
         path: str,
-        params: Params = None,
-        headers: Headers = None,
-        cookies: Mapping = None,
-        timeout: int = None,
+        params: Optional[Params] = None,
+        headers: Optional[Headers] = None,
+        cookies: Optional[Mapping] = None,
+        timeout: Optional[float] = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
         """
@@ -537,14 +548,14 @@ class AsyncHttpTestClient(_BaseClient):
     async def post(
         self,
         path: str,
-        params: Params = None,
-        headers: Headers = None,
-        cookies: Mapping = None,
-        json: Mapping = None,
-        files: Mapping = None,
-        form: Mapping = None,
-        content: bytes = None,
-        timeout: int = None,
+        params: Optional[Params] = None,
+        headers: Optional[Headers] = None,
+        cookies: Optional[Mapping] = None,
+        json: Optional[Mapping] = None,
+        files: Optional[Mapping] = None,
+        form: Optional[Mapping] = None,
+        content: Optional[bytes] = None,
+        timeout: Optional[float] = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
         """
@@ -568,14 +579,14 @@ class AsyncHttpTestClient(_BaseClient):
     async def put(
         self,
         path: str,
-        params: Params = None,
-        headers: Headers = None,
-        cookies: Mapping = None,
-        json: Mapping = None,
-        files: Mapping = None,
-        form: Mapping = None,
-        content: bytes = None,
-        timeout: int = None,
+        params: Optional[Params] = None,
+        headers: Optional[Headers] = None,
+        cookies: Optional[Mapping] = None,
+        json: Optional[Mapping] = None,
+        files: Optional[Mapping] = None,
+        form: Optional[Mapping] = None,
+        content: Optional[bytes] = None,
+        timeout: Optional[float] = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
         """
@@ -599,14 +610,14 @@ class AsyncHttpTestClient(_BaseClient):
     async def patch(
         self,
         path: str,
-        params: Params = None,
-        headers: Headers = None,
-        cookies: Mapping = None,
-        json: Mapping = None,
-        files: Mapping = None,
-        form: Mapping = None,
-        content: bytes = None,
-        timeout: int = None,
+        params: Optional[Params] = None,
+        headers: Optional[Headers] = None,
+        cookies: Optional[Mapping] = None,
+        json: Optional[Mapping] = None,
+        files: Optional[Mapping] = None,
+        form: Optional[Mapping] = None,
+        content: Optional[bytes] = None,
+        timeout: Optional[float] = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
         """
@@ -630,10 +641,10 @@ class AsyncHttpTestClient(_BaseClient):
     async def delete(
         self,
         path: str,
-        params: Params = None,
-        headers: Headers = None,
-        cookies: Mapping = None,
-        timeout: int = None,
+        params: Optional[Params] = None,
+        headers: Optional[Headers] = None,
+        cookies: Optional[Mapping] = None,
+        timeout: Optional[float] = None,
         allow_redirects=True,
     ) -> HttpTestResponse:
         """
