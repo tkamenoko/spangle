@@ -8,7 +8,7 @@ version: v0.11.0
 
 ## Get request headers
 
-Request headers are [`CIMultiDictProxy`](https://github.com/aio-libs/multidict) .
+Request header is [`starlette.Headers`](https://www.starlette.io/requests/#headers) instance.
 
 ```python
 @api.route("/")
@@ -38,7 +38,7 @@ class UrlExample:
 
 ### Query string
 
-`queries` is [`MultiDictProxy`](https://github.com/aio-libs/multidict) that contains parsed query strings.
+`queries` is [`starlette.QueryParams`](https://www.starlette.io/requests/#query-parameters) instance that contains parsed query strings.
 
 ```python
 @api.route("/search")
@@ -87,7 +87,7 @@ class Accepts:
 
 ## Receive uploaded data
 
-You can get request body as `bytes` , `str` , or `MultiDict` .
+You can get request body as `bytes` , `str` , or `ImmutableMultiDict` .
 
 ### Receive texts and bytes
 

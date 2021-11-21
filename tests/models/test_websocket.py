@@ -142,7 +142,7 @@ def qs_ws(api: Api):
     class QsWs:
         async def on_ws(self, conn):
             await conn.accept()
-            p = dict(**conn.params)
+            p = dict(**conn.queries)
             assert p == params
             await conn.send("bye")
             await conn.close(1000)
@@ -155,7 +155,7 @@ def qs_ws(api: Api):
 async def _(api: Api, ws: type[RequestHandlerProtocol]):
     path = api.url_for(ws)
     async with api.client() as client:
-        async with client.ws_connect(path, params=params) as connection:
+        async with client.ws_connect(path, queries=params) as connection:
             resp = await connection.receive(str)
             assert resp == "bye"
             await connection.send("FOO")

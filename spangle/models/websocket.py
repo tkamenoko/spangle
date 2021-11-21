@@ -3,11 +3,9 @@ WebSocket connection.
 """
 
 from typing import AnyStr, Optional, Union
-from urllib.parse import parse_qsl
 
 import addict
-from multidict import CIMultiDict, CIMultiDictProxy, MultiDict, MultiDictProxy
-from starlette.datastructures import URL
+from starlette.datastructures import URL, Headers, QueryParams
 from starlette.types import Receive, Scope, Send
 from starlette.websockets import WebSocket
 
@@ -24,18 +22,18 @@ class Connection:
     * closed(`bool`): Whether connection is closed or not.
     * reraise(`bool`): In ErrorHandler, if set true, reraise the exception after
         closing connection.
-    * headers(`CIMultiDictProxy`): The connection headers, case-insensitive dictionary.
+    * headers(`Headers`): The connection headers, case-insensitive dictionary.
 
     """
 
-    __slots__ = ("state", "reraise", "closed", "headers", "_params", "_connection")
+    __slots__ = ("state", "reraise", "closed", "headers", "_queries", "_connection")
 
     state: addict.Dict
     reraise: bool
     closed: bool
-    headers: CIMultiDictProxy[str]
+    headers: Headers
 
-    _params: Optional[MultiDictProxy[str]]
+    _queries: Optional[QueryParams]
     _connection: WebSocket
 
     def __init__(self, scope: Scope, receive: Receive, send: Send):
@@ -44,8 +42,8 @@ class Connection:
         self.state = addict.Dict()
         self.reraise = False
         self.closed = False
-        self.headers = CIMultiDictProxy(CIMultiDict(self._connection.headers.items()))
-        self._params = None
+        self.headers = self._connection.headers
+        self._queries = None
 
     async def accept(self, subprotocol: str = None):
         """
@@ -116,10 +114,8 @@ class Connection:
         return self._connection.url
 
     @property
-    def params(self) -> MultiDictProxy[str]:
-        """(`MultiDictProxy`): The parsed query parameters used for the request."""
-        if self._params is None:
-            params = parse_qsl(self.url.query)
-            d = MultiDict(params)
-            self._params = MultiDictProxy(d)
-        return self._params
+    def queries(self) -> QueryParams:
+        """(`QueryParams`): The parsed query parameters used for the request."""
+        if self._queries is None:
+            self._queries = QueryParams(self.url.query)
+        return self._queries

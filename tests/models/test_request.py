@@ -44,7 +44,7 @@ def param_view(api: Api):
 async def _(api: Api, view: type[RequestHandlerProtocol], query: tuple[str, dict]):
     path = api.url_for(view, {"path": query[0]})
     async with api.client() as client:
-        response = await client.get(path, params=query[1])
+        response = await client.get(path, queries=query[1])
         assert response.status_code == HTTPStatus.OK
 
 

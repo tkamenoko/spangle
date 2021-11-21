@@ -5,13 +5,18 @@ HTTP Request & Response.
 from collections.abc import AsyncGenerator, Awaitable, Callable
 from http import HTTPStatus
 from http.cookies import SimpleCookie
-from typing import Any, Optional, Union
-from urllib.parse import parse_qsl, unquote_plus
+from typing import Any, Literal, Optional, TypeVar, Union, overload
+from urllib.parse import unquote_plus
 
 import addict
 import chardet
 import jinja2
-from multidict import CIMultiDict, CIMultiDictProxy, MultiDict, MultiDictProxy
+from starlette.datastructures import (
+    Headers,
+    ImmutableMultiDict,
+    MutableHeaders,
+    QueryParams,
+)
 from starlette.requests import URL, Address
 from starlette.requests import Request as StarletteRequest
 from starlette.responses import JSONResponse, RedirectResponse
@@ -21,7 +26,9 @@ from starlette.types import Receive, Scope, Send
 
 from ..component import use_api
 from ..exceptions import NotFoundError, TooLargeRequestError
-from ..parser import _parse_body
+from ..parser import JsonType, ParseMode, _parse_body
+
+T = TypeVar("T")
 
 
 class _Accept:
@@ -46,7 +53,7 @@ class _Accept:
         self.q = q
 
     def __str__(self) -> str:
-        return self.main_type + "/" + self.subtype
+        return f"{self.main_type}/{self.subtype}"
 
     def accept(self, testing_type: str) -> bool:
         # wildcard.
@@ -70,7 +77,7 @@ class Request:
 
     **Attributes**
 
-    * headers (`CIMultiDictProxy`): The request headers, case-insensitive dictionary.
+    * headers (`Headers`): The request headers, case-insensitive dictionary.
     * state (`addict.Dict`): Any object you want to store while the response.
     * max_upload_bytes (`Optional[int]`): Limit upload size against each request.
 
@@ -96,12 +103,12 @@ class Request:
     _content: Optional[bytes]
     _mimetype: Optional[str]
     _full_url: Optional[str]
-    _queries: Optional[MultiDictProxy]
+    _queries: Optional[QueryParams]
     _media: Any
     _method: str
     _version: str
 
-    headers: CIMultiDictProxy
+    headers: Headers
     state: addict.Dict
     max_upload_bytes: Optional[int]
 
@@ -117,7 +124,7 @@ class Request:
         self._method = self._request.method.lower()
         self._version = scope["http_version"]
 
-        self.headers = CIMultiDictProxy(CIMultiDict(self._request.headers.items()))
+        self.headers = self._request.headers
         self.state = addict.Dict()
         self.max_upload_bytes = None
 
@@ -171,7 +178,7 @@ class Request:
         """(`str`): Mimetype of the request’s body, or `""` ."""
         if self._mimetype is None:
             self._mimetype = self.headers.get("content-type", "")
-        return self._mimetype  # type: ignore
+        return self._mimetype
 
     @property
     def client(self) -> Address:
@@ -195,12 +202,10 @@ class Request:
         return self._request.url
 
     @property
-    def queries(self) -> MultiDictProxy:
-        """(`MultiDictProxy`): The parsed query parameters used for the request."""
+    def queries(self) -> QueryParams:
+        """(`QueryParams`): The parsed query parameters used for the request."""
         if self._queries is None:
-            queries = parse_qsl(self.url.query)
-            d = MultiDict(queries)
-            self._queries = MultiDictProxy(d)
+            self._queries = QueryParams(self.url.query)
         return self._queries
 
     @property
@@ -239,7 +244,7 @@ class Request:
         """
 
         if self._accepts is None:
-            raw: list[str] = self.headers.getall("Accept", [])
+            raw: list[str] = self.headers.getlist("Accept")
             a_list = []
             for i in raw:
                 a_values = i.replace(" ", "").split(",")
@@ -262,11 +267,30 @@ class Request:
         b = await self.content
         return chardet.detect(b)
 
+    @overload
+    async def media(self) -> Union[ImmutableMultiDict, JsonType]:
+        ...
+
+    @overload
+    async def media(self, *, parse_as: Literal["json"]) -> JsonType:
+        ...
+
+    @overload
+    async def media(
+        self, *, parse_as: Literal["form", "multipart"]
+    ) -> ImmutableMultiDict:
+        ...
+
+    @overload
+    async def media(self, *, parser: Callable[["Request"], Awaitable[T]]) -> T:
+        ...
+
     async def media(
         self,
-        parser: Callable[["Request"], Awaitable[Any]] = None,
-        parse_as: str = None,
-    ) -> Union[MultiDictProxy, Any]:
+        *,
+        parser: Callable[["Request"], Awaitable[T]] = None,
+        parse_as: Optional[ParseMode] = None,
+    ) -> Union[ImmutableMultiDict, T, JsonType]:
         """
         Decode the request body to dict-like object. Must be awaited.
 
@@ -274,14 +298,16 @@ class Request:
 
         **Args**
 
-        * parser (`Optional[Callable[[Request], Awaitable[Any]]]`): Custom parser,
+        * parser (`Optional[Callable[[Request], Awaitable[T]]]`): Custom parser,
             must be async function. If not given, `spangle` uses builtin parser.
-        * parse_as (`Optional[str]`): Select parser to decode the body. Accept
+        * parse_as (`Optional[ParseMode]`): Select parser to decode the body. Accept
             `"json"` , `"form"` , or `"multipart"` .
 
         **Returns**
 
-        * `MultiDictProxy`: May be overridden by custom parser.
+        * `T`: Parsed by given function.
+        * `ImmutableMultiDict`
+        * `JsonType`
 
         """
         if self._media is None:
@@ -321,8 +347,8 @@ class Response:
 
     **Attributes**
 
-    * headers (`CIMultiDict`): The response headers, case-insensitive dictionary. To set
-        values having same key, use `headers.add()` .
+    * headers (`MutableHeaders`): The response headers, case-insensitive dictionary.
+        To set values having same key, use `headers.append()` .
     * cookies (`SimpleCookie`): Dict-like http cookies. `Set-Cookie` header refers this.
         You can set cookie-attributes.
     * status (`int`): The response's status code.
@@ -355,7 +381,7 @@ class Response:
     _content: Optional[bytes]
     _json: Union[addict.Dict, list, None]
 
-    headers: CIMultiDict[str]
+    headers: MutableHeaders
     cookies: SimpleCookie
     status_code: int
     streaming: Optional[AsyncGenerator]
@@ -370,7 +396,7 @@ class Response:
         self._content = None
         self._json = None
 
-        self.headers = CIMultiDict()
+        self.headers = MutableHeaders()
         self.cookies = SimpleCookie()
         self.status_code = HTTPStatus.OK
         self.streaming: Optional[AsyncGenerator] = None
@@ -552,7 +578,7 @@ class Response:
         * `spangle.models.http.Response`: Return self.
 
         """
-        self.headers.add(key, value)
+        self.headers.append(key, value)
         return self
 
     def set_header(self, key: str, value: str) -> "Response":
@@ -705,4 +731,4 @@ class Response:
             return
         cookies = self.cookies.output(header="").split("\r\n")
         for c in cookies:
-            self.headers.add("Set-Cookie", c.lstrip())
+            self.headers.append("Set-Cookie", c.lstrip())

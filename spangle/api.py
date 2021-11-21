@@ -7,7 +7,7 @@ import inspect
 import re
 from collections.abc import Callable
 from contextvars import Context, copy_context
-from typing import Any, Literal, Optional, Union
+from typing import Any, Literal, Optional
 
 import jinja2
 from starlette.middleware.errors import ServerErrorMiddleware
@@ -23,6 +23,7 @@ from .component import AnyComponentProtocol, ComponentsCache, api_ctx, component
 from .error_handler import ErrorHandler
 from .handler_protocols import (
     AnyRequestHandlerProtocol,
+    BaseHandlerProtocol,
     ErrorHandlerProtocol,
     RequestHandlerProtocol,
 )
@@ -53,10 +54,7 @@ class Api:
     """
 
     _app_ref: AppRef
-    _view_cache: dict[
-        type[Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol]],
-        Union[AnyRequestHandlerProtocol, ErrorHandlerProtocol],
-    ]
+    _view_cache: dict[type[BaseHandlerProtocol], BaseHandlerProtocol]
     _reverse_views: dict[type[AnyRequestHandlerProtocol], str]
     _jinja_env: Optional[jinja2.Environment]
     _context: Context
