@@ -5,7 +5,7 @@ HTTP Request & Response.
 from collections.abc import AsyncGenerator, Awaitable, Callable
 from http import HTTPStatus
 from http.cookies import SimpleCookie
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, TypeVar, Union, overload
 from urllib.parse import unquote_plus
 
 import addict
@@ -13,9 +13,9 @@ import chardet
 import jinja2
 from starlette.datastructures import (
     Headers,
+    ImmutableMultiDict,
     MutableHeaders,
     QueryParams,
-    ImmutableMultiDict,
 )
 from starlette.requests import URL, Address
 from starlette.requests import Request as StarletteRequest
@@ -26,7 +26,9 @@ from starlette.types import Receive, Scope, Send
 
 from ..component import use_api
 from ..exceptions import NotFoundError, TooLargeRequestError
-from ..parser import _parse_body
+from ..parser import JsonType, ParseMode, _parse_body
+
+T = TypeVar("T")
 
 
 class _Accept:
@@ -265,11 +267,30 @@ class Request:
         b = await self.content
         return chardet.detect(b)
 
+    @overload
+    async def media(self) -> Union[ImmutableMultiDict, JsonType]:
+        ...
+
+    @overload
+    async def media(self, *, parse_as: Literal["json"]) -> JsonType:
+        ...
+
+    @overload
+    async def media(
+        self, *, parse_as: Literal["form", "multipart"]
+    ) -> ImmutableMultiDict:
+        ...
+
+    @overload
+    async def media(self, *, parser: Callable[["Request"], Awaitable[T]]) -> T:
+        ...
+
     async def media(
         self,
-        parser: Callable[["Request"], Awaitable[Any]] = None,
-        parse_as: str = None,
-    ) -> Union[ImmutableMultiDict, Any]:
+        *,
+        parser: Callable[["Request"], Awaitable[T]] = None,
+        parse_as: Optional[ParseMode] = None,
+    ) -> Union[ImmutableMultiDict, T, JsonType]:
         """
         Decode the request body to dict-like object. Must be awaited.
 
@@ -277,14 +298,16 @@ class Request:
 
         **Args**
 
-        * parser (`Optional[Callable[[Request], Awaitable[Any]]]`): Custom parser,
+        * parser (`Optional[Callable[[Request], Awaitable[T]]]`): Custom parser,
             must be async function. If not given, `spangle` uses builtin parser.
-        * parse_as (`Optional[str]`): Select parser to decode the body. Accept
+        * parse_as (`Optional[ParseMode]`): Select parser to decode the body. Accept
             `"json"` , `"form"` , or `"multipart"` .
 
         **Returns**
 
-        * `ImmutableMultiDict`: May be overridden by custom parser.
+        * `T`: Parsed by given function.
+        * `ImmutableMultiDict`
+        * `JsonType`
 
         """
         if self._media is None:
