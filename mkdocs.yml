@@ -1,11 +1,8 @@
 site_name: spangle - ASGI framework for modern web application
 site_url: "https://tkamenoko.github.io/spangle/"
 
-docs_dir: "markdown"
-site_dir: "docs"
 repo_url: "https://github.com/tkamenoko/spangle/"
 edit_uri: ""
-
 
 theme:
   name: "material"
