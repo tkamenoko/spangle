@@ -11,7 +11,8 @@ from urllib.parse import parse_qsl, unquote_plus
 import addict
 import chardet
 import jinja2
-from multidict import CIMultiDict, CIMultiDictProxy, MultiDict, MultiDictProxy
+from multidict import MultiDict, MultiDictProxy
+from starlette.datastructures import Headers, MutableHeaders
 from starlette.requests import URL, Address
 from starlette.requests import Request as StarletteRequest
 from starlette.responses import JSONResponse, RedirectResponse
@@ -46,7 +47,7 @@ class _Accept:
         self.q = q
 
     def __str__(self) -> str:
-        return self.main_type + "/" + self.subtype
+        return f"{self.main_type}/{self.subtype}"
 
     def accept(self, testing_type: str) -> bool:
         # wildcard.
@@ -70,7 +71,7 @@ class Request:
 
     **Attributes**
 
-    * headers (`CIMultiDictProxy`): The request headers, case-insensitive dictionary.
+    * headers (`Headers`): The request headers, case-insensitive dictionary.
     * state (`addict.Dict`): Any object you want to store while the response.
     * max_upload_bytes (`Optional[int]`): Limit upload size against each request.
 
@@ -101,7 +102,7 @@ class Request:
     _method: str
     _version: str
 
-    headers: CIMultiDictProxy
+    headers: Headers
     state: addict.Dict
     max_upload_bytes: Optional[int]
 
@@ -117,7 +118,7 @@ class Request:
         self._method = self._request.method.lower()
         self._version = scope["http_version"]
 
-        self.headers = CIMultiDictProxy(CIMultiDict(self._request.headers.items()))
+        self.headers = self._request.headers
         self.state = addict.Dict()
         self.max_upload_bytes = None
 
@@ -171,7 +172,7 @@ class Request:
         """(`str`): Mimetype of the request’s body, or `""` ."""
         if self._mimetype is None:
             self._mimetype = self.headers.get("content-type", "")
-        return self._mimetype  # type: ignore
+        return self._mimetype
 
     @property
     def client(self) -> Address:
@@ -239,7 +240,7 @@ class Request:
         """
 
         if self._accepts is None:
-            raw: list[str] = self.headers.getall("Accept", [])
+            raw: list[str] = self.headers.getlist("Accept")
             a_list = []
             for i in raw:
                 a_values = i.replace(" ", "").split(",")
@@ -321,8 +322,8 @@ class Response:
 
     **Attributes**
 
-    * headers (`CIMultiDict`): The response headers, case-insensitive dictionary. To set
-        values having same key, use `headers.add()` .
+    * headers (`MutableHeaders`): The response headers, case-insensitive dictionary.
+        To set values having same key, use `headers.append()` .
     * cookies (`SimpleCookie`): Dict-like http cookies. `Set-Cookie` header refers this.
         You can set cookie-attributes.
     * status (`int`): The response's status code.
@@ -355,7 +356,7 @@ class Response:
     _content: Optional[bytes]
     _json: Union[addict.Dict, list, None]
 
-    headers: CIMultiDict[str]
+    headers: MutableHeaders
     cookies: SimpleCookie
     status_code: int
     streaming: Optional[AsyncGenerator]
@@ -370,7 +371,7 @@ class Response:
         self._content = None
         self._json = None
 
-        self.headers = CIMultiDict()
+        self.headers = MutableHeaders()
         self.cookies = SimpleCookie()
         self.status_code = HTTPStatus.OK
         self.streaming: Optional[AsyncGenerator] = None
@@ -552,7 +553,7 @@ class Response:
         * `spangle.models.http.Response`: Return self.
 
         """
-        self.headers.add(key, value)
+        self.headers.append(key, value)
         return self
 
     def set_header(self, key: str, value: str) -> "Response":
@@ -705,4 +706,4 @@ class Response:
             return
         cookies = self.cookies.output(header="").split("\r\n")
         for c in cookies:
-            self.headers.add("Set-Cookie", c.lstrip())
+            self.headers.append("Set-Cookie", c.lstrip())
