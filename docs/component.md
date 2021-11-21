@@ -35,8 +35,9 @@ class UseComponent:
 
 ```
 
+<!-- prettier-ignore -->
 !!! Note
-According to [The Twelve-FactorApp](https://12factor.net/processes) , every application process should be stateless. In other words, components should contain config or database connection, but not session data. Do not use a component as a datastore.
+    According to [The Twelve-FactorApp](https://12factor.net/processes) , every application process should be stateless. In other words, components should contain config or database connection, but not session data. Do not use a component as a datastore.
 
 ## Use components from another component
 
@@ -50,8 +51,9 @@ class AnotherComp:
 
 ```
 
+<!-- prettier-ignore -->
 !!! Note
-There is no way to define the order of startup hooks. Do not expect that `startup` hooks of other components are already completed.
+    There is no way to define the order of startup hooks. Do not expect that `startup` hooks of other components are already completed.
 
 ## Call `use_component` out of api context
 

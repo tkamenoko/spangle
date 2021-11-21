@@ -32,8 +32,9 @@ api.add_blueprint("/images", bp)
 
 ```
 
+<!-- prettier-ignore -->
 !!! Note
-`Blueprint` instance is _not_ an ASGI application.
+    `Blueprint` instance is _not_ an ASGI application.
 
 ## Nest blueprints
 

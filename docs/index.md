@@ -9,8 +9,9 @@ version: v0.12.0
 
 `spangle` is a small and flexible ASGI application framework for modern web.
 
+<!-- prettier-ignore -->
 !!! Note
-`spangle` is on pre-alpha stage, so any updates may contain breaking changes.
+    `spangle` is on pre-alpha stage, so any updates may contain breaking changes.
 
 ## Getting Started
 

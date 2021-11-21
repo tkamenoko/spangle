@@ -27,8 +27,9 @@ class WebSocket:
 
 ```
 
+<!-- prettier-ignore -->
 !!! Note
-HTTP Upgrade Request is processed in an ASGI server, so you don't need to send `101 Switching Protocols` manually.
+    HTTP Upgrade Request is processed in an ASGI server, so you don't need to send `101 Switching Protocols` manually.
 
 ## Error handling for WebSocket
 
